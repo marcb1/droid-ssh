@@ -15,9 +15,7 @@
         android:id="@+id/usernameField"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:hint="@string/username_message"
-        />
+        android:hint="@string/username_message" />
 
 
     <EditText
@@ -26,7 +24,6 @@
         android:id="@+id/passwordField"
         android:layout_below="@+id/usernameField"
         android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/usernameField"
         android:hint="@string/password_message"
         />
 
@@ -35,11 +32,29 @@
         android:layout_height="wrap_content"
         android:text="@string/button_connect"
         android:id="@+id/button"
+        android:onClick="connectToServer"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hostField"
         android:layout_below="@+id/passwordField"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="51dp"
-        android:onClick="connectToServer"
-    />
+        android:layout_alignParentRight="true"
+        android:hint="@string/host_message"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/portField"
+        android:layout_below="@+id/hostField"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/passwordField"
+        android:hint="@string/port_message"
+        />
 
 
 </RelativeLayout>
