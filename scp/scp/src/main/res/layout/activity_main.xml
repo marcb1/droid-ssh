@@ -39,7 +39,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/hostField"
+        android:id="@+id/hostNameField"
         android:layout_below="@+id/passwordField"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"

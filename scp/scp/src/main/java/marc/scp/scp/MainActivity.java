@@ -15,10 +15,10 @@ public class MainActivity extends ActionBarActivity
 {
     public final static String USERNAME = "com.whomarc.scp.USERNAME";
     public final static String PASSWORD = "com.whomarc.scp.PASSWORD";
-    public final static String HOST = "com.whomarc.scp.PASSWORD";
-    public final static String PORT = "com.whomarc.scp.PASSWORD";
-    public final static String RSAKEY = "com.whomarc.scp.PASSWORD";
-    
+    public final static String HOSTNAME = "com.whomarc.scp.HOSTNAME";
+    public final static String PORT = "com.whomarc.scp.PORT";
+    public final static String RSAKEY = "com.whomarc.scp.RSAKEY";
+
     @Override
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity
         editText = (EditText) findViewById(R.id.usernameField);
         String username = editText.getText().toString();
 
-        editText = (EditText) findViewById(R.id.hostnameField);
+        editText = (EditText) findViewById(R.id.hostNameField);
         String host = editText.getText().toString();
 
         editText = (EditText) findViewById(R.id.portField);

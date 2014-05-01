@@ -22,6 +22,8 @@ public class DisplayMessageActivity extends ActionBarActivity {
         Intent intent = getIntent();
         String username = intent.getStringExtra(MainActivity.USERNAME);
         String password = intent.getStringExtra(MainActivity.PASSWORD);
+        String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
+        String port = intent.getStringExtra(MainActivity.PORT);
 
         //construct ssh object and try to connect
         // Create the text view

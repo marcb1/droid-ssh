@@ -2,6 +2,7 @@ package marc.scp.scp;
 
 import com.jcraft.jsch.*;
 import java.io.ByteArrayOutputStream;
+import java.io.*;
 
 /**
  * Created by Marc on 5/1/14.
@@ -18,7 +19,7 @@ public class SshConnection
         JSch jsch = new JSch();
         try
         {
-        session = jsch.getSession(username, hostname, portNumber);
+            session = jsch.getSession(username, hostname, portNumber);
         }
         catch(Exception e)
         {
@@ -68,11 +69,21 @@ public class SshConnection
         return baos.toString();
     }
 
+    public void transferFile(FileInputStream file)
+    {
+        try
+        {
+            OutputStream out = channel.getOutputStream();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+
     public void disableHostChecking()
     {
-       // Properties prop = new Properties();
-       // prop.put("StrictHostKeyChecking", "no");
-        //session.setConfig(prop);
+        session.setConfig("StrictHostKeyChecking", "no");
     }
  }
 
