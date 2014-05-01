@@ -38,8 +38,8 @@
         android:layout_below="@+id/passwordField"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="51dp"
-        android:onClick="connect"
-        />
+        android:onClick="connectToServer"
+    />
 
 
 </RelativeLayout>

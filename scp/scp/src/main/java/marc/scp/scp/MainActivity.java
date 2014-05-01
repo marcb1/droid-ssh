@@ -7,29 +7,33 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.EditText;
 import android.view.View;
+import android.app.ActionBar;
+import android.util.Log;
 
+//this is the main acitivity that is first started when the app is launched
 public class MainActivity extends ActionBarActivity
 {
     public final static String USERNAME = "com.whomarc.scp.USERNAME";
     public final static String PASSWORD = "com.whomarc.scp.PASSWORD";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    //this is called when the activity is created
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     // Called when the user clicks the connnect button
-    public void connect(View view)
+    public void connectToServer(View view)
     {
         //this is a Context, because MainACtivity inherits from context
         Intent intent = new Intent(this, DisplayMessageActivity.class);
@@ -49,15 +53,17 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
-
 }

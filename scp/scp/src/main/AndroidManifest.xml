@@ -3,13 +3,14 @@
     package="marc.scp.scp" >
 
     <uses-sdk android:minSdkVersion="11"  />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo"
+        android:theme="@style/Theme.AppCompat"
         >
 
         <activity

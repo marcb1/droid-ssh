@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
-import android.widget.TextView;
 import android.view.MenuInflater;
+import android.widget.TextView;
 
 public class DisplayMessageActivity extends ActionBarActivity {
 
@@ -16,6 +16,7 @@ public class DisplayMessageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //add button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
@@ -24,12 +25,12 @@ public class DisplayMessageActivity extends ActionBarActivity {
 
         //construct ssh object and try to connect
         // Create the text view
-      //  TextView textView = new TextView(this);
-       // textView.setTextSize(40);
-        //textView.setText("hi");
+        TextView textView = new TextView(this);
+        textView.setTextSize(40);
+        textView.setText(username);
 
         // Set the text view as the activity layout
-        //setContentView(textView);
+        setContentView(textView);
     }
 
 
@@ -63,8 +64,7 @@ public class DisplayMessageActivity extends ActionBarActivity {
         }
         else
         {
-
-        return super.onOptionsItemSelected(item);
+            return super.onOptionsItemSelected(item);
         }
     }
 
