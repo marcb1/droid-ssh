@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.EditText;
+import android.view.View;
 
 public class MainActivity extends ActionBarActivity
 {

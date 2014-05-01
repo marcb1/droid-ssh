@@ -8,5 +8,6 @@
     <string name="password_message">Enter a password</string>
     <string name="button_connect">Connect</string>
     <string name="title_activity_display_message">MyMessage</string>
+    <string name="saved_servers">Saved Sessions</string>
 
 </resources>
