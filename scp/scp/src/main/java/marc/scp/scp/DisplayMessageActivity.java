@@ -16,20 +16,25 @@ public class DisplayMessageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //add button
+        //add buttons
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         String username = intent.getStringExtra(MainActivity.USERNAME);
         String password = intent.getStringExtra(MainActivity.PASSWORD);
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
-        String port = intent.getStringExtra(MainActivity.PORT);
+        int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
+
+        SshConnection connection = new SshConnection(username, password, hostname, port);
+        connection.disableHostChecking();
+        new SshConnectTask().execute(connection);
+        String result = connection.executeCommand("ls");
 
         //construct ssh object and try to connect
-        // Create the text view
+        //Create the text view
         TextView textView = new TextView(this);
         textView.setTextSize(40);
-        textView.setText(username);
+        textView.setText(result);
 
         // Set the text view as the activity layout
         setContentView(textView);

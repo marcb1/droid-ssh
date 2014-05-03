@@ -10,7 +10,7 @@ import android.view.View;
 import android.app.ActionBar;
 import android.util.Log;
 
-//this is the main acitivity that is first started when the app is launched
+//this is the main acitivity that's first started when the app is launched
 public class MainActivity extends ActionBarActivity
 {
     public final static String USERNAME = "com.whomarc.scp.USERNAME";
@@ -38,25 +38,26 @@ public class MainActivity extends ActionBarActivity
     // Called when the user clicks the connnect button
     public void connectToServer(View view)
     {
-        //this is a Context, because MainACtivity inherits from context
+        //MainActivity inherits from context (this)
         Intent intent = new Intent(this, DisplayMessageActivity.class);
 
         //grab the strings out of the correct field
-        EditText editText = (EditText) findViewById(R.id.passwordField);
-        String password = editText.getText().toString();
-
-        editText = (EditText) findViewById(R.id.usernameField);
+        EditText editText = (EditText) findViewById(R.id.usernameField);
         String username = editText.getText().toString();
 
+        editText = (EditText) findViewById(R.id.passwordField);
+        String password = editText.getText().toString();
+
         editText = (EditText) findViewById(R.id.hostNameField);
-        String host = editText.getText().toString();
+        String hostname = editText.getText().toString();
 
         editText = (EditText) findViewById(R.id.portField);
         String port = editText.getText().toString();
 
-        //add the correct data to the intent
         intent.putExtra(PASSWORD, password);
         intent.putExtra(USERNAME, username);
+        intent.putExtra(HOSTNAME, hostname);
+        intent.putExtra(PORT, port);
 
         startActivity(intent);
     }

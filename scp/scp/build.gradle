@@ -25,4 +25,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/jsch-0.1.51.jar')
+    compile files('libs/ormlite-android-4.48.jar')
+    compile files('libs/ormlite-core-4.48.jar')
 }

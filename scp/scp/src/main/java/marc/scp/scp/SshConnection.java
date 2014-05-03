@@ -3,15 +3,21 @@ package marc.scp.scp;
 import com.jcraft.jsch.*;
 import java.io.ByteArrayOutputStream;
 import java.io.*;
+import android.util.Log;
 
 /**
  * Created by Marc on 5/1/14.
  */
+
 public class SshConnection
 {
     //jsch session
     private Session session;
     private Channel channel;
+
+    //returned data
+    ByteArrayOutputStream baos;
+    private final String log = "SshConnection";
 
 
     public SshConnection(String username, String password, String hostname, int portNumber)
@@ -28,32 +34,28 @@ public class SshConnection
         session.setPassword(password);
     }
 
+    public void disableHostChecking()
+    {
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+    }
+
     public boolean connect()
     {
         boolean ret = true;
         try
         {
+          //  channel = session.openChannel("exec");
+           // baos = new ByteArrayOutputStream();
+          //  channel.setOutputStream(baos);
             session.connect(30000);
+          //  channel.connect();
+            Log.d(log, "SSH Connected");
         }
-        catch(Exception e)
+        catch(JSchException  e)
         {
-            System.out.println(e);
-            ret = false;
-        }
-        return ret;
-    }
-
-    public boolean openChannel()
-    {
-        boolean ret = true;
-        try
-        {
-            channel = session.openChannel("exec");
-            channel.connect();
-        }
-        catch(Exception e)
-        {
-            System.out.println(e);
+            Log.d(log, e.getLocalizedMessage());
             ret = false;
         }
         return ret;
@@ -61,9 +63,6 @@ public class SshConnection
 
     public String executeCommand(String command)
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        channel.setOutputStream(baos);
-
         // Execute command
         ((ChannelExec)channel).setCommand(command);
         return baos.toString();
@@ -77,13 +76,8 @@ public class SshConnection
         }
         catch(Exception e)
         {
-            System.out.println(e);
+            System.out.println("B" + e);
         }
-    }
-
-    public void disableHostChecking()
-    {
-        session.setConfig("StrictHostKeyChecking", "no");
     }
  }
 
