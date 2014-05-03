@@ -1,17 +1,30 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'android'
 
-buildscript {
-    repositories {
-        mavenCentral()
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.0.3'
+
+    defaultConfig {
+        minSdkVersion 11
+        targetSdkVersion 14
+        versionCode 1
+        versionName "1.0"
     }
-    dependencies
-    {
-        classpath 'com.android.tools.build:gradle:0.8.+'
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            debuggable false
+            jniDebugBuild false
+            zipAlign true
+        }
     }
 }
 
-allprojects {
-    repositories {
-        mavenCentral()
-    }
+dependencies {
+    compile 'com.android.support:appcompat-v7:+'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/jsch-0.1.51.jar')
+    compile files('libs/ormlite-android-4.48.jar')
+    compile files('libs/ormlite-core-4.48.jar')
 }

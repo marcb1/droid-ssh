@@ -1,0 +1,23 @@
+dataClass=marc.scp.scp.Preferences
+tableName=Preferences
+# --table-fields-start--
+# --field-start--
+fieldName=id
+generatedId=true
+# --field-end--
+# --field-start--
+fieldName=string
+indexName=hostname
+# --field-end--
+# --field-start--
+fieldName=username
+# --field-end--
+# --field-start--
+fieldName=password
+# --field-end--
+# --field-start--
+fieldName=rsakey
+# --field-end--
+# --table-fields-end--
+# --table-end--
+#################################
