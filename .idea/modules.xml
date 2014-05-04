@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/android-ssh.iml" filepath="$PROJECT_DIR$/android-ssh.iml" />
       <module fileurl="file://$PROJECT_DIR$/scp.iml" filepath="$PROJECT_DIR$/scp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/scp/scp-scp.iml" filepath="$PROJECT_DIR$/scp/scp-scp.iml" />
     </modules>
   </component>
 </project>
