@@ -19,12 +19,18 @@ public class MainActivity extends ActionBarActivity
     public final static String PORT = "com.whomarc.scp.PORT";
     public final static String RSAKEY = "com.whomarc.scp.RSAKEY";
 
+    DatabaseHelper helper;
+
     @Override
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        helper = new DatabaseHelper(this);
+
+        String test = "a";
+        helper.addToTable(test);
     }
 
     @Override

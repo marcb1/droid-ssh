@@ -18,17 +18,26 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 {
-    private static final String DATABASE_NAME = "marc_ssh.db";
+    private static final String DATABASE_NAME = "android_ssh.db";
     private static final int DATABASE_VERSION = 1;
 
-    private static final String log = "DatabaseHelper";//DatabaseHelper.class.getName()
+    private static final String log = "DatabaseHelper";//or DatabaseHelper.class.getName()
 
-    private Dao<Preferences, Integer> simpleDao = null;
-    private RuntimeExceptionDao<Preferences, Integer> simpleRuntimeDao = null;
+    //dao object to access table
+    private Dao<Preferences, Integer> dao = null;
+    private RuntimeExceptionDao<Preferences, Integer> runtimeDao = null;
 
     public DatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
+        try
+        {
+            dao = getDao(Preferences.class);
+
+        }
+        catch(Exception e)
+        {
+        }
     }
 
     @Override
@@ -51,16 +60,30 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
         //here we try inserting data in the on-create as a test
         RuntimeExceptionDao<Preferences, Integer> dao = getSimpleDataDao();
         Preferences pref = new Preferences(a, a, a, 1);
-        dao.create(pref);
+
+        long numRows = dao.countOf();
+        if(dao != null)
+        {
+            dao.create(pref);
+            Log.e(log, "added to table" + a);
+            System.out.println("a");
+        }
     }
 
     public Dao<Preferences, Integer> getDao() throws SQLException
     {
-        if (simpleDao == null)
+        if (dao == null)
         {
-            simpleDao = getDao(Preferences.class);
+            try
+            {
+                dao = getDao(Preferences.class);
+            }
+            catch (Exception e)
+            {
+
+            }
         }
-        return simpleDao;
+        return dao;
     }
 
     /**
@@ -69,11 +92,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
      */
     public RuntimeExceptionDao<Preferences, Integer> getSimpleDataDao()
     {
-        if (simpleRuntimeDao == null)
+        if (runtimeDao == null)
         {
             //simpleRuntimeDao = getRuntimeExceptionDao(Preferences.class);
         }
-        return simpleRuntimeDao;
+        return runtimeDao;
     }
 
     /**
@@ -83,8 +106,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
     public void close()
     {
         super.close();
-        simpleDao = null;
-        simpleRuntimeDao = null;
+        dao = null;
+        runtimeDao = null;
     }
 
     @Override
