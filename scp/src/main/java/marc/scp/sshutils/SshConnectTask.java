@@ -1,11 +1,11 @@
-package marc.scp.scp;
+package marc.scp.sshutils;
 
 import android.os.AsyncTask;
 
 /**
  * Created by Marc on 5/1/14.
  */
-class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
+public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
 {
     protected Boolean doInBackground(SshConnection... connection)
     {
@@ -13,7 +13,7 @@ class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
         try
         {
             connection[0].connect();
-            //System.out.println(connection[0].executeCommand("ls"));
+            System.out.println(connection[0].executeCommand("ls"));
         }
         catch (Exception e)
         {

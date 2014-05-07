@@ -1,4 +1,5 @@
 package marc.scp.scp;
+import marc.scp.sshutils.*;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -25,7 +26,8 @@ public class DisplayMessageActivity extends ActionBarActivity {
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
         int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
 
-        SshConnection connection = new SshConnection(username, password, hostname, port);
+        SessionUserInfo user = new SessionUserInfo(hostname, username, password, port);
+        SshConnection connection = new SshConnection(user);
         connection.disableHostChecking();
         new SshConnectTask().execute(connection);
         String result = connection.executeCommand("ls");

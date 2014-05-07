@@ -29,8 +29,8 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
         helper = new DatabaseHelper(this);
 
-        String test = "a";
-        helper.addToTable(test);
+        //String test = "a";
+        //helper.addToTable(test);
     }
 
     @Override
@@ -59,6 +59,7 @@ public class MainActivity extends ActionBarActivity
 
         editText = (EditText) findViewById(R.id.portField);
         String port = editText.getText().toString();
+
 
         intent.putExtra(PASSWORD, password);
         intent.putExtra(USERNAME, username);
