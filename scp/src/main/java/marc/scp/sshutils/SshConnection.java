@@ -28,6 +28,8 @@ public class SshConnection  extends TermSession
     private InputStream  consoleInput;
     private OutputStream consoleOutput;
 
+    SessionUserInfo userInfo;
+
     private final String log = "SshConnection";
 
     public boolean isConnected()
@@ -52,6 +54,7 @@ public class SshConnection  extends TermSession
             //log error here
         }
         session.setUserInfo(user);
+        userInfo = user;
     }
 
     public void disableHostChecking()
@@ -63,6 +66,7 @@ public class SshConnection  extends TermSession
 
     public boolean connectAsShell()
     {
+        System.out.println("a");
         boolean ret = false;
         try
         {
@@ -70,12 +74,18 @@ public class SshConnection  extends TermSession
             {
                 session.connect();
                 connected = true;
-                channel = session.openChannel("exec");
+                channel = session.openChannel("shell");
                 consoleInput = channel.getInputStream();
                 consoleOutput = channel.getOutputStream();
+                if(consoleInput == null)
+                {
+                    System.out.println("ERROR");
+                }
+                userInfo.setConsole(consoleInput, consoleOutput);
                 setTermIn(consoleInput);
                 setTermOut(consoleOutput);
                 channel.connect();
+                write("hi");
 
                 Log.d(log, "SSH Connected");
                 ret = true;
@@ -87,6 +97,7 @@ public class SshConnection  extends TermSession
             ret = false;
             connected = false;
         }
+        System.out.println("b");
         return ret;
     }
 
@@ -175,7 +186,9 @@ public class SshConnection  extends TermSession
     @Override //called when data is processed from the input stream
     public void processInput(byte[] buffer, int offset, int count)
     {
+
         Log.d(log, "Input Stream " + Arrays.toString(buffer));
+        super.processInput(buffer, offset, count);
     }
 
  }

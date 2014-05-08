@@ -1,12 +1,17 @@
 package marc.scp.sshutils;
 import com.jcraft.jsch.UserInfo;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class SessionUserInfo implements UserInfo {
 
     private final String mPassword;
     private final String mUser;
     private final String mHost;
     private final int mPort;
+    InputStream consoleIn;
+    OutputStream consoleOut;
 
     public SessionUserInfo(String host, String user, String password, int port)
     {
@@ -14,6 +19,12 @@ public class SessionUserInfo implements UserInfo {
         mUser = user;
         mPassword = password;
         mPort = port;
+    }
+
+    public void setConsole(InputStream i, OutputStream o)
+    {
+        consoleIn = i;
+        consoleOut = o;
     }
 
     //abstract methods

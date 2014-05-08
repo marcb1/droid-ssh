@@ -57,7 +57,7 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, String>
     {
         //showDialog("Downloaded " + result + " bytes");
         //System.out.println(result);
-        //handler.result(result);
+        handler.result(result);
     }
 
 }

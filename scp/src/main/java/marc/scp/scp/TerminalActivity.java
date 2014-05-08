@@ -4,12 +4,16 @@ import marc.scp.sshutils.*;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.method.TextKeyListener;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.view.MenuInflater;
 import android.widget.TextView;
 import android.util.DisplayMetrics;
+import android.widget.EditText;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -20,45 +24,61 @@ import jackpal.androidterm.emulatorview.TermSession;
 public class TerminalActivity extends ActionBarActivity
 {
     private EmulatorView emView;
+    SshConnection conn;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.terminal_activity);
-
-        //add buttons
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         String username = intent.getStringExtra(MainActivity.USERNAME);
         String password = intent.getStringExtra(MainActivity.PASSWORD);
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
-        int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
+       int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
 
         SessionUserInfo user = new SessionUserInfo(hostname, username, password, port);
         SshConnection connection = new SshConnection(user);
+        conn = connection;
         connection.disableHostChecking();
+
         SshConnectTask task = new SshConnectTask(this, "ls");
         task.execute(connection);
 
+
+    }
+
+    public void result(String res)
+    {
+        System.out.println("1");
+        setContentView(R.layout.terminal_activity);
+
+        //add buttons
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
         emView = view;
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         view.setDensity(metrics);
-        view.attachSession(connection);
-    }
+        view.attachSession(conn);
 
-    public void result(String res)
-    {
-        //construct ssh object and try to connect
-        //Create the text view
-        //TextView textView = new TextView(this);
-        //textView.setTextSize(40);
-        //textView.setText(res);
 
-        // Set the text view as the activity layout
-        //setContentView(textView);
+        EditText mEntry = (EditText) findViewById(R.id.term_entry);
+        mEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int action, KeyEvent ev) {
+                // Ignore enter-key-up events
+                if (ev != null && ev.getAction() == KeyEvent.ACTION_UP) {
+                    return false;
+                }
+                // Don't try to send something if we're not connected yet
+
+                Editable e = (Editable) v.getText();
+                // Write to the terminal session
+                System.out.println(e.toString());
+                conn.write(e.toString());
+                conn.write('\n');
+                TextKeyListener.clear(e);
+                return true;
+            }
+        });
     }
 
     @Override
