@@ -29,19 +29,21 @@ public class DisplayMessageActivity extends ActionBarActivity {
         SessionUserInfo user = new SessionUserInfo(hostname, username, password, port);
         SshConnection connection = new SshConnection(user);
         connection.disableHostChecking();
-        new SshConnectTask().execute(connection);
-        String result = connection.executeCommand("ls");
+        SshConnectTask task = new SshConnectTask(this, "ls");
+        task.execute(connection);
+    }
 
+    public void result(String res)
+    {
         //construct ssh object and try to connect
         //Create the text view
         TextView textView = new TextView(this);
         textView.setTextSize(40);
-        textView.setText(result);
+        textView.setText(res);
 
         // Set the text view as the activity layout
         setContentView(textView);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

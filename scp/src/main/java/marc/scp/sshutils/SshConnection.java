@@ -25,6 +25,10 @@ public class SshConnection
     private final String log = "SshConnection";
 
 
+    public boolean isConnected()
+    {
+        return connected;
+    }
     public SshConnection(SessionUserInfo user)
     {
         JSch jsch = new JSch();
