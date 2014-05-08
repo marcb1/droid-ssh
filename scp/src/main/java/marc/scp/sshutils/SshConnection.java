@@ -85,7 +85,7 @@ public class SshConnection  extends TermSession
                 setTermIn(consoleInput);
                 setTermOut(consoleOutput);
                 channel.connect();
-                write("hi");
+
 
                 Log.d(log, "SSH Connected");
                 ret = true;

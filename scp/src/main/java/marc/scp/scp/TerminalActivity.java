@@ -33,22 +33,20 @@ public class TerminalActivity extends ActionBarActivity
         String username = intent.getStringExtra(MainActivity.USERNAME);
         String password = intent.getStringExtra(MainActivity.PASSWORD);
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
-       int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
+        int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
 
         SessionUserInfo user = new SessionUserInfo(hostname, username, password, port);
         SshConnection connection = new SshConnection(user);
         conn = connection;
-        connection.disableHostChecking();
 
-        SshConnectTask task = new SshConnectTask(this, "ls");
+        //connection.disableHostChecking();
+        SshConnectTask task = new SshConnectTask(this);
         task.execute(connection);
-
-
     }
 
-    public void result(String res)
+
+    public void connectionResult(boolean result)
     {
-        System.out.println("1");
         setContentView(R.layout.terminal_activity);
 
         //add buttons
@@ -59,6 +57,8 @@ public class TerminalActivity extends ActionBarActivity
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         view.setDensity(metrics);
         view.attachSession(conn);
+        System.out.println("1");
+
 
 
         EditText mEntry = (EditText) findViewById(R.id.term_entry);

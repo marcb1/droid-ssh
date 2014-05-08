@@ -8,41 +8,32 @@ import android.os.AsyncTask;
  * Created by Marc on 5/1/14.
  */
 
-public class SshConnectTask extends AsyncTask<SshConnection, Integer, String>
+public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
 {
     TerminalActivity handler;
     SshConnection conn;
-    String message;
 
-    public SshConnectTask(TerminalActivity caller, String m)
+    public SshConnectTask(TerminalActivity caller)
     {
         handler = caller;
         conn = null;
-        message = m;
     }
 
-    protected String doInBackground(SshConnection... connection)
+    protected Boolean doInBackground(SshConnection... connection)
     {
-        String ret = "";
+        Boolean ret = false;
         try
         {
             conn = connection[0];
             if(!conn.isConnected())
             {
                 conn.connectAsShell();
+                ret = true;
             }
-            //System.out.println(message  + 1);
-            //ret = conn.executeCommand(message);
-            //System.out.println(message);
         }
         catch (Exception e)
         {
-            ret = "error";
             System.out.println(e.getMessage());
-           /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("User friendly text explaining what went wrong.");
-            AlertDialog alert = builder.create();
-            alert.show();*/
         }
         return ret;
     }
@@ -53,11 +44,9 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, String>
         //setProgressPercent(progress[0]);
     }
 
-    protected void onPostExecute(String result)
+    protected void onPostExecute(Boolean result)
     {
-        //showDialog("Downloaded " + result + " bytes");
-        //System.out.println(result);
-        handler.result(result);
+        handler.connectionResult(result);
     }
 
 }

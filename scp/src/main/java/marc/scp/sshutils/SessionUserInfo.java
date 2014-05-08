@@ -3,8 +3,9 @@ import com.jcraft.jsch.UserInfo;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import com.jcraft.jsch.UIKeyboardInteractive;
 
-public class SessionUserInfo implements UserInfo {
+public class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
 
     private final String mPassword;
     private final String mUser;
@@ -19,6 +20,24 @@ public class SessionUserInfo implements UserInfo {
         mUser = user;
         mPassword = password;
         mPort = port;
+    }
+
+    public String[] promptKeyboardInteractive(String destination, String name, String instruction,
+                                              String[] prompt, boolean[] echo) {
+        String str = new String(destination + ", " + name + ", " + instruction + "\n");
+        byte[] s = str.getBytes();
+        try {
+            consoleOut.write(s, 0, s.length);
+            for (String p : prompt)
+            {
+                s = p.getBytes();
+                consoleOut.write(s, 0, s.length);
+            }
+        }
+        catch (Exception e)
+        {
+        }
+        return null;
     }
 
     public void setConsole(InputStream i, OutputStream o)
@@ -38,9 +57,16 @@ public class SessionUserInfo implements UserInfo {
     {
         //TODO
     }
-    public boolean promptYesNo(java.lang.String arg0)
+    public boolean promptYesNo(String message)
     {
-        // TODO
+        byte[] s = message.getBytes();
+        try {
+            consoleOut.write(s, 0, s.length);
+        }
+        catch(Exception e)
+        {
+
+        }
         return true;
     }
     public boolean promptPassword(java.lang.String arg0)
