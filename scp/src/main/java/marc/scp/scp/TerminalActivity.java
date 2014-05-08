@@ -1,4 +1,5 @@
 package marc.scp.scp;
+import jackpal.androidterm.emulatorview.EmulatorView;
 import marc.scp.sshutils.*;
 
 import android.support.v7.app.ActionBarActivity;
@@ -8,14 +9,22 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.view.MenuInflater;
 import android.widget.TextView;
+import android.util.DisplayMetrics;
 
-public class DisplayMessageActivity extends ActionBarActivity {
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.InputStream;
 
+import jackpal.androidterm.emulatorview.TermSession;
+
+public class TerminalActivity extends ActionBarActivity
+{
+    private EmulatorView emView;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.terminal_activity);
 
         //add buttons
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -31,18 +40,25 @@ public class DisplayMessageActivity extends ActionBarActivity {
         connection.disableHostChecking();
         SshConnectTask task = new SshConnectTask(this, "ls");
         task.execute(connection);
+
+        EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
+        emView = view;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        view.setDensity(metrics);
+        view.attachSession(connection);
     }
 
     public void result(String res)
     {
         //construct ssh object and try to connect
         //Create the text view
-        TextView textView = new TextView(this);
-        textView.setTextSize(40);
-        textView.setText(res);
+        //TextView textView = new TextView(this);
+        //textView.setTextSize(40);
+        //textView.setText(res);
 
         // Set the text view as the activity layout
-        setContentView(textView);
+        //setContentView(textView);
     }
 
     @Override

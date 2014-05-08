@@ -45,7 +45,7 @@ public class MainActivity extends ActionBarActivity
     public void connectToServer(View view)
     {
         //MainActivity inherits from context (this)
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        Intent intent = new Intent(this, TerminalActivity.class);
 
         //grab the strings out of the correct field
         EditText editText = (EditText) findViewById(R.id.usernameField);

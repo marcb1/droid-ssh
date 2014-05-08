@@ -12,5 +12,6 @@
     <string name="button_connect">Connect</string>
     <string name="title_activity_display_message">MyMessage</string>
     <string name="saved_servers">Saved Sessions</string>
+    <string name="send_command"> Send </string>
 
 </resources>

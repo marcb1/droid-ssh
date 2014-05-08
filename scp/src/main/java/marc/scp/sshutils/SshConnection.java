@@ -6,14 +6,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Properties;
+import jackpal.androidterm.emulatorview.TermSession;
 
 import java.io.File;
 
 import android.util.Log;
 
-public class SshConnection
+public class SshConnection  extends TermSession
 {
     private SessionUserInfo sessionUserInfo;
 
@@ -23,7 +26,6 @@ public class SshConnection
     boolean connected;
 
     private final String log = "SshConnection";
-
 
     public boolean isConnected()
     {
@@ -52,6 +54,12 @@ public class SshConnection
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
+    }
+
+    public void setTerm(InputStream termIn, OutputStream termOut)
+    {
+        setTermIn(termIn);
+        setTermOut(termOut);
     }
 
     public boolean connect()
@@ -89,6 +97,9 @@ public class SshConnection
                 ((ChannelExec)channel).setCommand(command);
                  channel.setInputStream(null);
                 InputStream in = channel.getInputStream();
+                OutputStream out = channel.getOutputStream();
+                setTermIn(in);
+                setTermOut(out);
                  channel.connect();
 
                 StringBuilder stringBuilder = new StringBuilder();
@@ -100,7 +111,7 @@ public class SshConnection
                     stringBuilder.append(line + "\n");// append newline
                 }
 
-                in.close();
+                //in.close();
                 br.close();
 
                 if (stringBuilder.length() > 0)
@@ -156,5 +167,12 @@ public class SshConnection
         channel.disconnect();
         return ret;
     }
+
+    @Override //called when data is processed from the input stream
+    public void processInput(byte[] buffer, int offset, int count)
+    {
+        Log.d(log, "Input Stream " + Arrays.toString(buffer));
+    }
+
  }
 

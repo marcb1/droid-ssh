@@ -8,15 +8,13 @@ import android.os.AsyncTask;
  * Created by Marc on 5/1/14.
  */
 
-import android.support.v7.app.ActionBarActivity;
-
 public class SshConnectTask extends AsyncTask<SshConnection, Integer, String>
 {
-    DisplayMessageActivity handler;
+    TerminalActivity handler;
     SshConnection conn;
     String message;
 
-    public SshConnectTask(DisplayMessageActivity caller, String m)
+    public SshConnectTask(TerminalActivity caller, String m)
     {
         handler = caller;
         conn = null;
