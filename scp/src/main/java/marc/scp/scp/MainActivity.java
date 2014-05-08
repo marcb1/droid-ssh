@@ -7,8 +7,8 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.EditText;
 import android.view.View;
-import android.app.ActionBar;
-import android.util.Log;
+
+import marc.scp.databaseutils.DatabaseHelper;
 
 //this is the main acitivity that's first started when the app is launched
 public class MainActivity extends ActionBarActivity

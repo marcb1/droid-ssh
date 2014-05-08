@@ -29,11 +29,11 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, String>
             conn = connection[0];
             if(!conn.isConnected())
             {
-                conn.connect();
+                conn.connectAsShell();
             }
-            System.out.println(message  + 1);
-            ret = conn.executeCommand(message);
-            System.out.println(message);
+            //System.out.println(message  + 1);
+            //ret = conn.executeCommand(message);
+            //System.out.println(message);
         }
         catch (Exception e)
         {
@@ -56,8 +56,8 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, String>
     protected void onPostExecute(String result)
     {
         //showDialog("Downloaded " + result + " bytes");
-        System.out.println(result);
-        handler.result(result);
+        //System.out.println(result);
+        //handler.result(result);
     }
 
 }

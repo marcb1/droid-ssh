@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.databaseutils;
 
 
 import java.sql.SQLException;
@@ -12,6 +12,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
+import marc.scp.scp.Preferences;
+import marc.scp.scp.R;
 
 /**
  * Created by Marc on 5/2/14.

@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.databaseutils;
 
 /**
  * Created by Marc on 5/1/14.

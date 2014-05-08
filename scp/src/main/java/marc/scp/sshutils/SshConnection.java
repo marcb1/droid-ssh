@@ -23,7 +23,10 @@ public class SshConnection  extends TermSession
     //jsch session
     private Session session;
     private Channel channel;
-    boolean connected;
+
+    private boolean connected;
+    private InputStream  consoleInput;
+    private OutputStream consoleOutput;
 
     private final String log = "SshConnection";
 
@@ -31,11 +34,13 @@ public class SshConnection  extends TermSession
     {
         return connected;
     }
+
     public SshConnection(SessionUserInfo user)
     {
         JSch jsch = new JSch();
         connected = false;
         channel = null;
+
         try
         {
             session = jsch.getSession(user.getUser(), user.getHost(), 22);
@@ -56,23 +61,25 @@ public class SshConnection  extends TermSession
         session.setConfig(config);
     }
 
-    public void setTerm(InputStream termIn, OutputStream termOut)
+    public boolean connectAsShell()
     {
-        setTermIn(termIn);
-        setTermOut(termOut);
-    }
-
-    public boolean connect()
-    {
-        boolean ret = true;
+        boolean ret = false;
         try
         {
             if(session != null)
             {
                 session.connect();
                 connected = true;
+                channel = session.openChannel("exec");
+                consoleInput = channel.getInputStream();
+                consoleOutput = channel.getOutputStream();
+                setTermIn(consoleInput);
+                setTermOut(consoleOutput);
+                channel.connect();
+
+                Log.d(log, "SSH Connected");
+                ret = true;
             }
-            Log.d(log, "SSH Connected");
         }
         catch(Exception  e)
         {
@@ -83,6 +90,7 @@ public class SshConnection  extends TermSession
         return ret;
     }
 
+    //not supported anymore!
     public String executeCommand(String command)
     {
         String ret = null;
@@ -93,18 +101,13 @@ public class SshConnection  extends TermSession
             try
             {
                 //open channel ready to send input
-                channel = session.openChannel("exec");
+
                 ((ChannelExec)channel).setCommand(command);
-                 channel.setInputStream(null);
-                InputStream in = channel.getInputStream();
-                OutputStream out = channel.getOutputStream();
-                setTermIn(in);
-                setTermOut(out);
-                 channel.connect();
+
 
                 StringBuilder stringBuilder = new StringBuilder();
                 String line;
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                BufferedReader br = new BufferedReader(new InputStreamReader(consoleInput));
 
                 while ((line = br.readLine()) != null)
                 {
@@ -129,9 +132,10 @@ public class SshConnection  extends TermSession
                 connected = false;
             }
             channel.disconnect();
-        return ret;
+            return ret;
     }
 
+    //not tested, need to be worked on
     boolean sendFile(File[] files, SftpProgressMonitor monitor)
     {
         boolean ret = false;
