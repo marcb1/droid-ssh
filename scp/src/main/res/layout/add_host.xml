@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Host Information:" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/hostNameField"
+        android:hint="@string/host_message"
+        android:inputType="text|textNoSuggestions"
+        />
+
+    <EditText
+        android:id="@+id/usernameField"
+        android:layout_width="match_parent"
+        android:hint="@string/username_message"
+        android:inputType="text|textNoSuggestions"
+        android:layout_height="wrap_content" >
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/portField"
+        android:layout_width="match_parent"
+        android:hint="@string/port_message"
+        android:inputType="number"
+        android:layout_height="wrap_content" >
+        <requestFocus />
+    </EditText>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use RSA key"
+        android:onClick="onToggleRSA"
+        android:id="@+id/RSAToggle" />
+
+    <EditText
+        android:id="@+id/passwordField"
+        android:layout_width="match_parent"
+        android:hint="@string/password_message"
+        android:inputType="text|textPassword"
+        android:layout_height="wrap_content" >
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save" />
+
+
+
+</LinearLayout>

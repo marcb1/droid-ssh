@@ -35,7 +35,7 @@
         android:text="@string/button_connect"
         android:id="@+id/button"
         android:onClick="connectToServer"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/portField"
         android:layout_alignParentLeft="true" />
 
     <EditText
@@ -59,6 +59,22 @@
         android:hint="@string/port_message"
         android:inputType="number"
         />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="SavedConnections"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true" />
+
+
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_below="@id/textView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 
 
 </RelativeLayout>

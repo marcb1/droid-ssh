@@ -22,6 +22,12 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
         mPort = port;
     }
 
+    public void setConsole(InputStream i, OutputStream o)
+    {
+        consoleIn = i;
+        consoleOut = o;
+    }
+
     public String[] promptKeyboardInteractive(String destination, String name, String instruction,
                                               String[] prompt, boolean[] echo) {
         String str = new String(destination + ", " + name + ", " + instruction + "\n");
@@ -38,12 +44,6 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
         {
         }
         return null;
-    }
-
-    public void setConsole(InputStream i, OutputStream o)
-    {
-        consoleIn = i;
-        consoleOut = o;
     }
 
     //abstract methods

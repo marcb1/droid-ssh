@@ -16,35 +16,72 @@ public class Preference {
     private String username;
 
     @DatabaseField
-    private String host;
+    private String hostName;
 
     @DatabaseField
     private String password;
 
+    @DatabaseField
+    private String rsaKey;
+
+    @DatabaseField
+    private int portNumber;
+
+    public Preference()
+    {
+
+    }
+
+    public Preference(String host, String user, int port)
+    {
+        portNumber = port;
+        hostName = host;
+        username = user;
+    }
 
     public void setId(int id)
     {
         this.id = id;
     }
 
+    public void setPassword(String p)
+    {
+        password = p;
+    }
+
+    public void setRsaKey(String r)
+    {
+        rsaKey = r;
+    }
+
+    //getters
     public int getId()
     {
         return id;
     }
 
-    public void setUserName(String name) {
-        username = name;
+    public String getName()
+    {
+        return hostName;
     }
 
-    public String getName() {
-        return host;
+    public String getHostName()
+    {
+        return hostName;
     }
 
-    public void setHostName(String description) {
-        host = description;
+    public String getUsername()
+    {
+        return username;
     }
 
-    public String getHostName() {
-        return host;
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public int getPort()
+    {
+        return portNumber;
     }
 }

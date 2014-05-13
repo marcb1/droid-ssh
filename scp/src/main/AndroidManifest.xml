@@ -32,6 +32,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
         </activity>
+
+        <activity
+            android:name="marc.scp.scp.HostList"
+            android:label="@string/host_list_message"
+            android:parentActivityName="marc.scp.scp.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="marc.scp.scp.MainActivity" />
+        </activity>
+
+        <activity
+            android:name="marc.scp.scp.AddHost"
+            android:label="@string/add_host_message"
+            android:parentActivityName="marc.scp.scp.HostList" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="marc.scp.scp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ import marc.scp.scp.*;
 
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * Created by Marc on 5/1/14.
@@ -12,6 +13,8 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
 {
     TerminalActivity handler;
     SshConnection conn;
+
+    private final String log = "SshConnectTask";
 
     public SshConnectTask(TerminalActivity caller)
     {
@@ -33,7 +36,7 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
         }
         catch (Exception e)
         {
-            System.out.println(e.getMessage());
+            Log.d(log, "Exception caught while connectiong");
         }
         return ret;
     }

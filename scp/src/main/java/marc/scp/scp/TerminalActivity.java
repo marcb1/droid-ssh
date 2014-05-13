@@ -29,6 +29,8 @@ public class TerminalActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         String username = intent.getStringExtra(MainActivity.USERNAME);
         String password = intent.getStringExtra(MainActivity.PASSWORD);
@@ -37,9 +39,8 @@ public class TerminalActivity extends ActionBarActivity
 
         SessionUserInfo user = new SessionUserInfo(hostname, username, password, port);
         SshConnection connection = new SshConnection(user);
-        conn = connection;
 
-        //connection.disableHostChecking();
+        conn = connection;
         SshConnectTask task = new SshConnectTask(this);
         task.execute(connection);
     }
@@ -49,17 +50,12 @@ public class TerminalActivity extends ActionBarActivity
     {
         setContentView(R.layout.terminal_activity);
 
-        //add buttons
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
         emView = view;
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         view.setDensity(metrics);
         view.attachSession(conn);
-        System.out.println("1");
-
-
 
         EditText mEntry = (EditText) findViewById(R.id.term_entry);
         mEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {

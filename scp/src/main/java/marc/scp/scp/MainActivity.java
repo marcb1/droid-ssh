@@ -5,10 +5,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.view.View;
+import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.DatabaseHelper;
+import marc.scp.databaseutils.Preference;
 
 //this is the main acitivity that's first started when the app is launched
 public class MainActivity extends ActionBarActivity
@@ -19,6 +28,9 @@ public class MainActivity extends ActionBarActivity
     public final static String PORT = "com.whomarc.scp.PORT";
     public final static String RSAKEY = "com.whomarc.scp.RSAKEY";
 
+    ListView listView;
+    Preference selectedPref;
+
     DatabaseHelper helper;
 
     @Override
@@ -26,11 +38,56 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        helper = new DatabaseHelper(this);
+        ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.activity_main, null);
+        listView = (ListView) contentView.findViewById(R.id.list_view);
+        Database.init(this);
+        setContentView(contentView);
+    }
 
-        //String test = "a";
-        //helper.addToTable(test);
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        setupListView(listView);
+    }
+
+    private void setupListView(ListView lv)
+    {
+        final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
+        List<String> titles = new ArrayList<String>();
+        for (Preference pr : preferencesList)
+        {
+            if(pr != null)
+                titles.add("Host: " + pr.getName());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
+        lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Preference p = preferencesList.get(position);
+                ConnectToPreference(p);
+            }
+        });
+    }
+
+    public void ConnectToPreference(Preference p)
+    {
+        Intent intent = new Intent(this, TerminalActivity.class);
+
+        intent.putExtra(PASSWORD, p.getPassword());
+        System.out.println("password" + p.getPassword());
+        intent.putExtra(USERNAME, p.getUsername());
+        System.out.println("user" + p.getUsername());
+        intent.putExtra(HOSTNAME, p.getHostName());
+        System.out.println("host" + p.getHostName());
+        intent.putExtra(PORT, String.valueOf(p.getPort()));
+        System.out.println("host" + String.valueOf(p.getPort()));
+
+        startActivity(intent);
+
     }
 
     @Override
@@ -76,9 +133,10 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings)
+        if (id == R.id.action_saved)
         {
-            return true;
+            Intent intent = new Intent(this, HostList.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

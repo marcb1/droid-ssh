@@ -15,58 +15,65 @@ import jackpal.androidterm.emulatorview.TermSession;
 import java.io.File;
 
 import android.util.Log;
+import android.widget.TextView;
 
 public class SshConnection  extends TermSession
 {
-    private SessionUserInfo sessionUserInfo;
-
     //jsch session
     private Session session;
     private Channel channel;
+    TextView console;
 
     private boolean connected;
-    private InputStream  consoleInput;
+    private InputStream consoleInput;
     private OutputStream consoleOutput;
 
-    SessionUserInfo userInfo;
+    private SessionUserInfo userInfo;
 
     private final String log = "SshConnection";
 
-    public boolean isConnected()
-    {
-        return connected;
-    }
-
     public SshConnection(SessionUserInfo user)
     {
+        console = console;
         JSch jsch = new JSch();
-        connected = false;
+        session = null;
         channel = null;
 
+        connected = false;
+
+        consoleInput = null;
+        consoleOutput = null;
+
+        userInfo = null;
         try
         {
             session = jsch.getSession(user.getUser(), user.getHost(), 22);
         }
         catch(Exception e)
         {
-            System.out.println(e);
+            Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
             session = null;
-            //log error here
         }
         session.setUserInfo(user);
         userInfo = user;
+    }
+
+    public boolean isConnected()
+    {
+        return connected;
     }
 
     public void disableHostChecking()
     {
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
+        Log.d(log, "Host checking disabled");
         session.setConfig(config);
     }
 
+
     public boolean connectAsShell()
     {
-        System.out.println("a");
         boolean ret = false;
         try
         {
@@ -77,15 +84,9 @@ public class SshConnection  extends TermSession
                 channel = session.openChannel("shell");
                 consoleInput = channel.getInputStream();
                 consoleOutput = channel.getOutputStream();
-                if(consoleInput == null)
-                {
-                    System.out.println("ERROR");
-                }
-                userInfo.setConsole(consoleInput, consoleOutput);
                 setTermIn(consoleInput);
                 setTermOut(consoleOutput);
                 channel.connect();
-
 
                 Log.d(log, "SSH Connected");
                 ret = true;
@@ -93,11 +94,10 @@ public class SshConnection  extends TermSession
         }
         catch(Exception  e)
         {
-            Log.d(log, e.getMessage());
+            Log.d(log, "Exception caught while initiating SSH connection" + e.getMessage());
             ret = false;
             connected = false;
         }
-        System.out.println("b");
         return ret;
     }
 
@@ -186,8 +186,15 @@ public class SshConnection  extends TermSession
     @Override //called when data is processed from the input stream
     public void processInput(byte[] buffer, int offset, int count)
     {
-
-        Log.d(log, "Input Stream " + Arrays.toString(buffer));
+        String decoded = "ERROR";
+        try
+        {
+        decoded = new String(buffer, "UTF-8");
+        }
+        catch(Exception e)
+        {
+        }
+        Log.d(log, "Processing Input " + decoded);
         super.processInput(buffer, offset, count);
     }
 

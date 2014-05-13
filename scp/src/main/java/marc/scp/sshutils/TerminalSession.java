@@ -7,7 +7,8 @@ import java.io.*;
  */
 public class TerminalSession extends TermSession
 {
-    public TerminalSession(InputStream termIn, OutputStream termOut) {
+    public TerminalSession(InputStream termIn, OutputStream termOut)
+    {
         setTermIn(termIn);
         setTermOut(termOut);
     }
