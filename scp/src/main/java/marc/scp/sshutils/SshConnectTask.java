@@ -30,8 +30,7 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
             conn = connection[0];
             if(!conn.isConnected())
             {
-                conn.connectAsShell();
-                ret = true;
+                ret = conn.connectAsShell();
             }
         }
         catch (Exception e)

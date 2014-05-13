@@ -2,6 +2,9 @@ package marc.scp.scp;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import marc.scp.sshutils.*;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +17,8 @@ import android.view.MenuInflater;
 import android.widget.TextView;
 import android.util.DisplayMetrics;
 import android.widget.EditText;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +30,11 @@ public class TerminalActivity extends ActionBarActivity
 {
     private EmulatorView emView;
     SshConnection conn;
+
+    public void prompt(String message)
+    {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -37,17 +47,21 @@ public class TerminalActivity extends ActionBarActivity
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
         int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
 
-        SessionUserInfo user = new SessionUserInfo(hostname, username, password, port);
+        SessionUserInfo user = new SessionUserInfo(hostname, username, password, port, this);
         SshConnection connection = new SshConnection(user);
+        connection.disableHostChecking();
 
         conn = connection;
         SshConnectTask task = new SshConnectTask(this);
         task.execute(connection);
     }
 
-
     public void connectionResult(boolean result)
     {
+        if(result == false)
+        {
+            return;
+        }
         setContentView(R.layout.terminal_activity);
 
         EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
@@ -95,7 +109,32 @@ public class TerminalActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings)
+        if(id == android.R.id.home)
+        {
+            if(!conn.isConnected())
+            {
+                return true;
+            }
+            new AlertDialog.Builder(this).setMessage("Are you sure you would like to disconnect?")
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.dismiss();
+                            conn.disconnect();
+                            startActivity(new  Intent(TerminalActivity.this,MainActivity.class));
+                        }
+                    })
+                    .create()
+                    .show();
+            return true;
+        }
+        else if (id == R.id.action_settings)
         {
             //openSaved();
             return true;

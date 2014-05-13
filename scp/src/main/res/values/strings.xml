@@ -15,5 +15,6 @@
     <string name="send_command">Send </string>
     <string name="add_host_message"> Add Host </string>
     <string name="host_list_message"> Saved Sessions </string>
+    <string name="terminal_activity"> Terminal </string>
 
 </resources>

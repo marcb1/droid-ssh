@@ -1,48 +1,44 @@
 package marc.scp.sshutils;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.widget.Toast;
+
 import com.jcraft.jsch.UserInfo;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import com.jcraft.jsch.UIKeyboardInteractive;
 
-public class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
+import marc.scp.scp.TerminalActivity;
+
+public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
+{
 
     private final String mPassword;
     private final String mUser;
     private final String mHost;
     private final int mPort;
-    InputStream consoleIn;
-    OutputStream consoleOut;
 
-    public SessionUserInfo(String host, String user, String password, int port)
+    TerminalActivity parent;
+
+    public SessionUserInfo(String host, String user, String password, int port, TerminalActivity ac)
     {
         mHost = host;
         mUser = user;
         mPassword = password;
         mPort = port;
+        parent = ac;
     }
 
-    public void setConsole(InputStream i, OutputStream o)
+    public int getPort()
     {
-        consoleIn = i;
-        consoleOut = o;
+        return mPort;
     }
 
     public String[] promptKeyboardInteractive(String destination, String name, String instruction,
-                                              String[] prompt, boolean[] echo) {
-        String str = new String(destination + ", " + name + ", " + instruction + "\n");
-        byte[] s = str.getBytes();
-        try {
-            consoleOut.write(s, 0, s.length);
-            for (String p : prompt)
-            {
-                s = p.getBytes();
-                consoleOut.write(s, 0, s.length);
-            }
-        }
-        catch (Exception e)
-        {
-        }
+                                              String[] prompt, boolean[] echo)
+    {
         return null;
     }
 
@@ -59,14 +55,15 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
     }
     public boolean promptYesNo(String message)
     {
-        byte[] s = message.getBytes();
-        try {
-            consoleOut.write(s, 0, s.length);
-        }
-        catch(Exception e)
-        {
+     //   final String m = message;
+      //  new Thread()
+      //  {
+       //     public void run()
+        //    {
+         //       parent.prompt(m);
+         //   }
+       // }.start().join();
 
-        }
         return true;
     }
     public boolean promptPassword(java.lang.String arg0)

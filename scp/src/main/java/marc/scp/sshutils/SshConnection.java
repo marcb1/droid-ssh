@@ -47,7 +47,7 @@ public class SshConnection  extends TermSession
         userInfo = null;
         try
         {
-            session = jsch.getSession(user.getUser(), user.getHost(), 22);
+            session = jsch.getSession(user.getUser(), user.getHost(), user.getPort());
         }
         catch(Exception e)
         {
@@ -83,8 +83,10 @@ public class SshConnection  extends TermSession
                 connected = true;
                 channel = session.openChannel("shell");
                 consoleInput = channel.getInputStream();
-                consoleOutput = channel.getOutputStream();
+                channel.setInputStream(consoleInput);
                 setTermIn(consoleInput);
+
+                consoleOutput = channel.getOutputStream();
                 setTermOut(consoleOutput);
                 channel.connect();
 
@@ -94,11 +96,17 @@ public class SshConnection  extends TermSession
         }
         catch(Exception  e)
         {
-            Log.d(log, "Exception caught while initiating SSH connection" + e.getMessage());
+            Log.d(log, "Exception caught while initiating SSH connection: " + e.getMessage());
             ret = false;
             connected = false;
         }
         return ret;
+    }
+
+    public void disconnect()
+    {
+        channel.disconnect();
+        session.disconnect();
     }
 
     //not supported anymore!

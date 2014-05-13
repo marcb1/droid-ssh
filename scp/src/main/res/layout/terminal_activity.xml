@@ -24,8 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
-            android:imeOptions="actionNone|flagNoExtractUi"
-            android:inputType="text|textImeMultiLine|textNoSuggestions" />
+            android:inputType="text|textNoSuggestions" />
 
     </LinearLayout>
 

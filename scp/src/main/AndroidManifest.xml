@@ -27,7 +27,9 @@
         <activity
             android:name="marc.scp.scp.TerminalActivity"
             android:label="@string/title_activity_display_message"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName="marc.scp.scp.MainActivity" >
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
