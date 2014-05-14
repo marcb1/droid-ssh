@@ -4,12 +4,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
-
 
 public class Database
 {
-    private final String Log = "Database";
+    private static final String Log = "Database";
 
     private DatabaseHelper helper;
     static private Database instance;
@@ -41,9 +39,23 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "error while querying for preferences " + e.getMessage());
+            android.util.Log.d(Log, "Error while querying for preferences: " + e.getMessage());
         }
         return prefs;
+    }
+
+    public List<FileSync> getAllFileSync()
+    {
+        List<FileSync> sync = null;
+        try
+        {
+            sync = helper.getSyncDao().queryForAll();
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "Error while querying for preferences: " + e.getMessage());
+        }
+        return sync;
     }
 
     public void addPreference(Preference p)
@@ -54,9 +66,22 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "error while adding preference " + e.getMessage());
+            android.util.Log.d(Log, "Error while adding preference: " + e.getMessage());
         }
     }
+
+    public void addFileSync(FileSync f)
+    {
+        try
+        {
+            helper.getSyncDao().create(f);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "Error while adding FileSync: " + e.getMessage());
+        }
+    }
+
 
     public void deletePreference(Preference p)
     {
@@ -66,7 +91,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "error while deleting preference " + e.getMessage());
+            android.util.Log.d(Log, "Wrror while deleting preference: " + e.getMessage());
         }
     }
 
@@ -78,7 +103,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "error while updating preference " + e.getMessage());
+            android.util.Log.d(Log, "Error while updating preference: " + e.getMessage());
         }
     }
 
@@ -90,7 +115,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "error while getting preference ID " + e.getMessage());
+            android.util.Log.d(Log, "Error while getting preference ID: " + e.getMessage());
         }
         return pref;
     }

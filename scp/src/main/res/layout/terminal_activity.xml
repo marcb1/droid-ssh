@@ -17,15 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:orientation="horizontal" >
-
-        <EditText
-            android:id="@+id/term_entry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:singleLine="true"
-            android:inputType="text|textNoSuggestions" />
-
     </LinearLayout>
 
 </LinearLayout>

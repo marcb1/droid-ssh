@@ -8,6 +8,10 @@ import com.jcraft.jsch.UserInfo;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.Locale;
+
 import com.jcraft.jsch.UIKeyboardInteractive;
 
 import marc.scp.scp.TerminalActivity;
@@ -22,13 +26,18 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
 
     TerminalActivity parent;
 
-    public SessionUserInfo(String host, String user, String password, int port, TerminalActivity ac)
+    PipedInputStream pin;
+    PipedOutputStream pout;
+
+    public SessionUserInfo(String host, String user, String password, int port, TerminalActivity ac, PipedInputStream in, PipedOutputStream out)
     {
         mHost = host;
         mUser = user;
         mPassword = password;
         mPort = port;
         parent = ac;
+        pin = in;
+        pout = out;
     }
 
     public int getPort()
@@ -55,16 +64,26 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     }
     public boolean promptYesNo(String message)
     {
-     //   final String m = message;
-      //  new Thread()
-      //  {
-       //     public void run()
-        //    {
-         //       parent.prompt(m);
-         //   }
-       // }.start().join();
+        String m = new String(message);
 
-        return true;
+        try
+        {
+            byte[] data = m.getBytes("UTF-8");
+            pout.write(data, 0, data.length);
+            pout.flush();
+
+            byte[] buffer = new byte[32];
+            buffer[0] = (byte) pin.read();
+            int cnt = Math.min(buffer.length-1, pin.available());
+            pin.read(buffer, 1, cnt);
+
+            String answer = new String(buffer, 0, 1+cnt);
+            pout.write(buffer, 0, 1+cnt);
+            boolean yes = (answer != null && answer.trim().toLowerCase(Locale.ENGLISH).startsWith("y"));
+            return yes;
+        } catch (Exception e) {
+        }
+        return false;
     }
     public boolean promptPassword(java.lang.String arg0)
     {

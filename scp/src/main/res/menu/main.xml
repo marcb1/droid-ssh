@@ -9,7 +9,11 @@
         app:showAsAction="always" />
 
     <item android:id="@+id/action_saved"
-        android:title="@string/saved_servers"
+    android:title="@string/saved_servers"
+    android:showAsAction="always" />
+
+    <item android:id="@+id/action_saved"
+        android:title="@string/saved_sync"
         android:showAsAction="always" />
 
 </menu>

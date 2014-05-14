@@ -19,7 +19,7 @@ import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.DatabaseHelper;
 import marc.scp.databaseutils.Preference;
 
-//this is the main acitivity that's first started when the app is launched
+//this is the main activity that's first started when the app is launched
 public class MainActivity extends ActionBarActivity
 {
     public final static String USERNAME = "com.whomarc.scp.USERNAME";
@@ -28,9 +28,10 @@ public class MainActivity extends ActionBarActivity
     public final static String PORT = "com.whomarc.scp.PORT";
     public final static String RSAKEY = "com.whomarc.scp.RSAKEY";
 
-    ListView listView;
-    Preference selectedPref;
+    public final static String DBKEY = "com.whomarc.scp.DBKEY";
+    public final static String HOSTKEY = "com.whomarc.scp.HOSTKEY";
 
+    ListView listView;
     DatabaseHelper helper;
 
     @Override
@@ -78,16 +79,12 @@ public class MainActivity extends ActionBarActivity
         Intent intent = new Intent(this, TerminalActivity.class);
 
         intent.putExtra(PASSWORD, p.getPassword());
-        System.out.println("password" + p.getPassword());
         intent.putExtra(USERNAME, p.getUsername());
-        System.out.println("user" + p.getUsername());
         intent.putExtra(HOSTNAME, p.getHostName());
-        System.out.println("host" + p.getHostName());
         intent.putExtra(PORT, String.valueOf(p.getPort()));
-        System.out.println("host" + String.valueOf(p.getPort()));
-
+        intent.putExtra(DBKEY, String.valueOf(p.getId()));
+        intent.putExtra(DBKEY, p.getHostFingerPrint());
         startActivity(intent);
-
     }
 
     @Override

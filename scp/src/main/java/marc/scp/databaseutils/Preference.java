@@ -25,6 +25,9 @@ public class Preference {
     private String rsaKey;
 
     @DatabaseField
+    private String hostFingerPrint;
+
+    @DatabaseField
     private int portNumber;
 
     public Preference()
@@ -83,5 +86,15 @@ public class Preference {
     public int getPort()
     {
         return portNumber;
+    }
+
+    public String getHostFingerPrint()
+    {
+        return hostFingerPrint;
+    }
+
+    public void setHostFingerPrint(String fingerPrint)
+    {
+        hostFingerPrint = fingerPrint;
     }
 }

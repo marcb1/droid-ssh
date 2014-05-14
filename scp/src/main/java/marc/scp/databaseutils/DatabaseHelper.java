@@ -24,6 +24,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 
     //dao object to access table
     private Dao<Preference, Integer> preferenceDao = null;
+    private Dao<FileSync, Integer> syncDao = null;
 
     public DatabaseHelper(Context context)
     {
@@ -37,6 +38,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
         {
             android.util.Log.d(log, "onCreate");
             TableUtils.createTable(connectionSource, Preference.class);
+            TableUtils.createTable(connectionSource, FileSync.class);
         }
         catch (SQLException e)
         {
@@ -50,6 +52,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
     {
         super.close();
         preferenceDao = null;
+        syncDao = null;
     }
 
     @Override
@@ -75,6 +78,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
             try
             {
                 preferenceDao = getDao(Preference.class);
+
             }
             catch (java.sql.SQLException e)
             {
@@ -83,4 +87,22 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
         }
         return preferenceDao;
     }
+
+    public Dao<FileSync, Integer> getSyncDao()
+    {
+        if (syncDao == null)
+        {
+            try
+            {
+                syncDao = getDao(FileSync.class);
+
+            }
+            catch (java.sql.SQLException e)
+            {
+                android.util.Log.d(log, "Can't get syncDao " + e.getMessage());
+            }
+        }
+        return syncDao;
+    }
 }
+

@@ -23,23 +23,26 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 import jackpal.androidterm.emulatorview.TermSession;
 
 public class TerminalActivity extends ActionBarActivity
 {
-    private EmulatorView emView;
     SshConnection conn;
 
-    public void prompt(String message)
-    {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.terminal_activity);
+
+        EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        view.setDensity(metrics);
 
         Intent intent = getIntent();
         String username = intent.getStringExtra(MainActivity.USERNAME);
@@ -47,13 +50,17 @@ public class TerminalActivity extends ActionBarActivity
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
         int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
 
-        SessionUserInfo user = new SessionUserInfo(hostname, username, password, port, this);
-        SshConnection connection = new SshConnection(user);
-        connection.disableHostChecking();
+        PipedInputStream in  = new PipedInputStream();
+        PipedOutputStream out = new PipedOutputStream();
+
+        SessionUserInfo user = new SessionUserInfo(hostname, username, password, port, this, in, out);
+        SshConnection connection = new SshConnection(user, in, out);
 
         conn = connection;
+        view.attachSession(conn);
+
         SshConnectTask task = new SshConnectTask(this);
-        task.execute(connection);
+        task.execute(conn);
     }
 
     public void connectionResult(boolean result)
@@ -62,16 +69,9 @@ public class TerminalActivity extends ActionBarActivity
         {
             return;
         }
-        setContentView(R.layout.terminal_activity);
 
-        EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
-        emView = view;
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        view.setDensity(metrics);
-        view.attachSession(conn);
 
-        EditText mEntry = (EditText) findViewById(R.id.term_entry);
+      /*  EditText mEntry = (EditText) findViewById(R.id.term_entry);
         mEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int action, KeyEvent ev) {
                 // Ignore enter-key-up events
@@ -88,7 +88,7 @@ public class TerminalActivity extends ActionBarActivity
                 TextKeyListener.clear(e);
                 return true;
             }
-        });
+        });*/
     }
 
     @Override
@@ -113,7 +113,7 @@ public class TerminalActivity extends ActionBarActivity
         {
             if(!conn.isConnected())
             {
-                return true;
+                return super.onOptionsItemSelected(item);
             }
             new AlertDialog.Builder(this).setMessage("Are you sure you would like to disconnect?")
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {

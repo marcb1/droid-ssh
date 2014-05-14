@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.InputStreamReader;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Properties;
 import jackpal.androidterm.emulatorview.TermSession;
@@ -25,29 +28,36 @@ public class SshConnection  extends TermSession
     TextView console;
 
     private boolean connected;
-    private InputStream consoleInput;
-    private OutputStream consoleOutput;
+    private PipedInputStream localIn;
+    private PipedOutputStream localOut;
 
     private SessionUserInfo userInfo;
 
     private final String log = "SshConnection";
 
-    public SshConnection(SessionUserInfo user)
+    public SshConnection(SessionUserInfo user, PipedInputStream i, PipedOutputStream o)
     {
+        localIn = i;
+        localOut = o;
         console = console;
         JSch jsch = new JSch();
         session = null;
         channel = null;
 
         connected = false;
-
-        consoleInput = null;
-        consoleOutput = null;
-
         userInfo = null;
+
+
         try
         {
+
+            PipedInputStream in = new PipedInputStream(localOut);
+            PipedOutputStream out = new PipedOutputStream(localIn);
+            setTermIn(in);
+            setTermOut(out);
+
             session = jsch.getSession(user.getUser(), user.getHost(), user.getPort());
+            //session.setHostKeyRepository(new NoCheckHostKeyRepository());
         }
         catch(Exception e)
         {
@@ -82,12 +92,12 @@ public class SshConnection  extends TermSession
                 session.connect();
                 connected = true;
                 channel = session.openChannel("shell");
-                consoleInput = channel.getInputStream();
-                channel.setInputStream(consoleInput);
-                setTermIn(consoleInput);
 
-                consoleOutput = channel.getOutputStream();
-                setTermOut(consoleOutput);
+
+
+                channel.setInputStream(localIn, true);
+                channel.setOutputStream(localOut, true);
+
                 channel.connect();
 
                 Log.d(log, "SSH Connected");
@@ -126,7 +136,7 @@ public class SshConnection  extends TermSession
 
                 StringBuilder stringBuilder = new StringBuilder();
                 String line;
-                BufferedReader br = new BufferedReader(new InputStreamReader(consoleInput));
+                BufferedReader br = new BufferedReader(new InputStreamReader(new PipedInputStream()));
 
                 while ((line = br.readLine()) != null)
                 {
@@ -194,16 +204,18 @@ public class SshConnection  extends TermSession
     @Override //called when data is processed from the input stream
     public void processInput(byte[] buffer, int offset, int count)
     {
+        super.processInput(buffer, offset, count);
+
         String decoded = "ERROR";
         try
         {
-        decoded = new String(buffer, "UTF-8");
+            //out.write(buffer, offset, count);
         }
         catch(Exception e)
         {
         }
-        Log.d(log, "Processing Input " + decoded);
-        super.processInput(buffer, offset, count);
+      //  Log.d(log, "Processing Input " + decoded);
+        //super.processInput(buffer, offset, count);
     }
 
  }

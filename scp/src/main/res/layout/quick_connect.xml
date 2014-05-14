@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameField"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:hint="@string/username_message"
+        android:inputType="text|textNoSuggestions" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordField"
+        android:layout_below="@+id/usernameField"
+        android:layout_alignParentLeft="true"
+        android:hint="@string/password_message"
+        android:inputType="text|textPassword"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_connect"
+        android:id="@+id/button"
+        android:onClick="connectToServer"
+        android:layout_below="@+id/portField"
+        android:layout_alignParentLeft="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hostNameField"
+        android:layout_below="@+id/passwordField"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:hint="@string/host_message"
+        android:inputType="text"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/portField"
+        android:layout_below="@+id/hostNameField"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/passwordField"
+        android:hint="@string/port_message"
+        android:inputType="number"
+        />
+</LinearLayout>
