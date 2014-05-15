@@ -7,6 +7,7 @@
     <string name="host_list_message">Saved Connections</string>
     <string name="finger_print_title">Known Hosts</string>
     <string name="add_host_message">Add/Edit Connection</string>
+    <string name="settings">Settings</string>
 
     <!-- Menu Items -->
     <string name="saved_servers">Saved Connections</string>

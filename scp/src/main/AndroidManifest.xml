@@ -43,6 +43,15 @@
         </activity>
 
         <activity
+            android:name="marc.scp.scp.SettingsActivity"
+            android:label="@string/settings"
+            android:parentActivityName="marc.scp.scp.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="marc.scp.scp.MainActivity" />
+        </activity>
+
+        <activity
             android:name="marc.scp.scp.FingerPrintList"
             android:label="@string/finger_print_title"
             android:parentActivityName="marc.scp.scp.MainActivity">

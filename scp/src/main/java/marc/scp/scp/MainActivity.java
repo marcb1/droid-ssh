@@ -1,6 +1,8 @@
 package marc.scp.scp;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -162,10 +164,17 @@ public class MainActivity extends ActionBarActivity
         }
         else if(id == R.id.action_settings)
         {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
             // Display the fragment as the main content.
-            getFragmentManager().beginTransaction()
-                    .replace(R.layout.activity_main, new SettingsFragment())
-                    .commit();
+            //Fragment newFragment = new SettingsFragment();
+           // FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            //transaction.add(R.id.activity_main,newFragment);
+           // transaction.hide(this);
+        //    transaction.replace(R.id.activity_main, newFragment);
+          //  transaction.addToBackStack(null);
+          //  transaction.commit();
         }
         else if(id == R.id.action_exit)
         {

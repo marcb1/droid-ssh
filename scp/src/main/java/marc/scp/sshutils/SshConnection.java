@@ -2,23 +2,15 @@ package marc.scp.sshutils;
 
 import com.jcraft.jsch.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Properties;
-import jackpal.androidterm.emulatorview.TermSession;
-
 import java.io.File;
 
+import jackpal.androidterm.emulatorview.TermSession;
+
 import android.util.Log;
-import android.widget.TextView;
 
 public class SshConnection extends TermSession
 {
@@ -26,6 +18,7 @@ public class SshConnection extends TermSession
     private Session session;
     private Channel channel;
     private JSch jsch;
+    private ChannelSftp sftp;
 
     private PipedInputStream localIn;
     private PipedOutputStream localOut;
@@ -54,6 +47,7 @@ public class SshConnection extends TermSession
 
         session = null;
         channel = null;
+        sftp = null;
         //give user object, alerts user if they want to reconnect
         user.setConnectionHandler(this);
 
@@ -120,6 +114,71 @@ public class SshConnection extends TermSession
             userInfo.handleException(e);
             ret = false;
             state = CONNECTION_STATE.DISCONNECTED;
+        }
+        return ret;
+    }
+
+    //not tested, need to be worked on
+    boolean connectAsSftp()
+    {
+        boolean ret = false;
+        try
+        {
+            if((session != null) && (state == CONNECTION_STATE.DISCONNECTED))
+            {
+                Log.d(log, "SFTP Connecting...");
+                state = CONNECTION_STATE.CONNECTING;
+                session.connect(5000);
+
+                channel = session.openChannel("sftp");
+                state = CONNECTION_STATE.CONNECTED;
+
+                channel.connect(5000);
+                sftp = (ChannelSftp)channel;
+
+                Log.d(log, "SFTP Connected");
+                ret = true;
+            }
+        }
+        catch(JSchException  e)
+        {
+            Log.d(log, "Exception caught while initiating SFTP connection: " + e.getMessage(), e);
+            userInfo.handleException(e);
+            ret = false;
+            state = CONNECTION_STATE.DISCONNECTED;
+            sftp = null;
+        }
+        return ret;
+    }
+
+    public boolean sendFiles(File[] files, SftpProgressMonitor monitor)
+    {
+        boolean ret = false;
+        if((state == state.DISCONNECTED) || (sftp == null))
+        {
+            return ret;
+        }
+        try
+        {
+            sftp.setInputStream(null);
+            for (File file : files)
+            {
+                try
+                {
+                    sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.APPEND);
+                    ret = true;
+                }
+                catch (SftpException e)
+                {
+                    e.printStackTrace();
+                    ret = false;
+                    break;
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            ret = false;
         }
         return ret;
     }
@@ -205,43 +264,6 @@ public class SshConnection extends TermSession
             }
             channel.disconnect();
             return ret;
-    }
-
-    //not tested, need to be worked on
-    boolean sendFile(File[] files, SftpProgressMonitor monitor)
-    {
-        boolean ret = false;
-        if(true)
-        {
-            return ret;
-        }
-        try
-        {
-            //open channel ready to send input
-            channel = session.openChannel("sftp");
-            channel.setInputStream(null);
-
-            channel.connect();
-            ChannelSftp sftp = (ChannelSftp)channel;
-            for (File file : files) {
-
-                try
-                {
-                    sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.APPEND);
-                }
-                catch (SftpException e)
-                {
-                    e.printStackTrace();
-                }
-                ret = true;
-            }
-        }
-        catch(Exception e)
-        {
-
-        }
-        channel.disconnect();
-        return ret;
     }
 
     @Override //called when data is processed from the input stream
