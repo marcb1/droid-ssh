@@ -20,14 +20,13 @@ import java.io.File;
 import android.util.Log;
 import android.widget.TextView;
 
-public class SshConnection  extends TermSession
+public class SshConnection extends TermSession
 {
-    //jsch session
+    //jsch objects
     private Session session;
     private Channel channel;
-    TextView console;
+    private JSch jsch;
 
-    private boolean connected;
     private PipedInputStream localIn;
     private PipedOutputStream localOut;
 
@@ -35,42 +34,102 @@ public class SshConnection  extends TermSession
 
     private final String log = "SshConnection";
 
+    private enum CONNECTION_STATE
+    {
+        CONNECTED,
+        CONNECTING,
+        DISCONNECTED;
+    }
+    private CONNECTION_STATE state;
+
+
     public SshConnection(SessionUserInfo user, PipedInputStream i, PipedOutputStream o)
     {
+        jsch = new JSch();
+        userInfo = user;
+        state = CONNECTION_STATE.DISCONNECTED;
+
         localIn = i;
         localOut = o;
-        console = console;
-        JSch jsch = new JSch();
+
         session = null;
         channel = null;
-
-        connected = false;
-        userInfo = null;
-
+        //give user object, alerts user if they want to reconnect
+        user.setConnectionHandler(this);
 
         try
         {
-
             PipedInputStream in = new PipedInputStream(localOut);
             PipedOutputStream out = new PipedOutputStream(localIn);
             setTermIn(in);
             setTermOut(out);
 
-            session = jsch.getSession(user.getUser(), user.getHost(), user.getPort());
-            //session.setHostKeyRepository(new NoCheckHostKeyRepository());
+            session = jsch.getSession(userInfo.getUser(), userInfo.getHost(), userInfo.getPort());
+            session.setHostKeyRepository(new FingerPrintRepository(jsch));
+            session.setServerAliveInterval(10000);
+
+            //enableCompression("9");
+
+            if(user.usingRSA())
+            {
+                //load(alias, private, public, passphrase)
+                KeyPair keyPair = KeyPair.load(jsch, user.getRsa(), null);
+                jsch.addIdentity(user.getHost(), keyPair.forSSHAgent(), null, null);
+            }
+            session.setUserInfo(user);
+        }
+        catch(JSchException e)
+        {
+            userInfo.handleException(e);
+            Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
+            session = null;
         }
         catch(Exception e)
         {
             Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
             session = null;
         }
-        session.setUserInfo(user);
-        userInfo = user;
     }
 
-    public boolean isConnected()
+    public boolean connectAsShell()
     {
-        return connected;
+        boolean ret = false;
+        try
+        {
+            if((session != null) && (state == CONNECTION_STATE.DISCONNECTED))
+            {
+                Log.d(log, "SSH Connecting...");
+                state = CONNECTION_STATE.CONNECTING;
+                session.connect(5000);
+
+                channel = session.openChannel("shell");
+                state = CONNECTION_STATE.CONNECTED;
+
+                channel.setInputStream(localIn, true);
+                channel.setOutputStream(localOut, true);
+
+                channel.connect(5000);
+
+                Log.d(log, "SSH Connected");
+                ret = true;
+            }
+        }
+        catch(JSchException  e)
+        {
+            Log.d(log, "Exception caught while initiating SSH connection: " + e.getMessage(), e);
+            userInfo.handleException(e);
+            ret = false;
+            state = CONNECTION_STATE.DISCONNECTED;
+        }
+        return ret;
+    }
+
+    public void enableCompression(String level)
+    {
+        session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
+        session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
+        session.setConfig("compression_level", level);
+        Log.d(log, "enableCompression, level: " + level);
     }
 
     public void disableHostChecking()
@@ -81,49 +140,34 @@ public class SshConnection  extends TermSession
         session.setConfig(config);
     }
 
-
-    public boolean connectAsShell()
-    {
-        boolean ret = false;
-        try
-        {
-            if(session != null)
-            {
-                session.connect();
-                connected = true;
-                channel = session.openChannel("shell");
-
-
-
-                channel.setInputStream(localIn, true);
-                channel.setOutputStream(localOut, true);
-
-                channel.connect();
-
-                Log.d(log, "SSH Connected");
-                ret = true;
-            }
-        }
-        catch(Exception  e)
-        {
-            Log.d(log, "Exception caught while initiating SSH connection: " + e.getMessage());
-            ret = false;
-            connected = false;
-        }
-        return ret;
-    }
-
     public void disconnect()
     {
-        channel.disconnect();
-        session.disconnect();
+        if(state != CONNECTION_STATE.DISCONNECTED)
+        {
+            if(channel != null)
+            {
+                channel.disconnect();
+            }
+            session.disconnect();
+        }
+        finish();
     }
 
-    //not supported anymore!
+    public boolean isConnected()
+    {
+        return state != CONNECTION_STATE.DISCONNECTED;
+    }
+
+    public String getName()
+    {
+        return userInfo.getHost();
+    }
+
+    //This not supported anymore!
     public String executeCommand(String command)
     {
         String ret = null;
-        if(!connected)
+        if(state != CONNECTION_STATE.CONNECTED)
         {
             return ret;
         }
@@ -158,7 +202,6 @@ public class SshConnection  extends TermSession
             catch(Exception  e)
             {
                 Log.d(log, e.getMessage());
-                connected = false;
             }
             channel.disconnect();
             return ret;
@@ -168,7 +211,7 @@ public class SshConnection  extends TermSession
     boolean sendFile(File[] files, SftpProgressMonitor monitor)
     {
         boolean ret = false;
-        if(!connected)
+        if(true)
         {
             return ret;
         }
@@ -205,17 +248,6 @@ public class SshConnection  extends TermSession
     public void processInput(byte[] buffer, int offset, int count)
     {
         super.processInput(buffer, offset, count);
-
-        String decoded = "ERROR";
-        try
-        {
-            //out.write(buffer, offset, count);
-        }
-        catch(Exception e)
-        {
-        }
-      //  Log.d(log, "Processing Input " + decoded);
-        //super.processInput(buffer, offset, count);
     }
 
  }

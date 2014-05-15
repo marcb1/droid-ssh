@@ -19,11 +19,45 @@ public class FileSync
     @DatabaseField
     private String remoteFolder;
 
-    public FileSync(int pref, String local, String remote)
+    @DatabaseField
+    private String syncName;
+
+
+    public FileSync(String name, int pref, String local, String remote)
     {
         preferencesId = pref;
         localFolder = local;
         remoteFolder = remote;
+        syncName = name;
     }
 
+    public FileSync()
+    {
+    }
+
+    //getters
+    public String getName()
+    {
+        return syncName;
+    }
+
+    public String getRemoteFolder()
+    {
+        return remoteFolder;
+    }
+
+    public String getLocalFolder()
+    {
+        return localFolder;
+    }
+
+    public int getPreferencesId()
+    {
+        return preferencesId;
+    }
+
+    public int getId()
+    {
+        return id;
+    }
 }

@@ -8,15 +8,22 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable
-public class Preference {
+public class Preference
+{
     @DatabaseField(generatedId=true)
     private int id;
 
     @DatabaseField
-    private String username;
+    private String connectionName;
 
     @DatabaseField
     private String hostName;
+
+    @DatabaseField
+    private int portNumber;
+
+    @DatabaseField
+    private String username;
 
     @DatabaseField
     private String password;
@@ -24,24 +31,21 @@ public class Preference {
     @DatabaseField
     private String rsaKey;
 
-    @DatabaseField
-    private String hostFingerPrint;
-
-    @DatabaseField
-    private int portNumber;
-
     public Preference()
     {
-
     }
 
-    public Preference(String host, String user, int port)
+    public Preference(String name, String host, String user, int port)
     {
-        portNumber = port;
+        connectionName = name;
         hostName = host;
         username = user;
+        portNumber = port;
+        rsaKey = null;
+        password = null;
     }
 
+    //setters
     public void setId(int id)
     {
         this.id = id;
@@ -50,11 +54,13 @@ public class Preference {
     public void setPassword(String p)
     {
         password = p;
+        rsaKey = "";
     }
 
     public void setRsaKey(String r)
     {
         rsaKey = r;
+        password = "";
     }
 
     //getters
@@ -63,9 +69,19 @@ public class Preference {
         return id;
     }
 
+    public boolean getUseKey()
+    {
+       boolean ret = false;
+       if(rsaKey.length() > 2)
+       {
+           ret = true;
+       }
+        return ret;
+    }
+
     public String getName()
     {
-        return hostName;
+        return connectionName;
     }
 
     public String getHostName()
@@ -88,13 +104,8 @@ public class Preference {
         return portNumber;
     }
 
-    public String getHostFingerPrint()
+    public String getRsaKey()
     {
-        return hostFingerPrint;
-    }
-
-    public void setHostFingerPrint(String fingerPrint)
-    {
-        hostFingerPrint = fingerPrint;
+        return rsaKey;
     }
 }

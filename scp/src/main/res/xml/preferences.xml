@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory android:title="@string/pref_connection">
+        <ListPreference
+            android:key="compression_value"
+            android:summary="@string/pref_compression_summary"
+            android:title="@string/pref_compression" />
+
+        <EditTextPreference
+            android:key="font_size"
+            android:title="@string/pref_font" />
+
+        <EditTextPreference
+            android:key="clear_history"
+            android:title="@string/pref_clear_history" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

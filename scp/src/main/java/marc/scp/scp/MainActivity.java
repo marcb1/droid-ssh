@@ -1,5 +1,7 @@
 package marc.scp.scp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -59,7 +61,7 @@ public class MainActivity extends ActionBarActivity
         for (Preference pr : preferencesList)
         {
             if(pr != null)
-                titles.add("Host: " + pr.getName());
+                titles.add(pr.getName());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
         lv.setAdapter(adapter);
@@ -77,13 +79,19 @@ public class MainActivity extends ActionBarActivity
     public void ConnectToPreference(Preference p)
     {
         Intent intent = new Intent(this, TerminalActivity.class);
-
-        intent.putExtra(PASSWORD, p.getPassword());
         intent.putExtra(USERNAME, p.getUsername());
         intent.putExtra(HOSTNAME, p.getHostName());
         intent.putExtra(PORT, String.valueOf(p.getPort()));
         intent.putExtra(DBKEY, String.valueOf(p.getId()));
-        intent.putExtra(DBKEY, p.getHostFingerPrint());
+
+        if(p.getUseKey())
+        {
+            intent.putExtra(RSAKEY, p.getRsaKey());
+        }
+        else
+        {
+            intent.putExtra(PASSWORD, p.getPassword());
+        }
         startActivity(intent);
     }
 
@@ -98,6 +106,13 @@ public class MainActivity extends ActionBarActivity
     // Called when the user clicks the connnect button
     public void connectToServer(View view)
     {
+       /* LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogview = inflater.inflate(R.layout.dialoglayout, null);
+        AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
+        dialogbuilder.setTitle("Title");
+        dialogbuilder.setView(dialogview);
+        dialogDetails = dialogbuilder.create();*/
+
         //MainActivity inherits from context (this)
         Intent intent = new Intent(this, TerminalActivity.class);
 
@@ -130,12 +145,51 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_saved)
+        if (id == R.id.action_saved_hosts)
         {
             Intent intent = new Intent(this, HostList.class);
             startActivity(intent);
         }
-
+        else if(id == R.id.action_saved_folders)
+        {
+            Intent intent = new Intent(this, FolderPairsList.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.action_cached_fingerprints)
+        {
+            Intent intent = new Intent(this, FingerPrintList.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.action_settings)
+        {
+            // Display the fragment as the main content.
+            getFragmentManager().beginTransaction()
+                    .replace(R.layout.activity_main, new SettingsFragment())
+                    .commit();
+        }
+        else if(id == R.id.action_exit)
+        {
+           onBackPressed();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+            new AlertDialog.Builder(this).setMessage("Are you sure you would like to exit?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create()
+                    .show();
     }
 }

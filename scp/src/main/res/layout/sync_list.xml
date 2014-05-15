@@ -7,21 +7,21 @@
         android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/add_host" />
+        android:text="Add Pair" />
     <Button
         android:id="@+id/button_edit"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/button_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/edit_host" />
+        android:text="Edit Pair" />
     <Button
         android:id="@+id/button_delete"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/button_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_host" />
+        android:text="Delete Pair" />
     <ListView
         android:id="@+id/list_view"
         android:layout_above="@id/button_add"

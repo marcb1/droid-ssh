@@ -5,15 +5,12 @@ package marc.scp.scp;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,16 +21,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 
 import marc.scp.databaseutils.*;
 
-public class HostList extends Activity
+public class SyncList extends Activity
 {
     ListView listView;
-    Preference selectedPref;
+    FileSync selectedSync;
     public final static String SELECTED_ID = "com.whomarc.scp.ID";
-    View oldview;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -51,7 +46,6 @@ public class HostList extends Activity
         setupDeleteButton(btnDeleteList);
 
         setContentView(contentView);
-        oldview = null;
     }
 
     @Override
@@ -63,45 +57,20 @@ public class HostList extends Activity
 
     private void setupListView(ListView lv)
     {
-        final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
-        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-
-        for (Preference pr : preferencesList)
+        final List<FileSync> fileSyncList = Database.getInstance().getAllFileSync();
+        List<String> titles = new ArrayList<String>();
+        for (FileSync fs : fileSyncList)
         {
-            Map<String, String> datum = new HashMap<String, String>(2);
-            if(pr != null)
-            datum.put("host", pr.getName());
-            List<HostKeys> keyList = Database.getInstance().getHostKey(pr.getHostName());
-
-            System.out.println(keyList.size());
-            if(keyList.size() == 0)
-            {
-                datum.put("fingerprint", "no fingerprint found");
-            }
-            else
-            {
-                datum.put("fingerprint", keyList.get(0).getFingerprint());
-            }
-            data.add(datum);
-
+            if(fs != null)
+                titles.add(fs.getName());
         }
-        SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_2,
-                new String[] {"host", "fingerprint"},
-                new int[] {android.R.id.text1,
-                        android.R.id.text2});
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
         lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedPref = preferencesList.get(position);
-                view.setBackgroundColor(Color.GRAY);
-                if(oldview != null)
-                {
-                    oldview.setBackgroundColor(Color.BLACK);
-                }
-                if(oldview != view)
-                oldview = view;
+                selectedSync = fileSyncList.get(position);
             }
         });
     }
@@ -127,7 +96,7 @@ public class HostList extends Activity
         {
             public void onClick(View v) {
                 Intent intent = new Intent (activity, AddHost.class);
-                intent.putExtra(SELECTED_ID, selectedPref.getId());
+                intent.putExtra(SELECTED_ID, selectedSync.getId());
                 startActivity(intent);
             }
         });
@@ -139,7 +108,7 @@ public class HostList extends Activity
         btnDeleteList.setOnClickListener(new OnClickListener()
         {
             public void onClick(View v) {
-                new AlertDialog.Builder(activity).setMessage("Are you sure you would like to delete host: " + selectedPref.getName()+ "'?")
+                new AlertDialog.Builder(activity).setMessage("Are you sure you would like to delete host: " + selectedSync.getName()+ "'?")
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -150,7 +119,7 @@ public class HostList extends Activity
                             public void onClick(DialogInterface dialog, int which)
                             {
                                 dialog.dismiss();
-                                deletePreference(selectedPref);
+                                deleteSync(selectedSync);
                             }
                         })
                         .create()
@@ -159,9 +128,10 @@ public class HostList extends Activity
         });
     }
 
-    private void deletePreference(Preference pref)
+    private void deleteSync(FileSync file)
     {
-        Database.getInstance().deletePreference(pref);
+        Database.getInstance().deleteSync(file);
+        finish();
     }
 }
 

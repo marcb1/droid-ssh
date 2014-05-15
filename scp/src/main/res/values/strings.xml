@@ -1,22 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">scp</string>
-    <string name="hello_world">Hello world!</string>
+    <!-- Activity Titles -->
+    <string name="app_name">Droid SSH</string>
+    <string name="title_terminal_activity">Connecting...</string>
+    <string name="host_list_message">Saved Connections</string>
+    <string name="finger_print_title">Known Hosts</string>
+    <string name="add_host_message">Add/Edit Connection</string>
+
+    <!-- Menu Items -->
+    <string name="saved_servers">Saved Connections</string>
+    <string name="known_hosts">Known Hosts</string>
     <string name="action_settings">Settings</string>
+    <string name="saved_sync">Folder Pairs</string>
+    <string name="exit">Exit</string>
+
+    <!-- Host List -->
+    <string name="add_host">Add</string>
+    <string name="edit_host">Edit</string>
+    <string name="delete_host">Delete</string>
+
+    <!-- Fingerprint List -->
+    <string name="delete_all">Delete All Fingerprints</string>
+
+    <!-- Add/Edit Connection -->
+    <string name="connection_info">Connection Information:</string>
+    <string name="connection_name">connection name</string>
+    <string name="host_message">host name</string>
+
+    <!-- Preference Menu -->
+    <string name="pref_connection">Connection Preferences</string>
+    <string name="pref_compression">Enable Compression</string>
+    <string name="pref_compression_summary">Compression uses less data but more CPU to compress data streams, the higher the value the more the compression</string>
+    <string name="pref_font">Font Size</string>
+    <string name="pref_clear_history">Clear History</string>
+
+    <!-- Quick Connect Menu//NOT DONE -->
     <string name="username_message">username</string>
     <string name="password_message">password</string>
-    <string name="host_message">host name</string>
+
     <string name="port_message">port</string>
     <string name="rsa_message">rsa key</string>
     <string name="button_connect">Connect</string>
+
     <string name="title_activity_display_message">MyMessage</string>
-    <string name="saved_servers">Host List</string>
+
+
     <string name="send_command">Send </string>
-    <string name="add_host_message"> Add Host </string>
-    <string name="host_list_message"> Saved Sessions </string>
-    <string name="terminal_activity"> Terminal </string>
-    <string name="saved_sync"> Folder Sync </string>
-    <string name="ormlite_license"> Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that this permission notice appear in all copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. The author may be contacted via http://ormlite.com/ </string>
+    <string name="terminal_activity">Terminal </string>
+    <string name="license"> </string>
+
+
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

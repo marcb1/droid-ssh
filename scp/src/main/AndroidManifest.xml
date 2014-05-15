@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="marc.scp.scp" >
+    package="marc.scp.scp">
 
-    <uses-sdk android:minSdkVersion="11"  />
+    <uses-sdk android:minSdkVersion="11" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -11,25 +12,22 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat"
-        >
+        android:theme="@style/Theme.AppCompat">
 
         <activity
             android:name="marc.scp.scp.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name="marc.scp.scp.TerminalActivity"
-            android:label="@string/title_activity_display_message"
-            android:windowSoftInputMode="adjustResize"
-            android:parentActivityName="marc.scp.scp.MainActivity" >
-
+            android:label="@string/title_terminal_activity"
+            android:parentActivityName="marc.scp.scp.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
@@ -38,7 +36,16 @@
         <activity
             android:name="marc.scp.scp.HostList"
             android:label="@string/host_list_message"
-            android:parentActivityName="marc.scp.scp.MainActivity" >
+            android:parentActivityName="marc.scp.scp.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="marc.scp.scp.MainActivity" />
+        </activity>
+
+        <activity
+            android:name="marc.scp.scp.FingerPrintList"
+            android:label="@string/finger_print_title"
+            android:parentActivityName="marc.scp.scp.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
@@ -47,7 +54,7 @@
         <activity
             android:name="marc.scp.scp.AddHost"
             android:label="@string/add_host_message"
-            android:parentActivityName="marc.scp.scp.HostList" >
+            android:parentActivityName="marc.scp.scp.HostList">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />

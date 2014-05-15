@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.content.Context;
 
+import com.j256.ormlite.table.TableUtils;
+
 public class Database
 {
     private static final String Log = "Database";
@@ -39,9 +41,54 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Error while querying for preferences: " + e.getMessage());
+            android.util.Log.d(Log, "getAllPreferences exception", e);
         }
         return prefs;
+    }
+
+    public List<HostKeys> getAllHostKeys()
+    {
+        List<HostKeys> prefs = null;
+        try
+        {
+            prefs = helper.getHostDao().queryForAll();
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "getAllPreferences exception", e);
+        }
+        return prefs;
+    }
+
+    public List<HostKeys> getHostKey(String host)
+    {
+        List<HostKeys> res = null;
+        try
+        {
+            res = helper.getHostDao().queryForEq("hostName", host);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "getHostKey exception", e);
+        }
+        return res;
+    }
+
+    public void deleteAllHostKeys()
+    {
+            helper.clearHostKeysTable();
+    }
+
+    public void addHostKey(HostKeys h)
+    {
+        try
+        {
+            helper.getHostDao().create(h);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "addHostKey exception", e);
+        }
     }
 
     public List<FileSync> getAllFileSync()
@@ -53,7 +100,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Error while querying for preferences: " + e.getMessage());
+            android.util.Log.d(Log, "getAllFileSync exception", e);
         }
         return sync;
     }
@@ -66,7 +113,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Error while adding preference: " + e.getMessage());
+            android.util.Log.d(Log, "addPreference exception", e);
         }
     }
 
@@ -78,7 +125,19 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Error while adding FileSync: " + e.getMessage());
+            android.util.Log.d(Log, "addFileSync exception", e);
+        }
+    }
+
+    public void deleteSync(FileSync p)
+    {
+        try
+        {
+            helper.getSyncDao().delete(p);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "deletePreference exception", e);
         }
     }
 
@@ -91,7 +150,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Wrror while deleting preference: " + e.getMessage());
+            android.util.Log.d(Log, "deletePreference exception", e);
         }
     }
 
@@ -103,7 +162,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Error while updating preference: " + e.getMessage());
+            android.util.Log.d(Log, "updatePreference exception", e);
         }
     }
 
@@ -115,7 +174,7 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "Error while getting preference ID: " + e.getMessage());
+            android.util.Log.d(Log, "getPreferenceID exception", e);
         }
         return pref;
     }

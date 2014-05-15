@@ -8,12 +8,20 @@
         android:orderInCategory="100"
         app:showAsAction="always" />
 
-    <item android:id="@+id/action_saved"
+    <item android:id="@+id/action_saved_hosts"
     android:title="@string/saved_servers"
     android:showAsAction="always" />
 
-    <item android:id="@+id/action_saved"
+    <item android:id="@+id/action_cached_fingerprints"
+        android:title="@string/known_hosts"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_saved_folders"
         android:title="@string/saved_sync"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_exit"
+        android:title="@string/exit"
         android:showAsAction="always" />
 
 </menu>

@@ -24,10 +24,11 @@ import android.widget.ToggleButton;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.Preference;
 
-public class AddHost extends Activity {
+public class AddHost extends Activity
+{
     private ViewGroup contentView;
-    Preference pref;
     boolean usingRSAKey;
+    Preference pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,17 +39,35 @@ public class AddHost extends Activity {
         pref = null;
 
         Bundle bundle = getIntent().getExtras();
+
+        //if not null, get ID from database, and populate the text fields
         if ((bundle != null) && (bundle.containsKey(HostList.SELECTED_ID)))
         {
-            EditText edit = (EditText) contentView.findViewById(R.id.hostNameField);
+            EditText edit;
             int preferenceId = bundle.getInt(HostList.SELECTED_ID);
             pref = Database.getInstance().getPreferenceID(preferenceId);
             edit = (EditText) contentView.findViewById(R.id.hostNameField);
             edit.setText(pref.getHostName());
             edit = (EditText) contentView.findViewById(R.id.usernameField);
             edit.setText(pref.getUsername());
+            edit = (EditText) contentView.findViewById(R.id.connectionNameField);
+            edit.setText(pref.getName());
+
             edit = (EditText) contentView.findViewById(R.id.passwordField);
-            edit.setText(pref.getPassword());
+            System.out.println(pref.getRsaKey());
+            System.out.println(pref.getPassword());
+            if(pref.getUseKey())
+            {
+                Switch rsaToggle = (Switch) contentView.findViewById(R.id.RSAToggle);
+                rsaToggle.toggle();
+                edit.setInputType(InputType.TYPE_CLASS_TEXT);
+                edit.setText(pref.getRsaKey());
+            }
+            else
+            {
+                edit.setText(pref.getPassword());
+            }
+
             System.out.println(pref.getPassword());
             edit = (EditText) contentView.findViewById(R.id.portField);
             edit.setText(String.valueOf(pref.getPort()));
@@ -60,11 +79,11 @@ public class AddHost extends Activity {
         setContentView(contentView);
     }
 
-    public void onToggleRSA(View view) {
+    public void onToggleRSA(View view)
+    {
         // Is the toggle on?
         boolean on = ((Switch) view).isChecked();
         EditText edit = (EditText) contentView.findViewById(R.id.passwordField);
-
         if (on)
         {
             edit.setText("");
@@ -75,6 +94,7 @@ public class AddHost extends Activity {
         else
         {
             usingRSAKey = false;
+            edit.setText("");
             edit.setHint("Enter password");
             edit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }
@@ -88,36 +108,39 @@ public class AddHost extends Activity {
             {
 
                 EditText edit;
+
+                edit = (EditText) contentView.findViewById(R.id.connectionNameField);
+                String name = edit.getText().toString();
                 edit = (EditText) contentView.findViewById(R.id.hostNameField);
                 String host = edit.getText().toString();
-
                 edit = (EditText) contentView.findViewById(R.id.usernameField);
                 String userName = edit.getText().toString();
-
                 edit = (EditText) findViewById(R.id.portField);
-                String port = edit.getText().toString();
-
-                int portInt = Integer.parseInt(port);
-
-                Preference add = new Preference(host, userName, portInt);
+                int port = Integer.parseInt(edit.getText().toString());
+                Preference addP = new Preference(name, host, userName, port);
 
                 edit = (EditText) contentView.findViewById(R.id.passwordField);
-                String password = edit.getText().toString();
-
-                System.out.println(password);
-                add.setPassword(password);
-
-                if(pref == null)
+                String passwordOrKey = edit.getText().toString();
+                if(!usingRSAKey)
                 {
-                    createNewPreference(add);
+                    addP.setPassword(passwordOrKey);
                 }
                 else
                 {
-                    updatePreference(add);
+                    addP.setRsaKey(passwordOrKey);
+                }
+
+                if(pref == null)
+                {
+                    createNewPreference(addP);
+                }
+                else
+                {
+                    addP.setId(pref.getId());
+                    updatePreference(addP);
                 }
                 backToHostList();
                 finish();
-
             }
         });
     }
@@ -127,7 +150,6 @@ public class AddHost extends Activity {
         Intent intent = new Intent (this, HostList.class);
         startActivity(intent);
     }
-
 
     private void createNewPreference(Preference pref)
     {

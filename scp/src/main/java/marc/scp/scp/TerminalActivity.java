@@ -4,16 +4,20 @@ import marc.scp.sshutils.*;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.method.TextKeyListener;
+import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.view.MenuInflater;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.util.DisplayMetrics;
 import android.widget.EditText;
@@ -30,7 +34,8 @@ import jackpal.androidterm.emulatorview.TermSession;
 
 public class TerminalActivity extends ActionBarActivity
 {
-    SshConnection conn;
+    private SshConnection conn;
+    private int textSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,18 +51,33 @@ public class TerminalActivity extends ActionBarActivity
 
         Intent intent = getIntent();
         String username = intent.getStringExtra(MainActivity.USERNAME);
-        String password = intent.getStringExtra(MainActivity.PASSWORD);
         String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
         int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
+        String password = intent.getStringExtra(MainActivity.PASSWORD);
+
 
         PipedInputStream in  = new PipedInputStream();
         PipedOutputStream out = new PipedOutputStream();
 
-        SessionUserInfo user = new SessionUserInfo(hostname, username, password, port, this, in, out);
+        SessionUserInfo user = new SessionUserInfo(hostname, username, port, this);
+        if(password == null)
+        {
+            String key = intent.getStringExtra(MainActivity.RSAKEY);
+            user.setRSA(key);
+        }
+        else
+        {
+            user.setPassword(password);
+        }
         SshConnection connection = new SshConnection(user, in, out);
+        setTitle("Connecting...");
 
         conn = connection;
+        textSize = 10;
         view.attachSession(conn);
+        view.setTextSize(textSize);
+        //view.setUseCookedIME(true);
+
 
         SshConnectTask task = new SshConnectTask(this);
         task.execute(conn);
@@ -67,8 +87,10 @@ public class TerminalActivity extends ActionBarActivity
     {
         if(result == false)
         {
+            setTitle("Error...");
             return;
         }
+        setTitle(conn.getName());
 
 
       /*  EditText mEntry = (EditText) findViewById(R.id.term_entry);
@@ -90,6 +112,49 @@ public class TerminalActivity extends ActionBarActivity
             }
         });*/
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        boolean ret = true;
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP)
+        {
+            textSize++;
+            EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
+            view.setTextSize(textSize);
+            view.updateSize(true);
+        }
+        else if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN))
+        {
+            textSize--;
+            EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
+            view.setTextSize(textSize);
+            view.updateSize(true);
+        }
+        else
+        {
+            ret = super.onKeyDown(keyCode, event);
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event)
+    {
+        boolean ret = true;
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP)
+        {
+        }
+        else if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN))
+        {
+        }
+        else
+        {
+            ret = super.onKeyUp(keyCode, event);
+        }
+        return ret;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -127,7 +192,7 @@ public class TerminalActivity extends ActionBarActivity
                         {
                             dialog.dismiss();
                             conn.disconnect();
-                            startActivity(new  Intent(TerminalActivity.this,MainActivity.class));
+                            finish();
                         }
                     })
                     .create()
@@ -150,4 +215,35 @@ public class TerminalActivity extends ActionBarActivity
         }
     }
 
-}
+    @Override
+    public void onBackPressed()
+    {
+        System.out.println("onBackPressed");
+        if(!conn.isConnected())
+        {
+            super.onBackPressed();
+        }
+        else
+        {
+            new AlertDialog.Builder(this).setMessage("Are you sure you would like to disconnect?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            conn.disconnect();
+                            finish();
+
+                        }
+                    })
+                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create()
+                .show();
+        }
+        }
+    }
+
+
+
