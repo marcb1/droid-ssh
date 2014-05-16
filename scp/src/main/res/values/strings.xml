@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- General Dialogs -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <!-- Activity Titles -->
     <string name="app_name">Droid SSH</string>
     <string name="title_terminal_activity">Connecting...</string>
@@ -8,6 +12,8 @@
     <string name="finger_print_title">Known Hosts</string>
     <string name="add_host_message">Add/Edit Connection</string>
     <string name="settings">Settings</string>
+    <string name="folder_pairs_title">Folder Pairs</string>
+    <string name="add_folder">Add Folder Pair</string>
 
     <!-- Menu Items -->
     <string name="saved_servers">Saved Connections</string>
@@ -15,6 +21,7 @@
     <string name="action_settings">Settings</string>
     <string name="saved_sync">Folder Pairs</string>
     <string name="exit">Exit</string>
+    <string name="connection_details">Connection Details</string>
 
     <!-- Host List -->
     <string name="add_host">Add</string>
@@ -29,12 +36,61 @@
     <string name="connection_name">connection name</string>
     <string name="host_message">host name</string>
 
+    <!-- Add/Edit Folder Pairs -->
+    <string name="folder_pairs">Folder Pairs:</string>
+    <string name="local_folder">Local Folder</string>
+    <string name="remote_folder">Remote Folder</string>
+    <string name="pair_name">Folder Pair Name</string>
+
     <!-- Preference Menu -->
     <string name="pref_connection">Connection Preferences</string>
     <string name="pref_compression">Enable Compression</string>
-    <string name="pref_compression_summary">Compression uses less data but more CPU to compress data streams, the higher the value the more the compression</string>
+    <string name="pref_host_checking">Disable Host Checking</string>
+    <string name="pref_host_checking_summary">If you know what you\'re doing, feel free to disable</string>
+    <string name="pref_compression_summary">Compression uses less data but more CPU and battery to compress data streams</string>
+    <string name="pref_compression_values">Compression Values</string>
+    <string name="pref_compression_values_summary">The higher the value the more the compression</string>
     <string name="pref_font">Font Size</string>
+    <string name="pref_font_summary">Choose the font size, this can be set while in the terminal using your volume buttons</string>
     <string name="pref_clear_history">Clear History</string>
+    <string name="pref_general">General</string>
+    <string name="pref_about">About</string>
+    <string name="pref_terminal">Terminal Preferences</string>
+    <string name="terminal_emulation">Terminal Emulation</string>
+    <string name="terminal_emulation_summary">xterm-256 color is probably the best to use</string>
+    <!-- Preference arrays -->
+    <string-array name="compression_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+    <string-array name="terminal_values">
+        <item>screen</item>
+        <item>xterm-256color</item>
+        <item>xterm</item>
+    </string-array>
+    <string-array name="font_sizes">
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+    </string-array>
+
+    <!-- File Sync Activity -->
+    <string name="file_sync_title">Connecting...</string>
 
     <!-- Quick Connect Menu//NOT DONE -->
     <string name="username_message">username</string>

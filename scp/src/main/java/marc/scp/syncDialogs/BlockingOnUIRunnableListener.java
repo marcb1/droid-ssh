@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.syncDialogs;
 
 /**
  * Events for blocking runnable executing on UI thread

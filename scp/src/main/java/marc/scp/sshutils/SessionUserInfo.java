@@ -1,25 +1,16 @@
 package marc.scp.sshutils;
+
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.widget.Toast;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.UserInfo;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Locale;
-
 import com.jcraft.jsch.UIKeyboardInteractive;
 
-import marc.scp.scp.BlockingOnUIRunnable;
-import marc.scp.scp.BlockingOnUIRunnableListener;
-import marc.scp.scp.MyAlertBox;
+import marc.scp.syncDialogs.BlockingOnUIRunnable;
+import marc.scp.syncDialogs.MyAlertBox;
 import marc.scp.scp.TerminalActivity;
-import marc.scp.scp.MyAlertDialog;
+import marc.scp.syncDialogs.MyAlertDialog;
 
 
 public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
@@ -31,14 +22,14 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     private final String mHost;
     private final int mPort;
 
-    private TerminalActivity parent;
+    private Activity parent;
 
     //TODO make this private
     public boolean alertBooleanResult;
 
     private SshConnection conn;
 
-    public SessionUserInfo(String host, String user, int port, TerminalActivity ac)
+    public SessionUserInfo(String host, String user, int port, Activity ac)
     {
         mHost = host;
         mUser = user;

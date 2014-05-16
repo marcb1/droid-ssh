@@ -4,11 +4,14 @@ package marc.scp.databaseutils;
  * Created by Marc on 5/10/14.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable
-public class Preference
+public class Preference implements Parcelable
 {
     @DatabaseField(generatedId=true)
     private int id;
@@ -107,5 +110,48 @@ public class Preference
     public String getRsaKey()
     {
         return rsaKey;
+    }
+
+    //parceable methods
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel out, int flags)
+    {
+        out.writeInt(id);
+        out.writeString(connectionName);
+        out.writeString(hostName);
+        out.writeInt(portNumber);
+        out.writeString(username);
+        out.writeString(password);
+        out.writeString(rsaKey);
+    }
+
+    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+    public static final Parcelable.Creator<Preference> CREATOR = new Parcelable.Creator<Preference>()
+    {
+        public Preference createFromParcel(Parcel in)
+        {
+            return new Preference(in);
+        }
+
+        public Preference[] newArray(int size)
+        {
+            return new Preference[size];
+        }
+    };
+
+    // example constructor that takes a Parcel and gives you an object populated with it's values
+    private Preference(Parcel in)
+    {
+        id = in.readInt();
+        connectionName = in.readString();
+        hostName = in.readString();
+        portNumber = in.readInt();
+        username = in.readString();
+        password = in.readString();
+        rsaKey = in.readString();
     }
 }

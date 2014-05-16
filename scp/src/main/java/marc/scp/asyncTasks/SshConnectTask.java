@@ -1,5 +1,6 @@
-package marc.scp.sshutils;
+package marc.scp.asyncTasks;
 import marc.scp.scp.*;
+import marc.scp.sshutils.SshConnection;
 
 
 import android.os.AsyncTask;
@@ -11,12 +12,12 @@ import android.util.Log;
 
 public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
 {
-    TerminalActivity handler;
+    IConnectionNotifier handler;
     SshConnection conn;
 
     private final String log = "SshConnectTask";
 
-    public SshConnectTask(TerminalActivity caller)
+    public SshConnectTask(IConnectionNotifier caller)
     {
         handler = caller;
         conn = null;

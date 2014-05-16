@@ -19,8 +19,7 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 
-
-
+import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.Preference;
 
@@ -102,6 +101,7 @@ public class AddHost extends Activity
 
     private void setupAddandEditButton(Button btn)
     {
+        final Activity  activity = this;
         btn.setOnClickListener(new OnClickListener()
         {
             public void onClick(View v)
@@ -111,11 +111,27 @@ public class AddHost extends Activity
 
                 edit = (EditText) contentView.findViewById(R.id.connectionNameField);
                 String name = edit.getText().toString();
+                if(Dialogs.toastIfEmpty(name, activity, "You did not enter a connection name"))
+                {
+                    return;
+                }
                 edit = (EditText) contentView.findViewById(R.id.hostNameField);
                 String host = edit.getText().toString();
+                if(Dialogs.toastIfEmpty(host, activity, "You did not enter a host name"))
+                {
+                    return;
+                }
                 edit = (EditText) contentView.findViewById(R.id.usernameField);
                 String userName = edit.getText().toString();
+                if(Dialogs.toastIfEmpty(userName, activity, "You did not enter a user name"))
+                {
+                    return;
+                }
                 edit = (EditText) findViewById(R.id.portField);
+                if(Dialogs.toastIfEmpty(edit.getText().toString(), activity, "You did not enter a port number"))
+                {
+                    return;
+                }
                 int port = Integer.parseInt(edit.getText().toString());
                 Preference addP = new Preference(name, host, userName, port);
 
@@ -123,11 +139,20 @@ public class AddHost extends Activity
                 String passwordOrKey = edit.getText().toString();
                 if(!usingRSAKey)
                 {
+                    if(Dialogs.toastIfEmpty(passwordOrKey, activity, "you did not enter an RSA key"))
+                    {
+                        return;
+                    }
                     addP.setPassword(passwordOrKey);
+
                 }
                 else
                 {
                     addP.setRsaKey(passwordOrKey);
+                    if(Dialogs.toastIfEmpty(passwordOrKey, activity, "you did not enter a password"))
+                    {
+                        return;
+                    }
                 }
 
                 if(pref == null)
@@ -139,16 +164,9 @@ public class AddHost extends Activity
                     addP.setId(pref.getId());
                     updatePreference(addP);
                 }
-                backToHostList();
                 finish();
             }
         });
-    }
-
-    private void backToHostList()
-    {
-        Intent intent = new Intent (this, HostList.class);
-        startActivity(intent);
     }
 
     private void createNewPreference(Preference pref)

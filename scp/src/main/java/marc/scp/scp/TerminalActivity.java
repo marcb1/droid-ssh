@@ -1,48 +1,37 @@
 package marc.scp.scp;
 import jackpal.androidterm.emulatorview.EmulatorView;
+import marc.scp.asyncDialogs.YesNoDialog;
+import marc.scp.asyncTasks.IConnectionNotifier;
+import marc.scp.asyncTasks.SshConnectTask;
+import marc.scp.databaseutils.Preference;
 import marc.scp.sshutils.*;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Point;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.method.TextKeyListener;
-import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.view.MenuInflater;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.util.DisplayMetrics;
-import android.widget.EditText;
-import android.view.MenuItem;
-import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import jackpal.androidterm.emulatorview.TermSession;
-
-public class TerminalActivity extends ActionBarActivity
+public class TerminalActivity extends Activity implements IConnectionNotifier
 {
     private SshConnection conn;
     private int textSize;
+    SharedPreferencesManager prefInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.terminal_activity);
+        prefInstance = SharedPreferencesManager.getInstance(this);
 
         EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -50,32 +39,30 @@ public class TerminalActivity extends ActionBarActivity
         view.setDensity(metrics);
 
         Intent intent = getIntent();
-        String username = intent.getStringExtra(MainActivity.USERNAME);
-        String hostname = intent.getStringExtra(MainActivity.HOSTNAME);
-        int port = Integer.parseInt(intent.getStringExtra(MainActivity.PORT));
-        String password = intent.getStringExtra(MainActivity.PASSWORD);
-
+        Preference p = (Preference)intent.getParcelableExtra(MainActivity.PREFERENCE_PARCEABLE);
 
         PipedInputStream in  = new PipedInputStream();
         PipedOutputStream out = new PipedOutputStream();
 
-        SessionUserInfo user = new SessionUserInfo(hostname, username, port, this);
-        if(password == null)
+        SessionUserInfo user = new SessionUserInfo(p.getHostName(), p.getUsername(), p.getPort(), this);
+        if(p.getUseKey())
         {
-            String key = intent.getStringExtra(MainActivity.RSAKEY);
-            user.setRSA(key);
+            user.setRSA(p.getRsaKey());
         }
         else
         {
-            user.setPassword(password);
+            user.setPassword(p.getPassword());
         }
         SshConnection connection = new SshConnection(user, in, out);
-        setTitle("Connecting...");
 
         conn = connection;
-        textSize = 10;
+        textSize = Integer.parseInt(prefInstance.fontSize());
         view.attachSession(conn);
         view.setTextSize(textSize);
+        view.setAltSendsEsc(false);
+        view.setMouseTracking(true);
+
+        view.setTermType("xterm-256color");
         //view.setUseCookedIME(true);
 
 
@@ -91,26 +78,6 @@ public class TerminalActivity extends ActionBarActivity
             return;
         }
         setTitle(conn.getName());
-
-
-      /*  EditText mEntry = (EditText) findViewById(R.id.term_entry);
-        mEntry.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int action, KeyEvent ev) {
-                // Ignore enter-key-up events
-                if (ev != null && ev.getAction() == KeyEvent.ACTION_UP) {
-                    return false;
-                }
-                // Don't try to send something if we're not connected yet
-
-                Editable e = (Editable) v.getText();
-                // Write to the terminal session
-                System.out.println(e.toString());
-                conn.write(e.toString());
-                conn.write('\n');
-                TextKeyListener.clear(e);
-                return true;
-            }
-        });*/
     }
 
     @Override
@@ -122,14 +89,23 @@ public class TerminalActivity extends ActionBarActivity
             textSize++;
             EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
             view.setTextSize(textSize);
+
+           // conn.updateSize(view.getWidth(), view.getHeight());
+           // conn.reset();
+
+            view.setSelected(true);
             view.updateSize(true);
+            view.invalidate();
         }
         else if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN))
         {
             textSize--;
             EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
             view.setTextSize(textSize);
+
+            //conn.updateSize(view.getWidth(), view.getHeight());
             view.updateSize(true);
+            view.invalidate();
         }
         else
         {
@@ -162,7 +138,7 @@ public class TerminalActivity extends ActionBarActivity
         
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_actions, menu);
+        inflater.inflate(R.menu.terminal, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -204,11 +180,11 @@ public class TerminalActivity extends ActionBarActivity
             //openSaved();
             return true;
         }
-        else if (id == R.id.action_saved)
-        {
+        //else if (//id == R.id.action_saved)
+       // {
             //openSettings();
-            return true;
-        }
+         //   return true;
+       // }
         else
         {
             return super.onOptionsItemSelected(item);
@@ -225,25 +201,19 @@ public class TerminalActivity extends ActionBarActivity
         }
         else
         {
-            new AlertDialog.Builder(this).setMessage("Are you sure you would like to disconnect?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+            marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", getString(R.string.yes), getString(R.string.no), true,
+                    new YesNoDialog()
+                    {
+                        @Override
+                        public void PositiveMethod(final DialogInterface dialog, final int id)
+                        {
                             conn.disconnect();
                             finish();
-
                         }
-                    })
-                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create()
-                .show();
-        }
+                    });
         }
     }
+}
 
 
 

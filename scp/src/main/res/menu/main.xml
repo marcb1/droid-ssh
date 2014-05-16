@@ -2,26 +2,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="marc.scp.scp.MainActivity" >
-    
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="always" />
 
     <item android:id="@+id/action_saved_hosts"
     android:title="@string/saved_servers"
-    android:showAsAction="always" />
+    android:showAsAction="collapseActionView" />
 
     <item android:id="@+id/action_cached_fingerprints"
         android:title="@string/known_hosts"
-        android:showAsAction="always" />
+        android:showAsAction="collapseActionView" />
 
     <item android:id="@+id/action_saved_folders"
         android:title="@string/saved_sync"
-        android:showAsAction="always" />
+        android:showAsAction="collapseActionView" />
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="collapseActionView" />
 
     <item android:id="@+id/action_exit"
         android:title="@string/exit"
-        android:showAsAction="always" />
+        android:showAsAction="collapseActionView" />
 
 </menu>

@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.syncDialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/connectionNameField"
         android:hint="@string/connection_name"
-        android:inputType="text|textNoSuggestions"
+        android:inputType="text|textNoSuggestions|textFilter"
         />
 
     <EditText
@@ -22,14 +22,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/hostNameField"
         android:hint="@string/host_message"
-        android:inputType="text|textNoSuggestions"
+        android:inputType="text|textNoSuggestions|textFilter"
         />
 
     <EditText
         android:id="@+id/usernameField"
         android:layout_width="match_parent"
         android:hint="@string/username_message"
-        android:inputType="text|textNoSuggestions"
+        android:inputType="text|textNoSuggestions|textFilter"
         android:layout_height="wrap_content" >
         <requestFocus />
     </EditText>

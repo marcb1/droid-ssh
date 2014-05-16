@@ -3,18 +3,54 @@
 
 
     <PreferenceCategory android:title="@string/pref_connection">
-        <ListPreference
-            android:key="compression_value"
+
+        <CheckBoxPreference
+            android:key="pref_host_checking"
+            android:title="@string/pref_host_checking"
+            android:summary="@string/pref_host_checking_summary"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="pref_compression"
+            android:title="@string/pref_compression"
             android:summary="@string/pref_compression_summary"
-            android:title="@string/pref_compression" />
+            android:defaultValue="false" />
+        <ListPreference
+            android:dependency="pref_compression"
+            android:key="compression_value"
+            android:entries="@array/compression_values"
+            android:entryValues="@array/compression_values"
+            android:title="@string/pref_compression_values"
+            android:summary="@string/pref_compression_values_summary"/>
 
-        <EditTextPreference
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_terminal">
+        <ListPreference
             android:key="font_size"
-            android:title="@string/pref_font" />
+            android:entries="@array/font_sizes"
+            android:entryValues="@array/font_sizes"
+            android:title="@string/pref_font"
+            android:summary="@string/pref_font_summary"/>
 
+        <ListPreference
+            android:key="terminal_emulation"
+            android:entries="@array/terminal_values"
+            android:entryValues="@array/terminal_values"
+            android:title="@string/terminal_emulation"
+            android:summary="@string/terminal_emulation_summary"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_general">
+    <Preference
+        android:title="@string/pref_clear_history"
+        android:key="clear_history"/>
         <Preference
-            android:title="@string/pref_clear_history"
-            android:key="clear_cache"/>
+            android:title="@string/pref_about"
+            android:key="about"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

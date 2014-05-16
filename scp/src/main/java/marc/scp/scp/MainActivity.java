@@ -1,99 +1,107 @@
 package marc.scp.scp;
 
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.app.Activity;
 import android.content.DialogInterface;
-import android.support.v7.app.ActionBarActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
-import marc.scp.databaseutils.DatabaseHelper;
+import marc.scp.databaseutils.FileSync;
+import marc.scp.views.ListViews;
 import marc.scp.databaseutils.Preference;
 
 //this is the main activity that's first started when the app is launched
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends Activity
 {
-    public final static String USERNAME = "com.whomarc.scp.USERNAME";
-    public final static String PASSWORD = "com.whomarc.scp.PASSWORD";
-    public final static String HOSTNAME = "com.whomarc.scp.HOSTNAME";
-    public final static String PORT = "com.whomarc.scp.PORT";
-    public final static String RSAKEY = "com.whomarc.scp.RSAKEY";
+    public final static String PREFERENCE_PARCEABLE = "com.whomarc.scp.PREFERENCE";
+    public final static String FILE_PARCEABLE = "com.whomarc.scp.FILE";
 
-    public final static String DBKEY = "com.whomarc.scp.DBKEY";
-    public final static String HOSTKEY = "com.whomarc.scp.HOSTKEY";
+    private ViewGroup contentView;
 
-    ListView listView;
-    DatabaseHelper helper;
+    private Database dbInstance;
+    SharedPreferencesManager prefInstance;
 
     @Override
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.activity_main, null);
-        listView = (ListView) contentView.findViewById(R.id.list_view);
+        contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
+
         Database.init(this);
+        dbInstance = Database.getInstance();
         setContentView(contentView);
+        prefInstance = SharedPreferencesManager.getInstance(this);
     }
 
     @Override
     protected void onStart()
     {
         super.onStart();
-        setupListView(listView);
+
+        ListView listView = (ListView) contentView.findViewById(R.id.connections_list);
+        setupConnectionsList(listView);
+
+        listView = (ListView) contentView.findViewById(R.id.folder_pair_list);
+        setupFolderPairsList(listView);
     }
 
-    private void setupListView(ListView lv)
+    private void setupFolderPairsList(ListView lv)
     {
-        final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
-        List<String> titles = new ArrayList<String>();
-        for (Preference pr : preferencesList)
+        final List<FileSync> fileList = Database.getInstance().getAllFileSync();
+        SimpleAdapter adapter = ListViews.createAdapterFromFilePairs(this, fileList);
+        if((adapter != null))
         {
-            if(pr != null)
-                titles.add(pr.getName());
+            lv.setAdapter(adapter);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    FileSync f = fileList.get(position);
+                    syncFile(f);
+                }
+            });
+
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, titles);
-        lv.setAdapter(adapter);
+    }
+
+    private void setupConnectionsList(ListView lv)
+    {
+        final List<Preference> preferencesList = dbInstance.getAllPreferences();
+        lv.setAdapter(ListViews.createAdapterFromPrefs(this, preferencesList));
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Preference p = preferencesList.get(position);
                 ConnectToPreference(p);
             }
         });
     }
 
-    public void ConnectToPreference(Preference p)
+    private void ConnectToPreference(Preference p)
     {
         Intent intent = new Intent(this, TerminalActivity.class);
-        intent.putExtra(USERNAME, p.getUsername());
-        intent.putExtra(HOSTNAME, p.getHostName());
-        intent.putExtra(PORT, String.valueOf(p.getPort()));
-        intent.putExtra(DBKEY, String.valueOf(p.getId()));
+        intent.putExtra(PREFERENCE_PARCEABLE, (Parcelable) p);
+        startActivity(intent);
+    }
 
-        if(p.getUseKey())
-        {
-            intent.putExtra(RSAKEY, p.getRsaKey());
-        }
-        else
-        {
-            intent.putExtra(PASSWORD, p.getPassword());
-        }
+    private void syncFile(FileSync f)
+    {
+        Intent intent = new Intent(this, SyncActivity.class);
+        intent.putExtra(FILE_PARCEABLE, (Parcelable) f);
         startActivity(intent);
     }
 
@@ -132,10 +140,10 @@ public class MainActivity extends ActionBarActivity
         String port = editText.getText().toString();
 
 
-        intent.putExtra(PASSWORD, password);
-        intent.putExtra(USERNAME, username);
-        intent.putExtra(HOSTNAME, hostname);
-        intent.putExtra(PORT, port);
+       // intent.putExtra(PASSWORD, password);
+       // intent.putExtra(USERNAME, username);
+       // intent.putExtra(HOSTNAME, hostname);
+       // intent.putExtra(PORT, port);
 
         startActivity(intent);
     }
@@ -167,14 +175,6 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
-            // Display the fragment as the main content.
-            //Fragment newFragment = new SettingsFragment();
-           // FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            //transaction.add(R.id.activity_main,newFragment);
-           // transaction.hide(this);
-        //    transaction.replace(R.id.activity_main, newFragment);
-          //  transaction.addToBackStack(null);
-          //  transaction.commit();
         }
         else if(id == R.id.action_exit)
         {
@@ -186,19 +186,19 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onBackPressed()
     {
-            new AlertDialog.Builder(this).setMessage("Are you sure you would like to exit?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create()
-                    .show();
+        ExitDialog();
+    }
+
+    private void ExitDialog()
+    {
+                marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you want to exit?", getString(R.string.yes), getString(R.string.no), true,
+                new YesNoDialog()
+                {
+                    @Override
+                    public void PositiveMethod(final DialogInterface dialog, final int id)
+                    {
+                        finish();
+                    }
+                });
     }
 }

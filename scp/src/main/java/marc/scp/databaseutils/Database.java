@@ -7,6 +7,10 @@ import android.content.Context;
 
 import com.j256.ormlite.table.TableUtils;
 
+/*
+    This file has been checked
+ */
+
 public class Database
 {
     private static final String Log = "Database";
@@ -32,6 +36,7 @@ public class Database
         return instance;
     }
 
+    //getters
     public List<Preference> getAllPreferences()
     {
         List<Preference> prefs = null;
@@ -41,23 +46,110 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "getAllPreferences exception", e);
+            android.util.Log.e(Log, "getAllPreferences exception", e);
         }
         return prefs;
     }
 
     public List<HostKeys> getAllHostKeys()
     {
-        List<HostKeys> prefs = null;
+        List<HostKeys> keys = null;
         try
         {
-            prefs = helper.getHostDao().queryForAll();
+            keys = helper.getHostDao().queryForAll();
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "getAllPreferences exception", e);
+            android.util.Log.e(Log, "getAllHostKeys exception", e);
         }
-        return prefs;
+        return keys;
+    }
+
+    public List<FileSync> getAllFileSync()
+    {
+        List<FileSync> sync = null;
+        try
+        {
+            sync = helper.getSyncDao().queryForAll();
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "getAllFileSync exception", e);
+        }
+        return sync;
+    }
+
+    public void addHostKey(HostKeys h)
+    {
+        try
+        {
+            helper.getHostDao().create(h);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "addHostKey exception", e);
+        }
+    }
+
+    public void addPreference(Preference p)
+    {
+        try
+        {
+            helper.getPreferenceDao().create(p);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "addPreference exception", e);
+        }
+    }
+
+    public void addFileSync(FileSync f)
+    {
+        try
+        {
+            helper.getSyncDao().create(f);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "addFileSync exception", e);
+        }
+    }
+
+    public void deleteFileSync(FileSync p)
+    {
+        try
+        {
+            helper.getSyncDao().delete(p);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "deleteFileSync exception", e);
+        }
+    }
+
+
+    public void deletePreference(Preference p)
+    {
+        try
+        {
+            helper.getPreferenceDao().delete(p);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "deletePreference exception", e);
+        }
+    }
+
+    public void updatePreference(Preference p)
+    {
+        try
+        {
+            helper.getPreferenceDao().update(p);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.d(Log, "updatePreference exception", e);
+        }
     }
 
     public List<HostKeys> getHostKey(String host)
@@ -74,98 +166,6 @@ public class Database
         return res;
     }
 
-    public void deleteAllHostKeys()
-    {
-            helper.clearHostKeysTable();
-    }
-
-    public void addHostKey(HostKeys h)
-    {
-        try
-        {
-            helper.getHostDao().create(h);
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "addHostKey exception", e);
-        }
-    }
-
-    public List<FileSync> getAllFileSync()
-    {
-        List<FileSync> sync = null;
-        try
-        {
-            sync = helper.getSyncDao().queryForAll();
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "getAllFileSync exception", e);
-        }
-        return sync;
-    }
-
-    public void addPreference(Preference p)
-    {
-        try
-        {
-            helper.getPreferenceDao().create(p);
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "addPreference exception", e);
-        }
-    }
-
-    public void addFileSync(FileSync f)
-    {
-        try
-        {
-            helper.getSyncDao().create(f);
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "addFileSync exception", e);
-        }
-    }
-
-    public void deleteSync(FileSync p)
-    {
-        try
-        {
-            helper.getSyncDao().delete(p);
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "deletePreference exception", e);
-        }
-    }
-
-
-    public void deletePreference(Preference p)
-    {
-        try
-        {
-            helper.getPreferenceDao().delete(p);
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "deletePreference exception", e);
-        }
-    }
-
-    public void updatePreference(Preference p)
-    {
-        try
-        {
-            helper.getPreferenceDao().update(p);
-        }
-        catch (SQLException e)
-        {
-            android.util.Log.d(Log, "updatePreference exception", e);
-        }
-    }
-
     public Preference getPreferenceID(int preferenceID) {
         Preference pref = null;
         try
@@ -177,5 +177,16 @@ public class Database
             android.util.Log.d(Log, "getPreferenceID exception", e);
         }
         return pref;
+    }
+
+
+    public void deleteAllHostKeys()
+    {
+        helper.clearHostKeysTable();
+    }
+
+    public void deleteAllTables()
+    {
+
     }
 }

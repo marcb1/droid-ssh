@@ -130,7 +130,7 @@ public class SyncList extends Activity
 
     private void deleteSync(FileSync file)
     {
-        Database.getInstance().deleteSync(file);
+        Database.getInstance().deleteFileSync(file);
         finish();
     }
 }

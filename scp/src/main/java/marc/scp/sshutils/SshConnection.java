@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.File;
+import java.util.List;
 
 import jackpal.androidterm.emulatorview.TermSession;
 
@@ -62,7 +63,51 @@ public class SshConnection extends TermSession
             session.setHostKeyRepository(new FingerPrintRepository(jsch));
             session.setServerAliveInterval(10000);
 
-            //enableCompression("9");
+            enableCompression("9");
+
+            if(user.usingRSA())
+            {
+                //load(alias, private, public, passphrase)
+                KeyPair keyPair = KeyPair.load(jsch, user.getRsa(), null);
+                jsch.addIdentity(user.getHost(), keyPair.forSSHAgent(), null, null);
+            }
+            session.setUserInfo(user);
+        }
+        catch(JSchException e)
+        {
+            userInfo.handleException(e);
+            Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
+            session = null;
+        }
+        catch(Exception e)
+        {
+            Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
+            session = null;
+        }
+    }
+
+    public SshConnection(SessionUserInfo user)
+    {
+        jsch = new JSch();
+        userInfo = user;
+        state = CONNECTION_STATE.DISCONNECTED;
+
+        localIn = null;
+        localOut = null;
+
+        session = null;
+        channel = null;
+        sftp = null;
+        //give user object, alerts user if they want to reconnect
+        user.setConnectionHandler(this);
+
+        try
+        {
+            session = jsch.getSession(userInfo.getUser(), userInfo.getHost(), userInfo.getPort());
+            session.setHostKeyRepository(new FingerPrintRepository(jsch));
+            session.setServerAliveInterval(10000);
+
+            enableCompression("9");
 
             if(user.usingRSA())
             {
@@ -119,7 +164,7 @@ public class SshConnection extends TermSession
     }
 
     //not tested, need to be worked on
-    boolean connectAsSftp()
+    public boolean connectAsSftp()
     {
         boolean ret = false;
         try
@@ -151,7 +196,7 @@ public class SshConnection extends TermSession
         return ret;
     }
 
-    public boolean sendFiles(File[] files, SftpProgressMonitor monitor)
+    public boolean sendFiles(List<File> files, SftpProgressMonitor monitor)
     {
         boolean ret = false;
         if((state == state.DISCONNECTED) || (sftp == null))
@@ -170,11 +215,32 @@ public class SshConnection extends TermSession
                 }
                 catch (SftpException e)
                 {
-                    e.printStackTrace();
+                   // e.printStackTrace();
+                    System.out.println("Exception: " + e.getMessage());
                     ret = false;
                     break;
                 }
             }
+        }
+        catch(Exception e)
+        {
+            ret = false;
+        }
+        return ret;
+    }
+
+    public boolean sendFile(File file)
+    {
+        boolean ret = false;
+        if((state == state.DISCONNECTED) || (sftp == null))
+        {
+            return ret;
+        }
+        try
+        {
+            sftp.setInputStream(null);
+            sftp.put(file.getPath(), file.getName(), ChannelSftp.APPEND);
+            ret = true;
         }
         catch(Exception e)
         {
@@ -209,7 +275,13 @@ public class SshConnection extends TermSession
             }
             session.disconnect();
         }
-        finish();
+        try
+        {
+            finish();
+        }catch(Exception e)
+        {
+//            System.out.println(e.getMessage());
+        }
     }
 
     public boolean isConnected()

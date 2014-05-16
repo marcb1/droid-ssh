@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import android.app.Activity;
 
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.HostKeys;
@@ -23,19 +25,20 @@ import marc.scp.databaseutils.HostKeys;
  * Created by Marc on 5/14/14.
  */
 
-public class FingerPrintList  extends ActionBarActivity
+public class FingerPrintList extends Activity
 {
-    ListView listView;
-        protected void onCreate(Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
-            ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.fingerprint_list, null);
-            listView = (ListView) contentView.findViewById(R.id.list_view);
+    private ListView listView;
 
-            Button btnDeleteList = (Button) contentView.findViewById(R.id.button_delete);
-            setupDeleteButton(btnDeleteList);
-            setContentView(contentView);
-        }
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.fingerprint_list, null);
+        listView = (ListView) contentView.findViewById(R.id.list_view);
+
+        Button btnDeleteList = (Button) contentView.findViewById(R.id.button_delete);
+        setupDeleteButton(btnDeleteList);
+        setContentView(contentView);
+    }
 
     @Override
     protected void onStart()
