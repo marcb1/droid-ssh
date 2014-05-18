@@ -75,7 +75,7 @@ public class Preference implements Parcelable
     public boolean getUseKey()
     {
        boolean ret = false;
-       if(rsaKey.length() > 2)
+       if(rsaKey.length() >= 1)
        {
            ret = true;
        }

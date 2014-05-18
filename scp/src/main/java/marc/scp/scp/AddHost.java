@@ -19,6 +19,8 @@ import android.widget.Switch;
 import android.widget.ToggleButton;
 
 
+import java.io.File;
+
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.Preference;
@@ -99,6 +101,65 @@ public class AddHost extends Activity
         }
     }
 
+    private Preference errorCheckInput()
+    {
+        Preference p = null;
+        EditText edit;
+        final Activity activity = this;
+
+        edit = (EditText) contentView.findViewById(R.id.connectionNameField);
+        String name = edit.getText().toString();
+        if(Dialogs.toastIfEmpty(name, activity, "You did not enter a connection name"))
+        {
+            return p;
+        }
+        edit = (EditText) contentView.findViewById(R.id.hostNameField);
+        String host = edit.getText().toString();
+        if(Dialogs.toastIfEmpty(host, activity, "You did not enter a host name"))
+        {
+            return p;
+        }
+        edit = (EditText) contentView.findViewById(R.id.usernameField);
+        String userName = edit.getText().toString();
+        if(Dialogs.toastIfEmpty(userName, activity, "You did not enter a user name"))
+        {
+            return p;
+        }
+        edit = (EditText) findViewById(R.id.portField);
+        if(Dialogs.toastIfEmpty(edit.getText().toString(), activity, "You did not enter a port number"))
+        {
+            return p;
+        }
+        int port = Integer.parseInt(edit.getText().toString());
+        Preference addP = new Preference(name, host, userName, port);
+
+        edit = (EditText) contentView.findViewById(R.id.passwordField);
+        String passwordOrKey = edit.getText().toString();
+        if(!usingRSAKey)
+        {
+            if(Dialogs.toastIfEmpty(passwordOrKey, activity, "you did not enter a password"))
+            {
+                return p;
+            }
+            addP.setPassword(passwordOrKey);
+        }
+        else
+        {
+            if(Dialogs.toastIfEmpty(passwordOrKey, activity, "you did not enter an RSA key file"))
+            {
+                return p;
+            }
+            File file = new File(passwordOrKey);
+            if(!file.exists())
+            {
+                Dialogs.makeToast(activity, "File does not exist");
+                return p;
+            }
+            addP.setRsaKey(passwordOrKey);
+        }
+        return addP;
+    }
+
     private void setupAddandEditButton(Button btn)
     {
         final Activity  activity = this;
@@ -106,56 +167,12 @@ public class AddHost extends Activity
         {
             public void onClick(View v)
             {
-
-                EditText edit;
-
-                edit = (EditText) contentView.findViewById(R.id.connectionNameField);
-                String name = edit.getText().toString();
-                if(Dialogs.toastIfEmpty(name, activity, "You did not enter a connection name"))
+                Preference addP = errorCheckInput();
+                if(addP == null)
                 {
                     return;
                 }
-                edit = (EditText) contentView.findViewById(R.id.hostNameField);
-                String host = edit.getText().toString();
-                if(Dialogs.toastIfEmpty(host, activity, "You did not enter a host name"))
-                {
-                    return;
-                }
-                edit = (EditText) contentView.findViewById(R.id.usernameField);
-                String userName = edit.getText().toString();
-                if(Dialogs.toastIfEmpty(userName, activity, "You did not enter a user name"))
-                {
-                    return;
-                }
-                edit = (EditText) findViewById(R.id.portField);
-                if(Dialogs.toastIfEmpty(edit.getText().toString(), activity, "You did not enter a port number"))
-                {
-                    return;
-                }
-                int port = Integer.parseInt(edit.getText().toString());
-                Preference addP = new Preference(name, host, userName, port);
-
-                edit = (EditText) contentView.findViewById(R.id.passwordField);
-                String passwordOrKey = edit.getText().toString();
-                if(!usingRSAKey)
-                {
-                    if(Dialogs.toastIfEmpty(passwordOrKey, activity, "you did not enter an RSA key"))
-                    {
-                        return;
-                    }
-                    addP.setPassword(passwordOrKey);
-
-                }
-                else
-                {
-                    addP.setRsaKey(passwordOrKey);
-                    if(Dialogs.toastIfEmpty(passwordOrKey, activity, "you did not enter a password"))
-                    {
-                        return;
-                    }
-                }
-
-                if(pref == null)
+                else if(pref == null)
                 {
                     createNewPreference(addP);
                 }

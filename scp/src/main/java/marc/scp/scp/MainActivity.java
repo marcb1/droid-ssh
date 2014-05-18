@@ -1,8 +1,9 @@
 package marc.scp.scp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.view.View;
 import android.widget.ListView;
@@ -20,16 +22,22 @@ import java.util.List;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
-import marc.scp.views.ListViews;
+import marc.scp.preferences.SharedPreferencesManager;
+import marc.scp.viewPopulator.ListViews;
 import marc.scp.databaseutils.Preference;
+
+
 
 //this is the main activity that's first started when the app is launched
 public class MainActivity extends Activity
 {
     public final static String PREFERENCE_PARCEABLE = "com.whomarc.scp.PREFERENCE";
     public final static String FILE_PARCEABLE = "com.whomarc.scp.FILE";
+    private static final int REQUEST_CHOOSER = 1234;
+
 
     private ViewGroup contentView;
+    private AlertDialog exitAlert;
 
     private Database dbInstance;
     SharedPreferencesManager prefInstance;
@@ -38,13 +46,16 @@ public class MainActivity extends Activity
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
+        prefInstance = SharedPreferencesManager.getInstance(this);
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
 
         Database.init(this);
         dbInstance = Database.getInstance();
+
+        Button quickConnect = (Button) contentView.findViewById(R.id.quickConnect);
+        setupQuickConnectBtn(quickConnect);
         setContentView(contentView);
-        prefInstance = SharedPreferencesManager.getInstance(this);
     }
 
     @Override
@@ -191,7 +202,11 @@ public class MainActivity extends Activity
 
     private void ExitDialog()
     {
-                marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you want to exit?", getString(R.string.yes), getString(R.string.no), true,
+       // if((exitAlert != null) && (exitAlert.isShowing()))
+       // {
+         //   super.onBackPressed();
+       // }
+                exitAlert = marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you want to exit?", getString(R.string.yes), getString(R.string.no), true,
                 new YesNoDialog()
                 {
                     @Override
@@ -200,5 +215,27 @@ public class MainActivity extends Activity
                         finish();
                     }
                 });
+    }
+
+    private void setupQuickConnectBtn(Button quickConnect)
+    {
+        final Activity activity = this;
+        quickConnect.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                final Dialog dialog = new Dialog(activity);
+                dialog.setContentView(R.layout.quick_connect);
+                Button dialogButton = (Button) dialog.findViewById(R.id.quickConnect);
+                // if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+            }
+        });
     }
 }

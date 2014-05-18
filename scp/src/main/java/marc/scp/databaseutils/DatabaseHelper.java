@@ -90,9 +90,34 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
         }
         catch (SQLException e)
         {
-            android.util.Log.d(log, "onCreate exception", e);
+            android.util.Log.d(log, "clearHostKeysTable exception", e);
         }
     }
+
+    public void clearSyncTable()
+    {
+        try
+        {
+            TableUtils.clearTable(connectionSource, FileSync.class);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(log, "clearSyncTable exception", e);
+        }
+    }
+
+    public void clearConnectionsTable()
+    {
+        try
+        {
+            TableUtils.clearTable(connectionSource, Preference.class);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(log, "clearConnectionsTable exception", e);
+        }
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource)
     {

@@ -25,10 +25,6 @@
     <output url="file://$MODULE_DIR$/scp/build/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/classes/test" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/.gradle" />
-      <excludeFolder url="file://$MODULE_DIR$/build" />
-    </content>
     <content url="file://$MODULE_DIR$/scp">
       <sourceFolder url="file://$MODULE_DIR$/scp/build/source/r/debug" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/scp/build/source/aidl/debug" isTestSource="false" generated="true" />
@@ -40,27 +36,27 @@
       <sourceFolder url="file://$MODULE_DIR$/scp/build/source/buildConfig/test/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/scp/build/source/rs/test/debug" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/scp/build/res/rs/test/debug" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/aidl" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/assets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/debug/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/main/res" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/main/aidl" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/main/assets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/main/jni" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/scp/src/main/rs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/main/res" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/aidl" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/assets" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/jni" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/rs" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/res" type="java-test-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/scp/src/instrumentTest/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/assets" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/jni" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/scp/src/androidTest/rs" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/scp/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/scp/build/apk" />
       <excludeFolder url="file://$MODULE_DIR$/scp/build/assets" />

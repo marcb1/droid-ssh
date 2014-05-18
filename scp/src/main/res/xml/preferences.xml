@@ -46,11 +46,15 @@
 
     <PreferenceCategory android:title="@string/pref_general">
     <Preference
-        android:title="@string/pref_clear_history"
-        android:key="clear_history"/>
-        <Preference
+        android:title="@string/pref_delete_tables"
+        android:summary="@string/pref_delete_data_summary"
+        android:enabled="true"
+        android:key="delete_tables"/>
+     <Preference
             android:title="@string/pref_about"
             android:key="about"/>
+
+
     </PreferenceCategory>
 
 </PreferenceScreen>

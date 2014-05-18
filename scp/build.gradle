@@ -1,15 +1,19 @@
 apply plugin: 'android'
 
-android {
+android
+{
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
 
-    defaultConfig {
+    defaultConfig
+    {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
+    buildTypes
+    {
+        release
+        {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             debuggable false
@@ -19,7 +23,8 @@ android {
     }
 }
 
-dependencies {
+dependencies
+{
     compile 'com.android.support:appcompat-v7:+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/jsch-0.1.51.jar')

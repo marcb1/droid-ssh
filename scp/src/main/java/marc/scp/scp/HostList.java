@@ -20,15 +20,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import marc.scp.asyncDialogs.Dialogs;
+import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.*;
-import marc.scp.views.ListViews;
+import marc.scp.viewPopulator.ListViews;
 
 public class HostList extends Activity
 {
-    ListView listView;
-    Preference selectedPref;
+    private ListView listView;
+    private Preference selectedPref;
+
     public final static String SELECTED_ID = "com.whomarc.scp.ID";
-    View oldview;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -46,13 +48,14 @@ public class HostList extends Activity
         setupDeleteButton(btnDeleteList);
 
         setContentView(contentView);
-        oldview = null;
+        selectedPref = null;
     }
 
     @Override
     protected void onStart()
     {
         super.onStart();
+        selectedPref = null;
         setupListView(listView);
     }
 
@@ -63,15 +66,18 @@ public class HostList extends Activity
 
         lv.setOnItemClickListener(new OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedPref = preferencesList.get(position);
-                view.setBackgroundColor(Color.GRAY);
-                if(oldview != null)
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                if(selectedPref == preferencesList.get(position))
                 {
-                    oldview.setBackgroundColor(Color.BLACK);
+                    view.setBackgroundColor(Color.BLACK);
                 }
-                if(oldview != view)
-                oldview = view;
+                else
+                {
+                    selectedPref = preferencesList.get(position);
+                    view.setBackgroundColor(Color.GRAY);
+                }
+
             }
         });
     }
@@ -97,41 +103,53 @@ public class HostList extends Activity
         {
             public void onClick(View v) {
                 Intent intent = new Intent (activity, AddHost.class);
-                intent.putExtra(SELECTED_ID, selectedPref.getId());
-                startActivity(intent);
+                if(selectedPref != null)
+                {
+                    intent.putExtra(SELECTED_ID, selectedPref.getId());
+                    startActivity(intent);
+                }
+                else
+                {
+                    Dialogs.makeToast(activity, "Please select a saved connection to edit!");
+                }
             }
         });
     }
 
-    private void setupDeleteButton (Button btnDeleteList)
-    {
+    private void setupDeleteButton (Button btnDeleteList) {
         final Activity activity = this;
+        final HostList hostlist = this;
+
         btnDeleteList.setOnClickListener(new OnClickListener()
         {
             public void onClick(View v) {
-                new AlertDialog.Builder(activity).setMessage("Are you sure you would like to delete host: " + selectedPref.getName()+ "'?")
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                if(selectedPref != null) {
+                    Dialogs.getConfirmDialog(activity, "Are you sure you would like to delete the connection: " + selectedPref.getName()
+                                    + "? This will also delete the folder pairs associated with this connection.",
+                            getString(R.string.yes),
+                            getString(R.string.no), true, new YesNoDialog() {
+                                @Override
+                                public void PositiveMethod(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    hostlist.deletePreference(selectedPref);
+                                }
                             }
-                        })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog, int which)
-                            {
-                                dialog.dismiss();
-                                deletePreference(selectedPref);
-                            }
-                        })
-                        .create()
-                        .show();
+                    );
+                }
+                else
+                {
+                    Dialogs.makeToast(activity, "Please select a saved connection to delete!");
+                }
             }
-        });
+    });
     }
 
     private void deletePreference(Preference pref)
     {
+        Database.getInstance().deleteFileSyncsReferencingPref(pref.getId());
         Database.getInstance().deletePreference(pref);
+        finish();
+        startActivity(getIntent());
     }
 }
 

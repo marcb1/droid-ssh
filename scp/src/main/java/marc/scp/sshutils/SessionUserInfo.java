@@ -76,39 +76,41 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
 
     public void handleException(JSchException paramJSchException)
     {
-        String error = new String("Unknown error");
+        String error = new String(paramJSchException.getMessage());
+
         if (paramJSchException.getMessage().contains("reject HostKey")) {
             error = new String("You have rejected the server's fingerprint");
         }
         else if (paramJSchException.getMessage().contains("UnknownHostKey")) {
-            error = new String("Error: Unknown Host Key");
+            error = new String("Unknown Host Key");
         }
         else if (paramJSchException.getMessage().contains("HostKey has been changed")) {
-            error = new String("Error: Host key has been changed");
+            error = new String("Host key has been changed");
         }
         else if (paramJSchException.getMessage().contains("Auth fail")) {
-            error = new String("Error: authentication failed, check username/password");
+            error = new String("authentication failed, check username/password");
         }
         else if (paramJSchException.getMessage().contains("Auth cancel")) {
-            error = new String("Error: Authentication has been cancelled");
+            error = new String("Authentication has been cancelled");
         }
         else if (paramJSchException.getMessage().contains("socket is not established")) {
-            error = new String("Error: Unable to establish connection, check that you are connected");
+            error = new String("Unable to establish connection, check the host's IP and your connection.");
         }
         else if (paramJSchException.getMessage().contains("Too many authentication")) {
-            error = new String(paramJSchException.getMessage());
+            error = new String("Too many incorrect authentications with this user");
         }
         else if (paramJSchException.getMessage().contains("Connection refused")) {
             error = new String("Connection refused");
         }
-        else if (paramJSchException.getMessage().contains("Unable to resolve host"))
+        else if (paramJSchException.getMessage().contains("Unable to resolve host") || paramJSchException.getMessage().contains("Network is unreachable"))
         {
-            error = new String("Unable to establish connection, retry?");
+            error = new String("Unable to establish connection with the host, retry?");
             if(conn != null)
             {
                 MyAlertDialog alert = new MyAlertDialog(parent, error, this);
                 BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
                 actionRunnable.startOnUiAndWait();
+                System.out.println("A");
                 if(alertBooleanResult)
                 {
                     conn.connectAsShell();
@@ -121,13 +123,10 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
             }
             else
             {
-                error = new String("Error: Unable to establish connection, check that you are connected");
+                error = new String("Unable to establish connection with the host.");
             }
         }
-
-        MyAlertBox alert = new MyAlertBox(parent, error, this);
-        BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
-        actionRunnable.startOnUiAndWait();
+        showMessage("Error", error);
     }
 
     //abstract methods
@@ -137,11 +136,17 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
         return mPassword;
     }
 
-    public void showMessage(String message)
+    public void showMessage(String title, String message)
     {
-        MyAlertBox alert = new MyAlertBox(parent, message, this);
+        MyAlertBox alert = new MyAlertBox(parent, title, message, this);
         BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
         actionRunnable.startOnUiAndWait();
+    }
+
+    @Override
+    public void showMessage(String message)
+    {
+        showMessage("Info", message);
     }
     public boolean promptYesNo(final String message)
     {

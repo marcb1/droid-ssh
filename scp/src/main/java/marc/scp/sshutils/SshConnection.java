@@ -8,6 +8,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.File;
 import java.util.List;
+import java.util.Vector;
 
 import jackpal.androidterm.emulatorview.TermSession;
 
@@ -25,6 +26,9 @@ public class SshConnection extends TermSession
     private PipedOutputStream localOut;
 
     private SessionUserInfo userInfo;
+    private String remotePath;
+
+    public ChannelShell channelShell;
 
     private final String log = "SshConnection";
 
@@ -48,6 +52,7 @@ public class SshConnection extends TermSession
 
         session = null;
         channel = null;
+        remotePath = null;
         sftp = null;
         //give user object, alerts user if they want to reconnect
         user.setConnectionHandler(this);
@@ -62,8 +67,6 @@ public class SshConnection extends TermSession
             session = jsch.getSession(userInfo.getUser(), userInfo.getHost(), userInfo.getPort());
             session.setHostKeyRepository(new FingerPrintRepository(jsch));
             session.setServerAliveInterval(10000);
-
-            enableCompression("9");
 
             if(user.usingRSA())
             {
@@ -98,6 +101,7 @@ public class SshConnection extends TermSession
         session = null;
         channel = null;
         sftp = null;
+        remotePath = null;
         //give user object, alerts user if they want to reconnect
         user.setConnectionHandler(this);
 
@@ -106,8 +110,6 @@ public class SshConnection extends TermSession
             session = jsch.getSession(userInfo.getUser(), userInfo.getHost(), userInfo.getPort());
             session.setHostKeyRepository(new FingerPrintRepository(jsch));
             session.setServerAliveInterval(10000);
-
-            enableCompression("9");
 
             if(user.usingRSA())
             {
@@ -135,6 +137,8 @@ public class SshConnection extends TermSession
         boolean ret = false;
         try
         {
+            System.out.println(session == null);
+            System.out.println(state == CONNECTION_STATE.DISCONNECTED);
             if((session != null) && (state == CONNECTION_STATE.DISCONNECTED))
             {
                 Log.d(log, "SSH Connecting...");
@@ -142,6 +146,7 @@ public class SshConnection extends TermSession
                 session.connect(5000);
 
                 channel = session.openChannel("shell");
+                channelShell = (ChannelShell)channel;
                 state = CONNECTION_STATE.CONNECTED;
 
                 channel.setInputStream(localIn, true);
@@ -156,9 +161,9 @@ public class SshConnection extends TermSession
         catch(JSchException  e)
         {
             Log.d(log, "Exception caught while initiating SSH connection: " + e.getMessage(), e);
-            userInfo.handleException(e);
             ret = false;
             state = CONNECTION_STATE.DISCONNECTED;
+            userInfo.handleException(e);
         }
         return ret;
     }
@@ -206,12 +211,21 @@ public class SshConnection extends TermSession
         try
         {
             sftp.setInputStream(null);
-            for (File file : files)
+            for (final File file : files)
             {
                 try
                 {
-                    sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.APPEND);
-                    ret = true;
+                    if(remotePath != null)
+                    {
+                        ChannelSelector select = new ChannelSelector(file);
+
+                        sftp.ls(remotePath, select);
+                        if(!select.result)
+                        {
+                            sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.APPEND);
+                        }
+                        ret = true;
+                    }
                 }
                 catch (SftpException e)
                 {
@@ -226,6 +240,28 @@ public class SshConnection extends TermSession
         {
             ret = false;
         }
+        return ret;
+    }
+
+    public boolean changeRemoteDirectory(String path)
+    {
+        boolean ret = false;
+        if((state == state.DISCONNECTED) || (sftp == null))
+        {
+            return ret;
+        }
+        try
+        {
+            sftp.cd(path);
+            remotePath = path;
+            ret = true;
+        }
+        catch (SftpException e)
+        {
+         // e.printStackTrace();
+         System.out.println("Exception: " + e.getMessage());
+         ret = false;
+         }
         return ret;
     }
 
@@ -265,6 +301,7 @@ public class SshConnection extends TermSession
         session.setConfig(config);
     }
 
+
     public void disconnect()
     {
         if(state != CONNECTION_STATE.DISCONNECTED)
@@ -274,13 +311,18 @@ public class SshConnection extends TermSession
                 channel.disconnect();
             }
             session.disconnect();
+            state = CONNECTION_STATE.DISCONNECTED;
         }
         try
         {
-            finish();
-        }catch(Exception e)
+            if(sftp == null)
+            {
+                finish();
+            }
+        }
+        catch(Exception e)
         {
-//            System.out.println(e.getMessage());
+            Log.e(log, "disconnect", e);
         }
     }
 

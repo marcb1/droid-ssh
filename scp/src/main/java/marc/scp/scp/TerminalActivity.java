@@ -1,9 +1,10 @@
 package marc.scp.scp;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import marc.scp.asyncDialogs.YesNoDialog;
-import marc.scp.asyncTasks.IConnectionNotifier;
-import marc.scp.asyncTasks.SshConnectTask;
+import marc.scp.asyncNetworkTasks.IConnectionNotifier;
+import marc.scp.asyncNetworkTasks.SshConnectTask;
 import marc.scp.databaseutils.Preference;
+import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.sshutils.*;
 
 import android.app.Activity;
@@ -25,6 +26,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
     private SshConnection conn;
     private int textSize;
     SharedPreferencesManager prefInstance;
+    TerminalView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,7 +35,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         setContentView(R.layout.terminal_activity);
         prefInstance = SharedPreferencesManager.getInstance(this);
 
-        EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
+       view  = (TerminalView) findViewById(R.id.emulatorView);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         view.setDensity(metrics);
@@ -53,18 +55,23 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         {
             user.setPassword(p.getPassword());
         }
+        System.out.println(1);
         SshConnection connection = new SshConnection(user, in, out);
 
         conn = connection;
         textSize = Integer.parseInt(prefInstance.fontSize());
+        view.addConnection(conn);
         view.attachSession(conn);
         view.setTextSize(textSize);
         view.setAltSendsEsc(false);
         view.setMouseTracking(true);
 
-        view.setTermType("xterm-256color");
+        System.out.println(2);
+
+        view.setTermType("vt100");
         //view.setUseCookedIME(true);
 
+        SharedPreferencesManager.getInstance(this).setPreferencesonConnection(conn);
 
         SshConnectTask task = new SshConnectTask(this);
         task.execute(conn);
@@ -78,6 +85,8 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
             return;
         }
         setTitle(conn.getName());
+        conn.channelShell.setPtyType("xterm-256color");
+        view.refreshScreen();
     }
 
     @Override
@@ -197,7 +206,19 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         System.out.println("onBackPressed");
         if(!conn.isConnected())
         {
-            super.onBackPressed();
+            try
+            {
+                //kill the connecting thread
+                if(conn != null)
+                {
+                    conn.disconnect();
+                }
+                super.onBackPressed();
+            }
+            catch(Exception e)
+            {
+
+            }
         }
         else
         {
@@ -213,6 +234,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
                     });
         }
     }
+
 }
 
 

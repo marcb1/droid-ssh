@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
 import marc.scp.databaseutils.HostKeys;
@@ -46,6 +47,7 @@ public class AddFolderPair  extends Activity
         populateSpinner(spinner);
 
         setContentView(contentView);
+        selectedItemSpinner = -1;
     }
 
     private void populateSpinner(Spinner spinner)
@@ -71,7 +73,7 @@ public class AddFolderPair  extends Activity
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, prefList);
         spinner.setAdapter(adapter);
-System.out.println(1);
+        System.out.println(1);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String host = (String)parent.getItemAtPosition(pos);
@@ -87,19 +89,38 @@ System.out.println(1);
 
     private void setupAddandEditButton(Button btn)
     {
+        final Activity activity = this;
         btn.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
                 EditText edit;
 
-                edit = (EditText) contentView.findViewById(R.id.localFolderField);
-                String localFolder = edit.getText().toString();
-                edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
-                String remoteFolder = edit.getText().toString();
                 edit = (EditText) contentView.findViewById(R.id.folderPairName);
                 String name = edit.getText().toString();
+                if(Dialogs.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
+                {
+                    return;
+                }
 
+                edit = (EditText) contentView.findViewById(R.id.localFolderField);
+                String localFolder = edit.getText().toString();
+                if(Dialogs.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
+                {
+                    return;
+                }
+                edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
+                String remoteFolder = edit.getText().toString();
+                if(Dialogs.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
+                {
+                    return;
+                }
+
+                if(selectedItemSpinner == -1)
+                {
+                    Dialogs.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
+                    return;
+                }
                 FileSync file = new FileSync(name, selectedItemSpinner, localFolder, remoteFolder);
                 dbInstance.addFileSync(file);
                 finish();

@@ -3,53 +3,57 @@ package marc.scp.scp;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.jcraft.jsch.SftpProgressMonitor;
 
 import java.io.File;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import jackpal.androidterm.emulatorview.EmulatorView;
+import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
-import marc.scp.asyncTasks.FileUploadProgress;
-import marc.scp.asyncTasks.IConnectionNotifier;
-import marc.scp.asyncTasks.SftpConnectTask;
-import marc.scp.asyncTasks.SftpUploadTask;
-import marc.scp.asyncTasks.SshConnectTask;
+import marc.scp.asyncNetworkTasks.IUploadNotifier;
+import marc.scp.asyncNetworkTasks.SftpConnectTask;
+import marc.scp.asyncNetworkTasks.SftpUploadTask;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
 import marc.scp.databaseutils.Preference;
+import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.sshutils.SessionUserInfo;
 import marc.scp.sshutils.SshConnection;
 
 /**
  * Created by Marc on 5/16/14.
  */
-public class SyncActivity  extends Activity implements IConnectionNotifier, SftpProgressMonitor
+public class SyncActivity  extends Activity implements IUploadNotifier, SftpProgressMonitor
 {
     private Database dbInstance;
-    private SshConnection conn;
-    private FileSync f;
-    private ProgressBar mProgress;
 
-    FileUploadProgress progress;
+    private SshConnection conn;
+    private FileSync file;
+
+    private ViewGroup contentView;
+
+    private long max;
+    private long lastResult;
+    ProgressBar progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         dbInstance = Database.getInstance();
-        setContentView(R.layout.file_sync);
+        contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.file_sync, null);
+        setContentView(contentView);
 
         Intent intent = getIntent();
-        f = (FileSync)intent.getParcelableExtra(MainActivity.FILE_PARCEABLE);
-        Preference p = dbInstance.getPreferenceID(f.getPreferencesId());
+        file = (FileSync)intent.getParcelableExtra(MainActivity.FILE_PARCEABLE);
+        Preference p = dbInstance.getPreferenceID(file.getPreferencesId());
 
         SessionUserInfo user = new SessionUserInfo(p.getHostName(), p.getUsername(), p.getPort(), this);
         if(p.getUseKey())
@@ -63,9 +67,10 @@ public class SyncActivity  extends Activity implements IConnectionNotifier, Sftp
 
         conn = new SshConnection(user);
 
+        progress = (ProgressBar) contentView.findViewById(R.id.progressBar);
+        SharedPreferencesManager.getInstance(this).setPreferencesonConnection(conn);
+
         SftpConnectTask task = new SftpConnectTask(this);
-        progress = new FileUploadProgress();
-        progress.doneUploading = false;
         task.execute(conn);
     }
 
@@ -74,18 +79,47 @@ public class SyncActivity  extends Activity implements IConnectionNotifier, Sftp
     {
         if(result)
         {
-            setTitle("Connection Successful!");
-            List<File> files = getListFiles(new File(f.getLocalFolder()));
-              //  setTitle("uploading: " + file.getAbsoluteFile());
-              //  System.out.println(file.getAbsoluteFile());
-            SftpUploadTask task = new SftpUploadTask(this, conn);
+            setTitle("Connected");
+            System.out.println("Connected");
+            File toSync = new File(file.getLocalFolder());
+            if(!toSync.exists())
+            {
+                Dialogs.getAlertDialog(this, "Error", "Local folder: '" + file.getLocalFolder() + "' does not exist", true);
+                conn.disconnect();
+                return;
+            }
+            List<File> files = getListFiles(toSync);
+            boolean remoteExists = conn.changeRemoteDirectory(file.getRemoteFolder());
+            if(!remoteExists)
+            {
+                Dialogs.getAlertDialog(this, "Error", "Remote folder: '" + file.getRemoteFolder() + "' does not exist", true);
+                conn.disconnect();
+                return;
+            }
+            SftpUploadTask task = new SftpUploadTask(this, conn, this);
             task.execute(files);
-            waitOnEvents();
+            setTitle("Uploading...");
+        }
+        else
+        {
+            System.out.println("Error");
+            setTitle("Error...");
+        }
+    }
+
+    public void transferResult(boolean result)
+    {
+        if(result)
+        {
+            setTitle("Done uploading.");
         }
         else
         {
             setTitle("Error...");
         }
+        conn.disconnect();
+        TextView t = (TextView) contentView.findViewById(R.id.fileUploadStatus);
+        t.setText("");
     }
 
     private List<File> getListFiles(File parentDir)
@@ -106,53 +140,9 @@ public class SyncActivity  extends Activity implements IConnectionNotifier, Sftp
         return inFiles;
     }
 
-
-    //SFTP Progress methods
-    public boolean count(long count)
-    {
-        return true;
-    }
-
-    public void waitOnEvents()
-    {
-        synchronized (this)
-        {
-            try
-            {
-                if(!progress.doneUploading)
-                {
-                    this.wait();
-                    setTitle("uploading: " + progress.src);
-                }
-            }
-            catch(Exception e)
-            {
-
-            }
-        }
-    }
-
-    public void init(int op, String src, String dest, long max)
-    {
-        synchronized (this)
-        {
-            if(!progress.doneUploading)
-            {
-                progress.src = src;
-                progress.dst = dest;
-                this.notify();
-            }
-        }
-    }
-
-    public void end()
-    {
-    }
-
     @Override
     public void onBackPressed()
     {
-        System.out.println("onBackPressed");
         if(!conn.isConnected())
         {
             super.onBackPressed();
@@ -166,18 +156,45 @@ public class SyncActivity  extends Activity implements IConnectionNotifier, Sftp
                         @Override
                         public void PositiveMethod(final DialogInterface dialog, final int id)
                         {
-                            finish();
                             conn.disconnect();
-                            synchronized (activity)
-                            {
-                                progress.doneUploading = true;
-                                activity.notifyAll();
-                            }
-
+                            finish();
                         }
                     });
         }
     }
 
+    //SFTP Progress methods
+    @Override
+    public boolean count(final long count)
+    {
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                    progress.incrementProgressBy((int) count);
+            }
+        });
 
+        return true;
+    }
+
+    @Override
+    public void init(int op, final String src, final String dest, long m)
+    {
+        progress.setMax((int) m);
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                TextView t = (TextView) contentView.findViewById(R.id.fileUploadStatus);
+                t.setText("uploading: " + src + "...");
+            }
+        });
+    }
+
+    @Override
+    public void end()
+    {
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                progress.setProgress(0);
+            }
+        });
+    }
 }

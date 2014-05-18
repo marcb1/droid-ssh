@@ -7,7 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <Button
             android:id="@+id/quickConnect"
@@ -15,47 +16,46 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="12dp"
-            android:text="Quick Connect" />
+            android:layout_marginTop="6dp"
+            android:text="@string/quick_connect" />
 
         <TextView
             android:id="@+id/SavedConnections"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Saved Connections"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:layout_marginTop="1dp"
+            android:text="@string/saved_connections"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginLeft="7dp" />
 
         <ListView
             android:id="@+id/connections_list"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentStart="true"
             android:layout_marginTop="2dp"
-            android:background="@color/card_shadow" />
-
+            android:background="@drawable/rounded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="6dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <View style="@style/Divider" />
 
         <Button
-            android:id="@+id/QuickConnect"
+            android:id="@+id/SyncAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="12dp"
-            android:text="Sync All"
-
-            />
+            android:layout_marginTop="6dp"
+            android:text="@string/sync_all"/>
 
         <TextView
             android:id="@+id/textView"
@@ -63,9 +63,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="12dp"
-            android:text="Sync Folders"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginTop="1dp"
+            android:text="@string/sync_folders"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginLeft="7dp" />
 
         <ListView
             android:id="@+id/folder_pair_list"
@@ -74,7 +76,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="2dp"
-            android:background="@color/card_shadow" />
+            android:background="@drawable/rounded" />
 
     </LinearLayout>
 

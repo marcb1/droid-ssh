@@ -22,9 +22,11 @@ public class MyAlertDialog implements BlockingOnUIRunnableListener
 
     public void onRunOnUIThread(final Runnable runnable)
     {
-        new android.app.AlertDialog.Builder(activityParent).setMessage(message)
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+        android.app.AlertDialog alert =  new android.app.AlertDialog.Builder(activityParent).setMessage(message)
+                .setNegativeButton("No", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
                         dialog.dismiss();
                         handler.alertBooleanResult = false;
                         synchronized ( runnable )
@@ -45,7 +47,8 @@ public class MyAlertDialog implements BlockingOnUIRunnableListener
                         }
                     }
                 })
-                .create()
-                .show();
+                .create();
+        alert.setCanceledOnTouchOutside(false);
+        alert.show();
     }
 }

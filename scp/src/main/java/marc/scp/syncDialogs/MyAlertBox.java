@@ -14,19 +14,21 @@ public class MyAlertBox  implements BlockingOnUIRunnableListener
     Activity activityParent;
     SessionUserInfo handler;
     String message;
+    String title;
 
-    public MyAlertBox(Activity parent, String msg, SessionUserInfo handle)
+    public MyAlertBox(Activity parent, String boxTitle, String msg, SessionUserInfo handle)
     {
         message = msg;
         handler = handle;
         activityParent = parent;
+        title = boxTitle;
     }
 
     public void onRunOnUIThread(final Runnable runnable)
     {
         new AlertDialog.Builder(activityParent)
                 .setMessage(message)
-                .setTitle("Error")
+                .setTitle(title)
                 .setCancelable(true)
                 .setNeutralButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {

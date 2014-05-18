@@ -166,7 +166,8 @@ public class Database
         return res;
     }
 
-    public Preference getPreferenceID(int preferenceID) {
+    public Preference getPreferenceID(int preferenceID)
+    {
         Preference pref = null;
         try
         {
@@ -185,8 +186,30 @@ public class Database
         helper.clearHostKeysTable();
     }
 
-    public void deleteAllTables()
+    public void clearAllTables()
     {
+        helper.clearHostKeysTable();
+        helper.clearConnectionsTable();
+        helper.clearSyncTable();
+    }
 
+    public void deleteFileSyncsReferencingPref(int prefId)
+    {
+        try
+        {
+            List<FileSync> files = helper.getSyncDao().queryForAll();
+            for(FileSync file: files)
+            {
+                if(file.getPreferencesId() == prefId)
+                {
+                    System.out.println(file.getId());
+                    helper.getSyncDao().delete(file);
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "deleteFileSyncsReferencingPref exception", e);
+        }
     }
 }

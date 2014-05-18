@@ -1,5 +1,6 @@
 package marc.scp.asyncDialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,7 +12,7 @@ import android.widget.Toast;
 
 public class Dialogs
 {
-    public static void getConfirmDialog(Context mContext, String msg, String positiveBtnCaption,
+    public static AlertDialog getConfirmDialog(Context mContext, String msg, String positiveBtnCaption,
                                         String negativeBtnCaption, boolean isCancelable, final YesNoDialog target)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -45,6 +46,7 @@ public class Dialogs
                 }
             });
         }
+        return alert;
     }
 
     public static boolean toastIfEmpty(String content, Context mContext, String msg)
@@ -53,9 +55,33 @@ public class Dialogs
         if(content.matches(""))
         {
             ret = true;
-            Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+            makeToast(mContext, msg);
         }
         return ret;
+    }
+
+    public static void makeToast(Context mContext, String msg)
+    {
+        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+    }
+
+    public static void getAlertDialog(final Activity activity, String title, String msg, final boolean finishonOk)
+    {
+        new AlertDialog.Builder(activity)
+                .setMessage(msg)
+                .setTitle(title)
+                .setCancelable(true)
+                .setNeutralButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                if (finishonOk) {
+                                    activity.finish();
+                                }
+                            }
+                        }
+                )
+                .show();
     }
 
 }

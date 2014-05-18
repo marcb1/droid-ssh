@@ -5,33 +5,30 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <jackpal.androidterm.emulatorview.EmulatorView
+    <FrameLayout android:id="@+id/my_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+    <view class="marc.scp.sshutils.TerminalView"
         android:id="@+id/emulatorView"
         android:layout_width="fill_parent"
-        android:layout_height="476dp"
+        android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true" />
+        </FrameLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1.92">
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CTRL"
-            android:id="@+id/button" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="K"
-            android:id="@+id/button2" />
-    </LinearLayout>
+        <LinearLayout android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/quickConnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="6dp"
+                android:text="@string/quick_connect" />
+        </LinearLayout>
 
 
 </LinearLayout>
