@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +29,12 @@ import marc.scp.databaseutils.Preference;
 public class AddFolderPair  extends Activity
 {
     private ViewGroup contentView;
-    Database dbInstance;
-    int selectedItemSpinner;
-    HashMap<String, Integer> hash;
+    private Database dbInstance;
+    private int selectedItemSpinner;
+
+    //hash of preferences and their id, used for adding folder pairs, so we don't have to query the database again
+    //to find the preference object, the folder pair is linked to
+    private HashMap<String, Integer> hash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,6 +42,7 @@ public class AddFolderPair  extends Activity
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_folder_pair, null);
         dbInstance = Database.getInstance();
+
         hash = new HashMap<String, Integer>();
 
         Button btn = (Button) contentView.findViewById(R.id.button_save);
@@ -55,25 +60,23 @@ public class AddFolderPair  extends Activity
         final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
         if(preferencesList == null)
         {
-            //TODO unify alert dialog to one class and alert user of error
+            Dialogs.getAlertDialog(this, "Error", "Please create a connection first", true);
+            finish();
             return;
         }
         ArrayList<String> prefList = new ArrayList<String>();
 
-        System.out.println(2);
         for (Preference pr: preferencesList)
         {
             if(pr != null)
             {
-                System.out.println(2);
                 prefList.add(pr.getName());
                 hash.put(pr.getName(), pr.getId());
-                System.out.println(4);
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, prefList);
         spinner.setAdapter(adapter);
-        System.out.println(1);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String host = (String)parent.getItemAtPosition(pos);
@@ -107,6 +110,12 @@ public class AddFolderPair  extends Activity
                 String localFolder = edit.getText().toString();
                 if(Dialogs.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
                 {
+                    return;
+                }
+                File test = new File(localFolder);
+                if(!test.exists())
+                {
+                    Dialogs.makeToast(activity, "Local folder does not exit");
                     return;
                 }
                 edit = (EditText) contentView.findViewById(R.id.remoteFolderField);

@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 /**
  * Created by Marc on 5/16/14.
+ * Class for re-usable dialogs, caller needs to implement YesNoDialog as callback
  */
 
 public class Dialogs
@@ -40,9 +41,9 @@ public class Dialogs
             alert.setOnCancelListener(new DialogInterface.OnCancelListener()
             {
                 @Override
-                public void onCancel(DialogInterface arg0)
+                public void onCancel(DialogInterface dialog)
                 {
-                    target.NegativeMethod(null, 0);
+                    target.NegativeMethod(dialog, 0);
                 }
             });
         }
@@ -83,5 +84,4 @@ public class Dialogs
                 )
                 .show();
     }
-
 }

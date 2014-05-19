@@ -20,6 +20,7 @@ import android.app.Activity;
 
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.HostKeys;
+import marc.scp.viewPopulator.ListViews;
 
 /**
  * Created by Marc on 5/14/14.
@@ -49,22 +50,8 @@ public class FingerPrintList extends Activity
 
     private void setupListView(ListView lv)
     {
-        final List<HostKeys> hostList = Database.getInstance().getAllHostKeys();
-        List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-
-        for (HostKeys hk : hostList)
-        {
-            Map<String, String> datum = new HashMap<String, String>(2);
-            if(hk != null)
-            {
-                datum.put("host", hk.getHostName());
-                datum.put("fingerprint", hk.getFingerprint());
-            }
-            data.add(datum);
-        }
-        SimpleAdapter adapter = new SimpleAdapter(this, data, android.R.layout.simple_list_item_2,
-        new String[] {"host", "fingerprint"},
-        new int[] {android.R.id.text1, android.R.id.text2});
+        List<HostKeys> hostList = Database.getInstance().getAllHostKeys();
+        SimpleAdapter adapter = ListViews.createAdapterFromFingerPrintList(this, hostList);
         lv.setAdapter(adapter);
 
     }

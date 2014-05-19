@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Toolbar -->
+    <string name="K">K</string>
+    <string name="Ctrl">Ctrl</string>
+
     <!-- General Dialogs -->
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -78,6 +82,9 @@
         <item>xterm</item>
     </string-array>
     <string-array name="font_sizes">
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
         <item>10</item>
         <item>11</item>
         <item>12</item>
@@ -85,9 +92,6 @@
         <item>14</item>
         <item>15</item>
         <item>16</item>
-        <item>17</item>
-        <item>18</item>
-        <item>19</item>
     </string-array>
 
     <!-- File Sync Activity -->

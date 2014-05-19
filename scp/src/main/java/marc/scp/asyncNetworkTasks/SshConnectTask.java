@@ -11,8 +11,8 @@ import android.util.Log;
 
 public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
 {
-    IConnectionNotifier handler;
-    SshConnection conn;
+    private IConnectionNotifier handler;
+    private SshConnection conn;
 
     private final String log = "SshConnectTask";
 
@@ -30,12 +30,12 @@ public class SshConnectTask extends AsyncTask<SshConnection, Integer, Boolean>
             conn = connection[0];
             if(!conn.isConnected())
             {
-                ret = conn.connectAsShell();
+                ret = conn.connect();
             }
         }
         catch (Exception e)
         {
-            Log.d(log, "Exception caught while connectiong");
+            Log.e(log, "doInBackground exception", e);
         }
         return ret;
     }

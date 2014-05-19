@@ -28,8 +28,8 @@ import marc.scp.databaseutils.Preference;
 public class AddHost extends Activity
 {
     private ViewGroup contentView;
-    boolean usingRSAKey;
-    Preference pref;
+    private boolean usingRSAKey;
+    private Preference pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,6 +63,7 @@ public class AddHost extends Activity
                 rsaToggle.toggle();
                 edit.setInputType(InputType.TYPE_CLASS_TEXT);
                 edit.setText(pref.getRsaKey());
+                usingRSAKey = true;
             }
             else
             {

@@ -7,39 +7,49 @@ import android.preference.PreferenceManager;
 import java.util.HashMap;
 
 import marc.scp.sshutils.SshConnection;
+import marc.scp.sshutils.TerminalView;
 
 /**
  * Created by Marc on 5/16/14.
  */
 public class SharedPreferencesManager
 {
-    static private SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
     static private SharedPreferencesManager instance;
 
-    private HashMap<String, Object> cachedPreferences;
+    //Not sure if it is a good idea to cache preferences
+    // private HashMap<String, Object> cachedPreferences;
 
     static private final String HOSTCHECKING = "pref_host_checking";
+
     static private final String COMPRESSION = "pref_compression";
     static private final String COMPRESSIONVALUES = "compression_value";
+
     static private final String FONTSIZE = "font_size";
     static private final String TERMINALEMULATION = "terminal_emulation";
     static public final String DELETETABLES = "delete_tables";
-    static public final String THEME = "pref_theme";
 
 
     public static SharedPreferencesManager getInstance(Context context)
     {
-        if(sharedPref == null)
+        if(instance == null)
         {
-            sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-            instance = new SharedPreferencesManager();
+            instance = new SharedPreferencesManager(context);
         }
         return instance;
     }
 
-    private SharedPreferencesManager()
+    private SharedPreferencesManager(Context context)
     {
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         //cachedPreferences = new HashMap<String, Object>();
+    }
+
+    //Preference getters
+    public boolean hostChecking()
+    {
+        boolean enabled = sharedPref.getBoolean(HOSTCHECKING , false);
+        return enabled;
     }
 
     public boolean compressionEnabled()
@@ -48,20 +58,41 @@ public class SharedPreferencesManager
        return enabled;
     }
 
+    public String getCompressionValue()
+    {
+        String compression = sharedPref.getString(COMPRESSIONVALUES, null);
+        return compression;
+    }
+
     public String fontSize()
     {
         String fontSize = sharedPref.getString(FONTSIZE , "10");
         return fontSize;
     }
 
-
-    public void setPreferencesonConnection(SshConnection conn)
+    public String getTerminalEmulation()
     {
-        final String NONE = "NONE";
-        String compression = sharedPref.getString(COMPRESSIONVALUES, NONE);
-        if(!compression.equals(NONE))
+        String terminal = sharedPref.getString(TERMINALEMULATION, "vt100");
+        return terminal;
+    }
+
+    public void setPreferencesonShellConnection(SshConnection conn)
+    {
+        String compression = getCompressionValue();
+        if(compression != null)
         {
             conn.enableCompression(compression);
         }
+
+        boolean hostChecking = hostChecking();
+        if(hostChecking)
+        {
+            conn.disableHostChecking();
+        }
+    }
+
+    public void setPreferencesTerminal(TerminalView terminal)
+    {
+        terminal.setTermType(getTerminalEmulation());
     }
 }

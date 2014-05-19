@@ -9,10 +9,12 @@ import jackpal.androidterm.emulatorview.TermSession;
 
 /**
  * Created by Marc on 5/17/2014.
+ * This is the terminal view
  */
 public class TerminalView extends EmulatorView
 {
-    SshConnection conn;
+    private ShellConnection conn;
+
     public TerminalView(Context paramContext, TermSession paramTermSession, DisplayMetrics paramDisplayMetrics)
     {
         super(paramContext, paramTermSession, paramDisplayMetrics);
@@ -23,29 +25,23 @@ public class TerminalView extends EmulatorView
         super(context, attrs);
     }
 
-    public void addConnection(SshConnection c)
+    public void addConnection(ShellConnection c)
     {
-        w = getVisibleWidth();
-        h = getVisibleHeight();
         conn = c;
     }
 
-    int w;
-    int h;
     public void refreshScreen()
     {
-        if(conn.channelShell != null)
-        {
-            conn.channelShell.setPtySize(this.mVisibleColumns, this.mVisibleRows, w, h);
-        }
+        super.updateSize(true);
+        updatePTY();
     }
 
     @Override
     public void setTextSize(int paramInt)
     {
+        //setTextSize calls updateSize(true) for us, no need to call again, just setPtySize
         super.setTextSize(paramInt);
-        super.updateSize(true);
-        refreshScreen();
+        updatePTY();
     }
 
     @Override
@@ -53,6 +49,20 @@ public class TerminalView extends EmulatorView
     {
         refreshScreen();
         super.onSizeChanged(paramInt1, paramInt2, paramInt3, paramInt4);
+    }
+
+    @Override
+    public void setTermType(String type)
+    {
+        super.setTermType(type);
+    }
+
+    private void updatePTY()
+    {
+        if(conn != null)
+        {
+            conn.setPtySize(getVisibleColumns(), getVisibleRows(), getWidth(), getHeight());
+        }
     }
 
 }

@@ -30,6 +30,8 @@ public class HostList extends Activity
     private ListView listView;
     private Preference selectedPref;
 
+    private View lastSelectedview;
+
     public final static String SELECTED_ID = "com.whomarc.scp.ID";
 
     protected void onCreate(Bundle savedInstanceState)
@@ -59,27 +61,28 @@ public class HostList extends Activity
         setupListView(listView);
     }
 
-    private void setupListView(ListView lv)
+    private void setupListView(final ListView lv)
     {
         final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
         lv.setAdapter(ListViews.createAdapterFromPrefs(this, preferencesList));
+        lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        lv.setOnItemClickListener(new OnItemClickListener() {
+        lv.setOnItemClickListener(new OnItemClickListener()
+        {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                if(selectedPref == preferencesList.get(position))
+                selectedPref = preferencesList.get(position);
+                if(lastSelectedview != null)
                 {
-                    view.setBackgroundColor(Color.BLACK);
+                    lastSelectedview.setBackgroundColor(Color.TRANSPARENT);
                 }
-                else
-                {
-                    selectedPref = preferencesList.get(position);
-                    view.setBackgroundColor(Color.GRAY);
-                }
-
+                view.setBackgroundColor(getResources().getColor(R.color.list_selected));
+                lastSelectedview = view;
             }
-        });
+
+        }
+        );
     }
 
 

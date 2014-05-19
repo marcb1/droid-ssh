@@ -5,4 +5,11 @@
     <color name="second_grey">#ff999999</color>
     <color name="card_white">#ffffffff</color>
     <color name="card_shadow">#8c666666</color>
+
+    <color name="list_selected">@android:color/darker_gray</color>
+    <color name="default_color">@android:color/transparent</color>
+
+        <color name="pressed_color">#4d90fe</color>
+
+
 </resources>

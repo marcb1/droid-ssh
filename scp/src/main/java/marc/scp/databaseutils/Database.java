@@ -13,9 +13,9 @@ import com.j256.ormlite.table.TableUtils;
 
 public class Database
 {
-    private static final String Log = "Database";
-
     private DatabaseHelper helper;
+
+    static private final String Log = "Database";
     static private Database instance;
 
     private Database(Context ctx)

@@ -113,7 +113,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
                 System.out.println("A");
                 if(alertBooleanResult)
                 {
-                    conn.connectAsShell();
+                    conn.connect();
                 }
                 else
                 {

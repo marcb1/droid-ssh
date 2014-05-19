@@ -21,7 +21,8 @@
             android:entries="@array/compression_values"
             android:entryValues="@array/compression_values"
             android:title="@string/pref_compression_values"
-            android:summary="@string/pref_compression_values_summary"/>
+            android:summary="@string/pref_compression_values_summary"
+            android:defaultValue="9"/>
 
 
 

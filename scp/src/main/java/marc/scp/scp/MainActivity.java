@@ -26,35 +26,31 @@ import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.viewPopulator.ListViews;
 import marc.scp.databaseutils.Preference;
 
-
-
 //this is the main activity that's first started when the app is launched
 public class MainActivity extends Activity
 {
     public final static String PREFERENCE_PARCEABLE = "com.whomarc.scp.PREFERENCE";
     public final static String FILE_PARCEABLE = "com.whomarc.scp.FILE";
-    private static final int REQUEST_CHOOSER = 1234;
-
 
     private ViewGroup contentView;
-    private AlertDialog exitAlert;
 
     private Database dbInstance;
-    SharedPreferencesManager prefInstance;
+    private SharedPreferencesManager prefInstance;
 
     @Override
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
-        prefInstance = SharedPreferencesManager.getInstance(this);
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
 
         Database.init(this);
         dbInstance = Database.getInstance();
+        prefInstance = SharedPreferencesManager.getInstance(this);
 
         Button quickConnect = (Button) contentView.findViewById(R.id.quickConnect);
         setupQuickConnectBtn(quickConnect);
+
         setContentView(contentView);
     }
 
@@ -68,6 +64,58 @@ public class MainActivity extends Activity
 
         listView = (ListView) contentView.findViewById(R.id.folder_pair_list);
         setupFolderPairsList(listView);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        ExitDialog();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_saved_hosts)
+        {
+            Intent intent = new Intent(this, HostList.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.action_saved_folders)
+        {
+            Intent intent = new Intent(this, FolderPairsList.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.action_cached_fingerprints)
+        {
+            Intent intent = new Intent(this, FingerPrintList.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.action_settings)
+        {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.action_exit)
+        {
+            onBackPressed();
+        }
+        else
+        {
+            return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     private void setupFolderPairsList(ListView lv)
@@ -116,97 +164,9 @@ public class MainActivity extends Activity
         startActivity(intent);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    // Called when the user clicks the connnect button
-    public void connectToServer(View view)
-    {
-       /* LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogview = inflater.inflate(R.layout.dialoglayout, null);
-        AlertDialog.Builder dialogbuilder = new AlertDialog.Builder(this);
-        dialogbuilder.setTitle("Title");
-        dialogbuilder.setView(dialogview);
-        dialogDetails = dialogbuilder.create();*/
-
-        //MainActivity inherits from context (this)
-        Intent intent = new Intent(this, TerminalActivity.class);
-
-        //grab the strings out of the correct field
-        EditText editText = (EditText) findViewById(R.id.usernameField);
-        String username = editText.getText().toString();
-
-        editText = (EditText) findViewById(R.id.passwordField);
-        String password = editText.getText().toString();
-
-        editText = (EditText) findViewById(R.id.hostNameField);
-        String hostname = editText.getText().toString();
-
-        editText = (EditText) findViewById(R.id.portField);
-        String port = editText.getText().toString();
-
-
-       // intent.putExtra(PASSWORD, password);
-       // intent.putExtra(USERNAME, username);
-       // intent.putExtra(HOSTNAME, hostname);
-       // intent.putExtra(PORT, port);
-
-        startActivity(intent);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_saved_hosts)
-        {
-            Intent intent = new Intent(this, HostList.class);
-            startActivity(intent);
-        }
-        else if(id == R.id.action_saved_folders)
-        {
-            Intent intent = new Intent(this, FolderPairsList.class);
-            startActivity(intent);
-        }
-        else if(id == R.id.action_cached_fingerprints)
-        {
-            Intent intent = new Intent(this, FingerPrintList.class);
-            startActivity(intent);
-        }
-        else if(id == R.id.action_settings)
-        {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        else if(id == R.id.action_exit)
-        {
-           onBackPressed();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        ExitDialog();
-    }
-
     private void ExitDialog()
     {
-       // if((exitAlert != null) && (exitAlert.isShowing()))
-       // {
-         //   super.onBackPressed();
-       // }
-                exitAlert = marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you want to exit?", getString(R.string.yes), getString(R.string.no), true,
+                marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you want to exit?", getString(R.string.yes), getString(R.string.no), true,
                 new YesNoDialog()
                 {
                     @Override
@@ -237,5 +197,31 @@ public class MainActivity extends Activity
                 dialog.show();
             }
         });
+    }
+
+    // TODO needs to be worked on
+    // Called when the user clicks the quick connnect button
+    public void connectToServer(View view)
+    {
+        //MainActivity inherits from context (this)
+        Intent intent = new Intent(this, TerminalActivity.class);
+
+        //grab the strings out of the correct field
+        EditText editText = (EditText) findViewById(R.id.usernameField);
+        String username = editText.getText().toString();
+
+        editText = (EditText) findViewById(R.id.passwordField);
+        String password = editText.getText().toString();
+
+        editText = (EditText) findViewById(R.id.hostNameField);
+        String hostname = editText.getText().toString();
+
+        editText = (EditText) findViewById(R.id.portField);
+        String port = editText.getText().toString();
+
+
+        // create a new parceable preference object
+
+        startActivity(intent);
     }
 }

@@ -1,25 +1,30 @@
 package marc.scp.asyncNetworkTasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.jcraft.jsch.SftpProgressMonitor;
 
 import java.io.File;
 import java.util.List;
 
+import marc.scp.sshutils.SftpConnection;
 import marc.scp.sshutils.SshConnection;
 
 /**
  * Created by Marc on 5/16/14.
+ * Class to handle uploading of files
  */
 
 public class SftpUploadTask extends AsyncTask<List<File>, Integer, Boolean>
 {
-    SftpProgressMonitor sftpMonitor;
-    SshConnection conn;
-    IUploadNotifier handler;
+    private SftpProgressMonitor sftpMonitor;
+    private SftpConnection conn;
+    private IUploadNotifier handler;
 
-    public SftpUploadTask(SftpProgressMonitor monitor, SshConnection connection, IUploadNotifier callback)
+    private final String log = "SftpUploadTask";
+
+    public SftpUploadTask(SftpProgressMonitor monitor, SftpConnection connection, IUploadNotifier callback)
     {
         sftpMonitor = monitor;
         conn = connection;
@@ -39,7 +44,7 @@ public class SftpUploadTask extends AsyncTask<List<File>, Integer, Boolean>
         }
         catch (Exception e)
         {
-            //Log.d(log, "Exception caught while connectiong");
+            Log.e(log, "doInBackground exception", e);
         }
         return ret;
     }

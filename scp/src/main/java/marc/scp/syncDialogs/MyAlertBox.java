@@ -26,6 +26,7 @@ public class MyAlertBox  implements BlockingOnUIRunnableListener
 
     public void onRunOnUIThread(final Runnable runnable)
     {
+        //Unfortunately, this could throw an exception if this thread tries to create an alert while the activity is not running
         new AlertDialog.Builder(activityParent)
                 .setMessage(message)
                 .setTitle(title)
