@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 
+import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
 
@@ -73,8 +74,6 @@ public class TerminalView extends EmulatorView
         //setTextSize calls updateSize(true) for us, no need to call again, just setPtySize
         super.setTextSize(size);
         updatePTY();
-        setTermType("xterm-256color");
-        conn.setPtyType("xterm-256color");
     }
 
     @Override
@@ -88,6 +87,7 @@ public class TerminalView extends EmulatorView
     public void setTermType(String type)
     {
         super.setTermType(type);
+        conn.setPty(true);
     }
 
     private void updatePTY()

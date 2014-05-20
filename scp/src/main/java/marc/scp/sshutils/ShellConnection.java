@@ -103,6 +103,14 @@ public class ShellConnection extends SshConnection
         }
     }
 
+    public void setPty(boolean bool)
+    {
+        if(channelShell != null)
+        {
+            channelShell.setPty(bool);
+        }
+    }
+
     //This not supported anymore!
     public String executeCommand(String command)
     {
