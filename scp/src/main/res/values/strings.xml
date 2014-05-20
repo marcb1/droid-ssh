@@ -53,7 +53,7 @@
     <string name="pref_host_checking">Disable Host Checking</string>
     <string name="pref_host_checking_summary">If you know what you\'re doing, feel free to disable</string>
     <string name="pref_compression_summary">Compression uses less data but more CPU and battery to compress data streams</string>
-    <string name="pref_compression_values">Compression Values</string>
+    <string name="pref_compression_values">Compression Value</string>
     <string name="pref_compression_values_summary">The higher the value the more the compression</string>
     <string name="pref_font">Font Size</string>
     <string name="pref_font_summary">Choose the font size, this can be set while in the terminal using your volume buttons</string>
