@@ -64,21 +64,20 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         {
             terminalSession = retainedTerminal.getTerminalSession();
             view  = (TerminalView) findViewById(R.id.emulatorView);
+            view.copyOld(retainedTerminal.getTerminalView());
+            conn = terminalSession.getConnection();
 
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             view.setDensity(metrics);
 
             view.attachSession(terminalSession);
-
-            conn = terminalSession.getConnection();
             connectionResult(true);
-            view = retainedTerminal.getTerminalView();
         }
 
         else
         {
-            view  = (TerminalView) findViewById(R.id.emulatorView);
+            view  = (TerminalView)findViewById(R.id.emulatorView);
 
             retainedTerminal = new RetainedTerminal();
             fm.beginTransaction().add(retainedTerminal, ter).commit();

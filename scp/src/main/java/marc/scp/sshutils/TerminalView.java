@@ -26,9 +26,26 @@ public class TerminalView extends EmulatorView
         super(context, attrs);
     }
 
+    //called when orientation of screen changes
+    public void copyOld(TerminalView old)
+    {
+        conn = old.getConnection();
+        textSize = old.getTextSize();
+    }
+
     public void addConnection(ShellConnection c)
     {
         conn = c;
+    }
+
+    public ShellConnection getConnection()
+    {
+        return conn;
+    }
+
+    public int getTextSize()
+    {
+        return textSize;
     }
 
     public void refreshScreen()
