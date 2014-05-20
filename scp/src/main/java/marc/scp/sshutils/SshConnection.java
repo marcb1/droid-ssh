@@ -33,6 +33,12 @@ public class SshConnection
     }
     protected CONNECTION_STATE state;
 
+
+    public JSch getJsch()
+    {
+        return jsch;
+    }
+
     public SshConnection(SessionUserInfo user)
     {
         jsch = new JSch();

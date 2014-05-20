@@ -5,6 +5,7 @@ import android.util.Log;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -39,8 +40,6 @@ public class ShellConnection extends SshConnection
 
         //give user object, alerts user if they want to reconnect
         getUserInfo().setConnectionHandler(this);
-
-
     }
 
     public boolean connect()
@@ -124,7 +123,6 @@ public class ShellConnection extends SshConnection
             //open channel ready to send input
 
             ((ChannelExec)getChannel()).setCommand(command);
-
 
             StringBuilder stringBuilder = new StringBuilder();
             String line;

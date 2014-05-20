@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -86,18 +87,20 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         }
         else
         {
-            final Activity activity = this;
-            Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", true,
-                    new YesNoDialog()
-                    {
-                        @Override
-                        public void PositiveMethod(final DialogInterface dialog, final int id)
-                        {
-                            conn.disconnect();
-                            finish();
-                        }
-                    });
+          exitDialog();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                exitDialog();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //IConnectionNotifier
@@ -183,5 +186,20 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
                 progress.setProgress(0);
             }
         });
+    }
+
+    private void exitDialog()
+    {
+        final Activity activity = this;
+        Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", true,
+                new YesNoDialog()
+                {
+                    @Override
+                    public void PositiveMethod(final DialogInterface dialog, final int id)
+                    {
+                        conn.disconnect();
+                        finish();
+                    }
+                });
     }
 }
