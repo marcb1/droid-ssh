@@ -164,8 +164,9 @@ public class AddFolderPair  extends Activity
                 {
                     fileInput.setId(file.getId());
                     updateFile(fileInput);
+                    finish();
                 }
-                if(fileInput != null)
+                else if(fileInput != null)
                 {
                     addFile(fileInput);
                     finish();
