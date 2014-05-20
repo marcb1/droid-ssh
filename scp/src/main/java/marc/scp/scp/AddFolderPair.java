@@ -31,6 +31,7 @@ public class AddFolderPair  extends Activity
 {
     private ViewGroup contentView;
     private Database dbInstance;
+    private Dialogs Dialogs;
     private int selectedItemSpinner;
 
     //hash of preferences and their id, used for adding folder pairs, so we don't have to query the database again
@@ -45,6 +46,7 @@ public class AddFolderPair  extends Activity
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_folder_pair, null);
         dbInstance = Database.getInstance();
+        Dialogs = Dialogs.getInstance(this);
 
         hash = new HashMap<String, Integer>();
 
@@ -157,19 +159,30 @@ public class AddFolderPair  extends Activity
         {
             public void onClick(View v)
             {
-                FileSync file = errorCheckInput();
+                FileSync fileInput = errorCheckInput();
                 if(file != null)
                 {
-                    addFile(file);
+                    fileInput.setId(file.getId());
+                    updateFile(fileInput);
                 }
-                finish();
+                if(fileInput != null)
+                {
+                    addFile(fileInput);
+                    finish();
+                }
+
             }
         });
     }
 
     private void addFile(FileSync fileSync)
     {
-        dbInstance.addFileSync(file);
+        dbInstance.addFileSync(fileSync);
+    }
+
+    private void updateFile(FileSync fileSync)
+    {
+        dbInstance.updateFile(fileSync);
     }
 
 }

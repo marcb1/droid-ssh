@@ -1,6 +1,7 @@
 package marc.scp.scp;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
+import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
 import marc.scp.viewPopulator.ListViews;
@@ -27,8 +29,11 @@ public class FolderPairsList extends Activity
     private ListView listView;
     private FileSync selectedFolderPair;
     private Database dbInstance;
+    private Dialogs DialogsInstance;
 
     private View lastSelectedview;
+
+
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -38,6 +43,7 @@ public class FolderPairsList extends Activity
         listView = (ListView) contentView.findViewById(R.id.list_view);
         selectedFolderPair = null;
         dbInstance = Database.getInstance();
+        DialogsInstance = Dialogs.getInstance(this);
 
         Button btnAdd = (Button) contentView.findViewById(R.id.button_add);
         setupAddButton(btnAdd);
@@ -106,7 +112,7 @@ public class FolderPairsList extends Activity
                 }
                 else
                 {
-                    Dialogs.makeToast(activity, "Please select a saved folder pair to edit!");
+                    DialogsInstance.makeToast(activity, "Please select a saved folder pair to edit!");
                 }
             }
         });
@@ -114,13 +120,24 @@ public class FolderPairsList extends Activity
 
     private void setupDeleteButton(Button btn)
     {
+        final Activity activity = this;
         btn.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
 
-                deleteFile(selectedFolderPair);
-                finish();
+                DialogsInstance.getConfirmDialog(activity, "Are you sure you want to delete: " + selectedFolderPair.getName(), true,
+                        new YesNoDialog()
+                        {
+                            @Override
+                            public void PositiveMethod(DialogInterface dialog, int id)
+                            {
+                                dialog.dismiss();
+                                deleteFile(selectedFolderPair);
+                                finish();
+                                startActivity(getIntent());
+                            }
+                        });
             }
         });
     }

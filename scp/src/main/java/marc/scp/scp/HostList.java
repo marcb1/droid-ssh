@@ -31,6 +31,7 @@ public class HostList extends Activity
 {
     private ListView listView;
     private Preference selectedPref;
+    private Dialogs Dialogs;
 
     private View lastSelectedview;
 
@@ -39,6 +40,7 @@ public class HostList extends Activity
         super.onCreate(savedInstanceState);
         ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.host_list, null);
         listView = (ListView) contentView.findViewById(R.id.list_view);
+        Dialogs = Dialogs.getInstance(this);
 
         Button btnAdd = (Button) contentView.findViewById(R.id.button_add);
         setupAddButton(btnAdd);
@@ -128,11 +130,12 @@ public class HostList extends Activity
             public void onClick(View v) {
                 if(selectedPref != null) {
                     Dialogs.getConfirmDialog(activity, "Are you sure you would like to delete the connection: " + selectedPref.getName()
-                                    + "? This will also delete the folder pairs associated with this connection.",
-                            getString(R.string.yes),
-                            getString(R.string.no), true, new YesNoDialog() {
+                                    + "? This will also delete the folder pairs associated with this connection.", true,
+                            new YesNoDialog()
+                            {
                                 @Override
-                                public void PositiveMethod(DialogInterface dialog, int id) {
+                                public void PositiveMethod(DialogInterface dialog, int id)
+                                {
                                     dialog.dismiss();
                                     hostlist.deletePreference(selectedPref);
                                 }

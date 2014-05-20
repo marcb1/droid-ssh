@@ -1,7 +1,6 @@
 package marc.scp.scp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -26,11 +25,13 @@ import marc.scp.databaseutils.FileSync;
 import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.viewPopulator.ListViews;
 import marc.scp.databaseutils.Preference;
+import marc.scp.asyncDialogs.Dialogs;
 
 //this is the main activity that's first started when the app is launched
 public class MainActivity extends Activity
 {
     private ViewGroup contentView;
+    private Dialogs DialogsInstance;
 
     private Database dbInstance;
     private SharedPreferencesManager prefInstance;
@@ -39,6 +40,7 @@ public class MainActivity extends Activity
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
+        DialogsInstance = DialogsInstance.getInstance(this);
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
 
@@ -164,15 +166,14 @@ public class MainActivity extends Activity
 
     private void ExitDialog()
     {
-                marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you want to exit?", getString(R.string.yes), getString(R.string.no), true,
-                new YesNoDialog()
-                {
-                    @Override
-                    public void PositiveMethod(final DialogInterface dialog, final int id)
-                    {
-                        finish();
-                    }
-                });
+                DialogsInstance.getConfirmDialog(this, "Are you sure you want to exit?", true,
+                        new YesNoDialog() {
+                            @Override
+                            public void PositiveMethod(final DialogInterface dialog, final int id) {
+                                finish();
+                            }
+                        }
+                );
     }
 
     private void setupQuickConnectBtn(Button quickConnect)

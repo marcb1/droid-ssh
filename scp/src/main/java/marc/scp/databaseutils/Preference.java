@@ -133,11 +133,13 @@ public class Preference implements Parcelable
     }
 
     //parceable methods
+    @Override
     public int describeContents()
     {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel out, int flags)
     {
         out.writeInt(id);

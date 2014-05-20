@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.Toast;
 
+import marc.scp.scp.R;
+
 /**
  * Created by Marc on 5/16/14.
  * Class for re-usable dialogs, caller needs to implement YesNoDialog as callback
@@ -13,23 +15,47 @@ import android.widget.Toast;
 
 public class Dialogs
 {
-    public static AlertDialog getConfirmDialog(Context mContext, String msg, String positiveBtnCaption,
-                                        String negativeBtnCaption, boolean isCancelable, final YesNoDialog target)
+    private String AlertDialogYes;
+    private String AlertDialogNo;
+
+    private static Dialogs instance;
+
+    private Dialogs(Activity activity)
+    {
+        AlertDialogYes = activity.getString(R.string.yes);
+        AlertDialogNo = activity.getString(R.string.no);
+    }
+
+    public static Dialogs getInstance(Activity activity)
+    {
+        if(instance == null)
+        {
+            instance =  new Dialogs(activity);
+        }
+        return instance;
+    }
+
+    public static Dialogs getInstance()
+    {
+        return instance;
+    }
+
+    public AlertDialog getConfirmDialog(Context mContext, String msg, boolean isCancelable, final YesNoDialog target)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-        builder.setMessage(msg).setCancelable(false).setPositiveButton(positiveBtnCaption, new DialogInterface.OnClickListener()
-        {
-            public void onClick(DialogInterface dialog, int id)
-            {
-                target.PositiveMethod(dialog, id);
-            }
-        }).setNegativeButton(negativeBtnCaption, new DialogInterface.OnClickListener()
+        builder.setMessage(msg).setCancelable(false).setNegativeButton(AlertDialogNo, new DialogInterface.OnClickListener()
         {
             @Override
             public void onClick(DialogInterface dialog, int id)
             {
                 target.NegativeMethod(dialog, id);
+            }
+        }).setPositiveButton(AlertDialogYes, new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int id)
+            {
+                target.PositiveMethod(dialog, id);
             }
         });
 
@@ -50,7 +76,7 @@ public class Dialogs
         return alert;
     }
 
-    public static boolean toastIfEmpty(String content, Context mContext, String msg)
+    public boolean toastIfEmpty(String content, Context mContext, String msg)
     {
         boolean ret = false;
         if(content.matches(""))
@@ -61,12 +87,12 @@ public class Dialogs
         return ret;
     }
 
-    public static void makeToast(Context mContext, String msg)
+    public void makeToast(Context mContext, String msg)
     {
         Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
     }
 
-    public static void getAlertDialog(final Activity activity, String title, String msg, final boolean finishonOk)
+    public void getAlertDialog(final Activity activity, String title, String msg, final boolean finishonOk)
     {
         new AlertDialog.Builder(activity)
                 .setMessage(msg)

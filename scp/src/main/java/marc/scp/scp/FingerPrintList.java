@@ -1,23 +1,18 @@
 package marc.scp.scp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import android.app.Activity;
 
+import marc.scp.asyncDialogs.Dialogs;
+import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.HostKeys;
 import marc.scp.viewPopulator.ListViews;
@@ -29,10 +24,12 @@ import marc.scp.viewPopulator.ListViews;
 public class FingerPrintList extends Activity
 {
     private ListView listView;
+    private Dialogs DialogsInstance;
 
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        DialogsInstance = DialogsInstance.getInstance(this);
         ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.fingerprint_list, null);
         listView = (ListView) contentView.findViewById(R.id.list_view);
 
@@ -59,28 +56,21 @@ public class FingerPrintList extends Activity
     private void setupDeleteButton (Button btnDeleteList)
     {
         final Activity activity = this;
-        System.out.println("a");
         btnDeleteList.setOnClickListener(new View.OnClickListener()
         {
-            public void onClick(View v) {
-                new AlertDialog.Builder(activity).setMessage("Are you sure you would like to all saved Fingerprints?")
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                        {
-                            public void onClick(DialogInterface dialog, int which)
-                            {
+            public void onClick(View v)
+            {
+                DialogsInstance.getConfirmDialog(activity, "Are you sure you would like to all saved Fingerprints?", true,
+                        new YesNoDialog() {
+                            @Override
+                            public void PositiveMethod(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                                 deleteAll();
                                 finish();
                                 startActivity(getIntent());
                             }
-                        })
-                        .create()
-                        .show();
+                        }
+                );
             }
         });
     }

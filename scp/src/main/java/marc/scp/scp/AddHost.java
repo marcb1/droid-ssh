@@ -25,6 +25,7 @@ public class AddHost extends Activity
     private ViewGroup contentView;
     private boolean usingRSAKey;
     private Preference pref;
+    private Dialogs Dialogs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -34,6 +35,7 @@ public class AddHost extends Activity
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_host, null);
 
         pref = (Preference)getIntent().getParcelableExtra(Constants.PREFERENCE_PARCEABLE);
+        Dialogs = Dialogs.getInstance(this);
 
         //if not null
         if (pref != null)

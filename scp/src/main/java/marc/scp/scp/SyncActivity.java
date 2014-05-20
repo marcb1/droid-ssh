@@ -41,6 +41,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
 
     private ViewGroup contentView;
     private ProgressBar progress;
+    private Dialogs Dialogs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -48,6 +49,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.file_sync, null);
         setContentView(contentView);
+        Dialogs = Dialogs.getInstance(this);
 
         dbInstance = Database.getInstance();
 
@@ -85,7 +87,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         else
         {
             final Activity activity = this;
-            marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", getString(R.string.yes), getString(R.string.no), true,
+            Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", true,
                     new YesNoDialog()
                     {
                         @Override

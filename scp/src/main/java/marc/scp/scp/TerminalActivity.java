@@ -7,6 +7,7 @@ import marc.scp.asyncNetworkTasks.SshConnectTask;
 import marc.scp.databaseutils.Preference;
 import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.sshutils.*;
+import marc.scp.asyncDialogs.Dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -42,6 +43,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
     private TerminalView view;
 
     private RetainedTerminal retainedTerminal;
+    private Dialogs Dialogs;
 
 
     @Override
@@ -52,6 +54,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
 
         prefInstance = SharedPreferencesManager.getInstance(this);
         keyboardShown = true;
+        Dialogs = Dialogs.getInstance(this);
 
         FragmentManager fm = getFragmentManager();
         String ter = "terminal";
@@ -271,7 +274,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         }
         else
         {
-            marc.scp.asyncDialogs.Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", getString(R.string.yes), getString(R.string.no), true,
+            Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", true,
                     new YesNoDialog()
                     {
                         @Override

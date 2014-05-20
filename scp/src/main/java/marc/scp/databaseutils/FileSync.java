@@ -64,12 +64,20 @@ public class FileSync implements Parcelable
         return id;
     }
 
+    //setters
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
     //parceable methods
+    @Override
     public int describeContents()
     {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel out, int flags)
     {
         out.writeInt(id);

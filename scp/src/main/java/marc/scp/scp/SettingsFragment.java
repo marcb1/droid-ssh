@@ -13,13 +13,16 @@ import android.preference.PreferenceFragment;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.preferences.SharedPreferencesManager;
+import marc.scp.asyncDialogs.Dialogs;
 
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener
 {
+    private Dialogs Dialogs;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Dialogs = Dialogs.getInstance();
         // Load the preferences from an XML resource
         addPreferencesFromResource(marc.scp.scp.R.xml.preferences);
         Preference p_delete = (Preference) this.findPreference(SharedPreferencesManager.DELETETABLES);
@@ -32,8 +35,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         String key = preference.getKey();
         if(key.equals(SharedPreferencesManager.DELETETABLES))
         {
-            marc.scp.asyncDialogs.Dialogs.getConfirmDialog(getActivity(), "Are you sure you want to delete all saved data?",
-                    getString(R.string.yes), getString(R.string.no), true,
+                    Dialogs.getConfirmDialog(getActivity(), "Are you sure you want to delete all saved data?", true,
                     new YesNoDialog()
                     {
                         @Override

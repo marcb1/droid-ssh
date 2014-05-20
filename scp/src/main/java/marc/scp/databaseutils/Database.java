@@ -148,7 +148,19 @@ public class Database
         }
         catch (SQLException e)
         {
-            android.util.Log.d(Log, "updatePreference exception", e);
+            android.util.Log.e(Log, "updatePreference exception", e);
+        }
+    }
+
+    public void updateFile(FileSync f)
+    {
+        try
+        {
+            helper.getSyncDao().update(f);
+        }
+        catch (SQLException e)
+        {
+            android.util.Log.e(Log, "updateFile exception", e);
         }
     }
 
