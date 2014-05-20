@@ -19,6 +19,7 @@ import android.widget.SimpleAdapter;
 
 import java.util.List;
 
+import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
@@ -29,9 +30,6 @@ import marc.scp.databaseutils.Preference;
 //this is the main activity that's first started when the app is launched
 public class MainActivity extends Activity
 {
-    public final static String PREFERENCE_PARCEABLE = "com.whomarc.scp.PREFERENCE";
-    public final static String FILE_PARCEABLE = "com.whomarc.scp.FILE";
-
     private ViewGroup contentView;
 
     private Database dbInstance;
@@ -153,14 +151,14 @@ public class MainActivity extends Activity
     private void ConnectToPreference(Preference p)
     {
         Intent intent = new Intent(this, TerminalActivity.class);
-        intent.putExtra(PREFERENCE_PARCEABLE, (Parcelable) p);
+        intent.putExtra(Constants.PREFERENCE_PARCEABLE, (Parcelable) p);
         startActivity(intent);
     }
 
     private void syncFile(FileSync f)
     {
         Intent intent = new Intent(this, SyncActivity.class);
-        intent.putExtra(FILE_PARCEABLE, (Parcelable) f);
+        intent.putExtra(Constants.FILE_PARCEABLE, (Parcelable) f);
         startActivity(intent);
     }
 

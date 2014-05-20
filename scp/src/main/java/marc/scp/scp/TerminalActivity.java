@@ -1,5 +1,6 @@
 package marc.scp.scp;
 import jackpal.androidterm.emulatorview.EmulatorView;
+import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.asyncNetworkTasks.IConnectionNotifier;
 import marc.scp.asyncNetworkTasks.SshConnectTask;
@@ -9,8 +10,10 @@ import marc.scp.sshutils.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.Service;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,9 +25,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 public class TerminalActivity extends Activity implements IConnectionNotifier
 {
@@ -37,6 +41,9 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
     private TerminalSession terminalSession;
     private TerminalView view;
 
+    private RetainedTerminal retainedTerminal;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -45,14 +52,82 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
 
         prefInstance = SharedPreferencesManager.getInstance(this);
         keyboardShown = true;
-        view  = (TerminalView) findViewById(R.id.emulatorView);
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        view.setDensity(metrics);
+        FragmentManager fm = getFragmentManager();
+        String ter = "terminal";
+        retainedTerminal = (RetainedTerminal) fm.findFragmentByTag(ter);
+
+        if (retainedTerminal != null)
+        {
+            terminalSession = retainedTerminal.getTerminalSession();
+            view  = (TerminalView) findViewById(R.id.emulatorView);
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            view.setDensity(metrics);
+
+            view.attachSession(terminalSession);
+
+            conn = terminalSession.getConnection();
+            connectionResult(true);
+            view = retainedTerminal.getTerminalView();
+        }
+
+        else
+        {
+            view  = (TerminalView) findViewById(R.id.emulatorView);
+
+            retainedTerminal = new RetainedTerminal();
+            fm.beginTransaction().add(retainedTerminal, ter).commit();
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            view.setDensity(metrics);
+
+            Intent intent = getIntent();
+            Preference p = (Preference)intent.getParcelableExtra(Constants.PREFERENCE_PARCEABLE);
+
+            SessionUserInfo user = new SessionUserInfo(p.getHostName(), p.getUsername(), p.getPort(), this);
+            if(p.getUseKey())
+            {
+                user.setRSA(p.getRsaKey());
+            }
+            else
+            {
+                user.setPassword(p.getPassword());
+            }
+
+            ShellConnection connection = new ShellConnection(user);
+            terminalSession = new TerminalSession(connection);
+            view.attachSession(terminalSession);
+
+            retainedTerminal.setTerminalSession(terminalSession);
+            retainedTerminal.setTerminalView(view);
+
+            conn = connection;
+            //give the connection to the view so he can update Pty size on the fly
+            view.addConnection(connection);
+
+            //view.setUseCookedIME(true);
+
+            prefInstance.setPreferencesonShellConnection(conn);
+            prefInstance.setPreferencesTerminal(view);
+
+            SshConnectTask task = new SshConnectTask(this);
+            task.execute(conn);
+        }
+
+        view.setAltSendsEsc(false);
+        view.setMouseTracking(true);
 
         Button Ctrl = (Button) findViewById(R.id.Ctrl);
         setupControlButton(Ctrl);
+
+        Button Tab = (Button) findViewById(R.id.tab);
+        setupTabButton(Tab);
+
+        Button Esc = (Button) findViewById(R.id.esc);
+        setupEscButton(Esc);
 
         ImageButton leftButton = (ImageButton) findViewById(R.id.leftButton);
         setupLeftButton(leftButton);
@@ -60,44 +135,12 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         ImageButton rightButton = (ImageButton) findViewById(R.id.rightButton);
         setupRightButton(rightButton);
 
+        ImageButton upButton = (ImageButton) findViewById(R.id.upButton);
+        setupUpButton(upButton);
+
         ImageButton keyboardButton = (ImageButton) findViewById(R.id.keyboardButton);
         setupKeyboardButton(keyboardButton);
 
-
-        Intent intent = getIntent();
-        Preference p = (Preference)intent.getParcelableExtra(MainActivity.PREFERENCE_PARCEABLE);
-
-        SessionUserInfo user = new SessionUserInfo(p.getHostName(), p.getUsername(), p.getPort(), this);
-        if(p.getUseKey())
-        {
-            user.setRSA(p.getRsaKey());
-        }
-        else
-        {
-            user.setPassword(p.getPassword());
-        }
-
-        ShellConnection connection = new ShellConnection(user);
-        terminalSession = new TerminalSession(connection);
-
-        conn = connection;
-        textSize = Integer.parseInt(prefInstance.fontSize());
-
-        //give the connection to the view so he can update Pty size on the fly
-        view.addConnection(connection);
-
-        view.attachSession(terminalSession);
-        view.setTextSize(textSize);
-        view.setAltSendsEsc(false);
-        view.setMouseTracking(true);
-
-        //view.setUseCookedIME(true);
-
-        prefInstance.setPreferencesonShellConnection(conn);
-        prefInstance.setPreferencesTerminal(view);
-
-        SshConnectTask task = new SshConnectTask(this);
-        task.execute(conn);
     }
 
     public void connectionResult(boolean result)
@@ -117,15 +160,11 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         boolean ret = true;
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP)
         {
-            textSize++;
-            EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
-            view.setTextSize(textSize);
+            view.increaseSize();
         }
         else if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN))
         {
-            textSize--;
-            EmulatorView view = (EmulatorView) findViewById(R.id.emulatorView);
-            view.setTextSize(textSize);
+            view.reduceSize();
         }
         else
         {
@@ -261,6 +300,45 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         });
     }
 
+    private void setupEscButton(Button ctrl)
+    {
+        final View terminalView = view;
+        ctrl.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                terminalSession.write(Constants.ESC);
+            }
+        });
+    }
+
+    private void setupTabButton(Button ctrl)
+    {
+        final View terminalView = view;
+        ctrl.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                terminalSession.write(Constants.TAB);
+            }
+        });
+    }
+
+    private void setupUpButton(ImageButton leftButton)
+    {
+        final View terminalView = view;
+        leftButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                terminalSession.write(Constants.UP);
+            }
+        });
+    }
+
     private void setupLeftButton(ImageButton leftButton)
     {
         final View terminalView = view;
@@ -269,7 +347,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
             @Override
             public void onClick(View v)
             {
-                terminalSession.write("\033[D");
+                terminalSession.write(Constants.LEFT);
             }
         });
     }
@@ -282,7 +360,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
             @Override
             public void onClick(View v)
             {
-                terminalSession.write("\033[C");
+                terminalSession.write(Constants.RIGHT);
             }
         });
     }
@@ -302,6 +380,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
     private void handleKeyboard()
     {
         final InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
+        System.out.println(keyboardShown);
         if(keyboardShown)
         {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

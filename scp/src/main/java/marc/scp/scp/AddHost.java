@@ -4,9 +4,6 @@ package marc.scp.scp;
  * Created by Marc on 5/13/14.
  */
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -16,11 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
-import android.widget.ToggleButton;
-
-
 import java.io.File;
 
+import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.Preference;
@@ -37,16 +32,14 @@ public class AddHost extends Activity
         usingRSAKey = false;
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_host, null);
-        pref = null;
 
-        Bundle bundle = getIntent().getExtras();
+        pref = (Preference)getIntent().getParcelableExtra(Constants.PREFERENCE_PARCEABLE);
 
-        //if not null, get ID from database, and populate the text fields
-        if ((bundle != null) && (bundle.containsKey(HostList.SELECTED_ID)))
+        //if not null
+        if (pref != null)
         {
             EditText edit;
-            int preferenceId = bundle.getInt(HostList.SELECTED_ID);
-            pref = Database.getInstance().getPreferenceID(preferenceId);
+
             edit = (EditText) contentView.findViewById(R.id.hostNameField);
             edit.setText(pref.getHostName());
             edit = (EditText) contentView.findViewById(R.id.usernameField);
@@ -55,8 +48,7 @@ public class AddHost extends Activity
             edit.setText(pref.getName());
 
             edit = (EditText) contentView.findViewById(R.id.passwordField);
-            System.out.println(pref.getRsaKey());
-            System.out.println(pref.getPassword());
+
             if(pref.getUseKey())
             {
                 Switch rsaToggle = (Switch) contentView.findViewById(R.id.RSAToggle);
@@ -74,7 +66,6 @@ public class AddHost extends Activity
             edit = (EditText) contentView.findViewById(R.id.portField);
             edit.setText(String.valueOf(pref.getPort()));
         }
-
         Button btn = (Button) contentView.findViewById(R.id.button_save);
         setupAddandEditButton(btn);
 
@@ -102,7 +93,7 @@ public class AddHost extends Activity
         }
     }
 
-    private Preference errorCheckInput()
+    private Preference createPreferenceObjectFromInput()
     {
         Preference p = null;
         EditText edit;
@@ -132,7 +123,6 @@ public class AddHost extends Activity
             return p;
         }
         int port = Integer.parseInt(edit.getText().toString());
-        Preference addP = new Preference(name, host, userName, port);
 
         edit = (EditText) contentView.findViewById(R.id.passwordField);
         String passwordOrKey = edit.getText().toString();
@@ -142,7 +132,8 @@ public class AddHost extends Activity
             {
                 return p;
             }
-            addP.setPassword(passwordOrKey);
+            p  = new Preference(name, host, userName, port);
+            p.setPassword(passwordOrKey);
         }
         else
         {
@@ -156,9 +147,10 @@ public class AddHost extends Activity
                 Dialogs.makeToast(activity, "File does not exist");
                 return p;
             }
-            addP.setRsaKey(passwordOrKey);
+            p  = new Preference(name, host, userName, port);
+            p.setRsaKey(passwordOrKey);
         }
-        return addP;
+        return p;
     }
 
     private void setupAddandEditButton(Button btn)
@@ -168,7 +160,7 @@ public class AddHost extends Activity
         {
             public void onClick(View v)
             {
-                Preference addP = errorCheckInput();
+                Preference addP = createPreferenceObjectFromInput();
                 if(addP == null)
                 {
                     return;

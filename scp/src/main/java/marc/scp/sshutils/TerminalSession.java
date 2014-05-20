@@ -34,6 +34,11 @@ public class TerminalSession extends TermSession
 
     }
 
+    public ShellConnection getConnection()
+    {
+        return conn;
+    }
+
     @Override //called when data is processed from the input stream
     public void processInput(byte[] buffer, int offset, int count)
     {

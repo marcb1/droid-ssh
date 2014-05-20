@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.*;
@@ -31,8 +33,6 @@ public class HostList extends Activity
     private Preference selectedPref;
 
     private View lastSelectedview;
-
-    public final static String SELECTED_ID = "com.whomarc.scp.ID";
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -108,7 +108,8 @@ public class HostList extends Activity
                 Intent intent = new Intent (activity, AddHost.class);
                 if(selectedPref != null)
                 {
-                    intent.putExtra(SELECTED_ID, selectedPref.getId());
+                    intent.putExtra(Constants.PREFERENCE_PARCEABLE, (Parcelable) selectedPref);
+                    System.out.println(selectedPref.getHostName());
                     startActivity(intent);
                 }
                 else

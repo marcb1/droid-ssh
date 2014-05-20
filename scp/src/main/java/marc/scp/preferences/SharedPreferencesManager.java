@@ -94,5 +94,7 @@ public class SharedPreferencesManager
     public void setPreferencesTerminal(TerminalView terminal)
     {
         terminal.setTermType(getTerminalEmulation());
+        int textSize = Integer.parseInt(fontSize());
+        terminal.setTextSize(textSize);
     }
 }

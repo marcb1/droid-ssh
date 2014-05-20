@@ -24,38 +24,59 @@
     <LinearLayout
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="34dp">
+        android:layout_weight="0.07"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
         <ImageButton
             android:id="@+id/keyboardButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="39dp"
+            android:layout_height="33dp"
             android:src="@drawable/ic_action_keyboard" />
 
 
         <Button
             android:id="@+id/Ctrl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Ctrl" />
+            android:layout_width="39dp"
+            android:layout_height="33dp"
+            android:text="@string/Ctrl"
+            android:textSize="15dp"
+            android:layout_weight="0.10" />
+
+        <Button
+            android:id="@+id/esc"
+            android:layout_width="39dp"
+            android:layout_height="33dp"
+            android:text="@string/Esc"
+            android:textSize="15dp"
+            android:layout_weight="0.10" />
+
+
+        <Button
+            android:id="@+id/tab"
+            android:layout_width="39dp"
+            android:layout_height="33dp"
+            android:text="@string/Tab"
+            android:textSize="15dp"
+            android:layout_weight="0.10" />
 
 
         <ImageButton
             android:id="@+id/leftButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="39dp"
+            android:layout_height="33dp"
             android:src="@drawable/ic_action_left" />
 
         <ImageButton
             android:id="@+id/upButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="39dp"
+            android:layout_height="33dp"
             android:src="@drawable/ic_action_up" />
 
         <ImageButton
             android:id="@+id/rightButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="39dp"
+            android:layout_height="33dp"
             android:src="@drawable/ic_action_right" />
 
 

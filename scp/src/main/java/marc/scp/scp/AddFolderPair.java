@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
@@ -36,6 +37,8 @@ public class AddFolderPair  extends Activity
     //to find the preference object, the folder pair is linked to
     private HashMap<String, Integer> hash;
 
+    private FileSync file;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -51,6 +54,7 @@ public class AddFolderPair  extends Activity
         Spinner spinner = (Spinner) contentView.findViewById(R.id.connection_list);
         populateSpinner(spinner);
 
+        file = (FileSync)getIntent().getParcelableExtra(Constants.FILE_PARCEABLE);
         setContentView(contentView);
         selectedItemSpinner = -1;
     }

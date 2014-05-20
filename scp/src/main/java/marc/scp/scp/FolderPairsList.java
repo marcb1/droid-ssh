@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,6 +13,8 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import marc.scp.Constants.Constants;
+import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
 import marc.scp.viewPopulator.ListViews;
@@ -23,7 +26,8 @@ public class FolderPairsList extends Activity
 {
     private ListView listView;
     private FileSync selectedFolderPair;
-    public final static String SELECTED_ID = "com.whomarc.scp.ID";
+
+    private View lastSelectedview;
 
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,6 +39,9 @@ public class FolderPairsList extends Activity
 
         Button btnAdd = (Button) contentView.findViewById(R.id.button_add);
         setupAddButton(btnAdd);
+
+        Button btnEdt = (Button) contentView.findViewById(R.id.button_edit);
+        setupEditButton(btnEdt);
 
         setContentView(contentView);
     }
@@ -56,16 +63,13 @@ public class FolderPairsList extends Activity
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                if(selectedFolderPair == fileList.get(position))
+                selectedFolderPair = fileList.get(position);
+                if(lastSelectedview != null)
                 {
-                    view.setBackgroundColor(Color.BLACK);
+                    lastSelectedview.setBackgroundColor(Color.TRANSPARENT);
                 }
-                else
-                {
-                    selectedFolderPair = fileList.get(position);
-                    view.setBackgroundColor(Color.GRAY);
-                }
-
+                view.setBackgroundColor(getResources().getColor(R.color.list_selected));
+                lastSelectedview = view;
             }
         });
     }
@@ -79,6 +83,26 @@ public class FolderPairsList extends Activity
             {
                 Intent intent = new Intent (activity, AddFolderPair.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    private void setupEditButton(Button btnEditList)
+    {
+        final Activity activity = this;
+        btnEditList.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v) {
+                Intent intent = new Intent (activity, AddFolderPair.class);
+                if(selectedFolderPair != null)
+                {
+                    intent.putExtra(Constants.FILE_PARCEABLE, (Parcelable) selectedFolderPair);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Dialogs.makeToast(activity, "Please select a saved folder pair to edit!");
+                }
             }
         });
     }

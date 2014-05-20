@@ -82,6 +82,26 @@ public class Preference implements Parcelable
         return ret;
     }
 
+    public void setConnectionName(String name)
+    {
+        connectionName = name;
+    }
+
+    public void setHostName(String name)
+    {
+        hostName = name;
+    }
+
+    public void setPortNumber(int num)
+    {
+        portNumber = num;
+    }
+
+    public void setUsername(String user)
+    {
+        username = user;
+    }
+
     public String getName()
     {
         return connectionName;

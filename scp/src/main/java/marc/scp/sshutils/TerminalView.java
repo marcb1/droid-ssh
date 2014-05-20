@@ -14,6 +14,7 @@ import jackpal.androidterm.emulatorview.TermSession;
 public class TerminalView extends EmulatorView
 {
     private ShellConnection conn;
+    private int textSize;
 
     public TerminalView(Context paramContext, TermSession paramTermSession, DisplayMetrics paramDisplayMetrics)
     {
@@ -36,12 +37,27 @@ public class TerminalView extends EmulatorView
         updatePTY();
     }
 
-    @Override
-    public void setTextSize(int paramInt)
+    public void reduceSize()
     {
+       textSize--;
+        this.setTextSize(textSize);
+    }
+
+    public void increaseSize()
+    {
+        textSize++;
+        this.setTextSize(textSize);
+    }
+
+    @Override
+    public void setTextSize(int size)
+    {
+        textSize = size;
         //setTextSize calls updateSize(true) for us, no need to call again, just setPtySize
-        super.setTextSize(paramInt);
+        super.setTextSize(size);
         updatePTY();
+        setTermType("xterm-256color");
+        conn.setPtyType("xterm-256color");
     }
 
     @Override

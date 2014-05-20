@@ -13,6 +13,7 @@ import com.jcraft.jsch.SftpProgressMonitor;
 import java.io.File;
 import java.util.List;
 
+import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.asyncNetworkTasks.IConnectionNotifier;
@@ -51,7 +52,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         dbInstance = Database.getInstance();
 
         Intent intent = getIntent();
-        file = (FileSync)intent.getParcelableExtra(MainActivity.FILE_PARCEABLE);
+        file = (FileSync)intent.getParcelableExtra(Constants.FILE_PARCEABLE);
         Preference p = dbInstance.getPreferenceID(file.getPreferencesId());
 
         SessionUserInfo user = new SessionUserInfo(p.getHostName(), p.getUsername(), p.getPort(), this);

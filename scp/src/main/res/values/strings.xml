@@ -2,8 +2,9 @@
 <resources>
 
     <!-- Toolbar -->
-    <string name="K">K</string>
-    <string name="Ctrl">Ctrl</string>
+    <string name="Ctrl">ctrl</string>
+    <string name="Esc">esc</string>
+    <string name="Tab">tab</string>
 
     <!-- General Dialogs -->
     <string name="yes">Yes</string>
