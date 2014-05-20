@@ -33,12 +33,6 @@ public class SshConnection
     }
     protected CONNECTION_STATE state;
 
-
-    public JSch getJsch()
-    {
-        return jsch;
-    }
-
     public SshConnection(SessionUserInfo user)
     {
         jsch = new JSch();
@@ -75,12 +69,7 @@ public class SshConnection
 
     public boolean connect()
     {
-        boolean ret = true;
-        if((state == state.DISCONNECTED))
-        {
-            return ret;
-        }
-        return ret;
+        return true;
     }
 
     public void disconnect()
@@ -102,7 +91,7 @@ public class SshConnection
         session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
         session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
         session.setConfig("compression_level", level);
-        Log.d(log, "enableCompression, level: " + level);
+        Log.d(log, "Compression enabled, level: " + level);
     }
 
     public void disableHostChecking()
@@ -124,6 +113,12 @@ public class SshConnection
         return userInfo.getHost();
     }
 
+    public Channel getChannel()
+    {
+        return channel;
+    }
+
+    //protected getters
     protected SessionUserInfo getUserInfo()
     {
         return userInfo;
@@ -134,9 +129,9 @@ public class SshConnection
         return session;
     }
 
-    public Channel getChannel()
+    protected JSch getJsch()
     {
-        return channel;
+        return jsch;
     }
 }
 

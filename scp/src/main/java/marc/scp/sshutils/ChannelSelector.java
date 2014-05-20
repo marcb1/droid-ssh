@@ -20,7 +20,8 @@ public class ChannelSelector implements ChannelSftp.LsEntrySelector
 
     public int select(ChannelSftp.LsEntry entry)
     {
-        if(file.getName().equals(entry.getFilename()))
+        //if names are equal and sizes are equal let's not upload the file
+        if((file.length() == entry.getAttrs().getSize()) && (file.getName().equals(entry.getFilename())) )
         {
             result = true;
             return BREAK;

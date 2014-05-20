@@ -48,30 +48,29 @@ public class ShellConnection extends SshConnection
         try
         {
             Session session = super.getSession();
-
             if((session != null) && (state == CONNECTION_STATE.DISCONNECTED))
             {
+                Log.d(log, "SSH shell Connecting...");
                 Channel channel = super.getChannel();
-                Log.d(log, "SSH Shell Connecting...");
                 state = CONNECTION_STATE.CONNECTING;
                 session.connect(5000);
 
                 channel = session.openChannel("shell");
                 channelShell = (ChannelShell)channel;
-                state = CONNECTION_STATE.CONNECTED;
 
                 channel.setInputStream(localIn, true);
                 channel.setOutputStream(localOut, true);
 
                 channel.connect(5000);
+                state = CONNECTION_STATE.CONNECTED;
 
-                Log.d(log, "SSH Connected");
+                Log.d(log, "SSH shell Connected");
                 ret = true;
             }
         }
         catch(JSchException  e)
         {
-            Log.d(log, "Exception caught while initiating SSH connection: " + e.getMessage(), e);
+            Log.e(log, "Exception caught while initiating shell connection", e);
             ret = false;
             state = CONNECTION_STATE.DISCONNECTED;
             getUserInfo().handleException(e);

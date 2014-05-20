@@ -94,9 +94,8 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        switch (item.getItemId())
+        if ((item.getItemId() == android.R.id.home) && (conn.isConnected()))
         {
-            case android.R.id.home:
                 exitDialog();
                 return true;
         }
