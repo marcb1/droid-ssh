@@ -112,13 +112,11 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
 
             prefInstance.setPreferencesonShellConnection(conn);
             prefInstance.setPreferencesTerminal(view);
+            prefInstance.setPreferenceSession(terminalSession);
 
             SshConnectTask task = new SshConnectTask(this);
             task.execute(conn);
         }
-
-        view.setAltSendsEsc(false);
-        view.setMouseTracking(true);
 
         Button Ctrl = (Button) findViewById(R.id.Ctrl);
         setupControlButton(Ctrl);
@@ -140,7 +138,6 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
 
         ImageButton keyboardButton = (ImageButton) findViewById(R.id.keyboardButton);
         setupKeyboardButton(keyboardButton);
-
     }
 
     public void connectionResult(boolean result)
@@ -380,7 +377,6 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
     private void handleKeyboard()
     {
         final InputMethodManager imm = (InputMethodManager)this.getSystemService(Service.INPUT_METHOD_SERVICE);
-        System.out.println(keyboardShown);
         if(keyboardShown)
         {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

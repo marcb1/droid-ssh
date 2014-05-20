@@ -109,7 +109,6 @@ public class HostList extends Activity
                 if(selectedPref != null)
                 {
                     intent.putExtra(Constants.PREFERENCE_PARCEABLE, (Parcelable) selectedPref);
-                    System.out.println(selectedPref.getHostName());
                     startActivity(intent);
                 }
                 else

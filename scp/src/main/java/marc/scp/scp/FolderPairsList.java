@@ -26,6 +26,7 @@ public class FolderPairsList extends Activity
 {
     private ListView listView;
     private FileSync selectedFolderPair;
+    private Database dbInstance;
 
     private View lastSelectedview;
 
@@ -36,12 +37,16 @@ public class FolderPairsList extends Activity
 
         listView = (ListView) contentView.findViewById(R.id.list_view);
         selectedFolderPair = null;
+        dbInstance = Database.getInstance();
 
         Button btnAdd = (Button) contentView.findViewById(R.id.button_add);
         setupAddButton(btnAdd);
 
         Button btnEdt = (Button) contentView.findViewById(R.id.button_edit);
         setupEditButton(btnEdt);
+
+        Button btnDel = (Button) contentView.findViewById(R.id.button_delete);
+        setupDeleteButton(btnDel);
 
         setContentView(contentView);
     }
@@ -105,5 +110,23 @@ public class FolderPairsList extends Activity
                 }
             }
         });
+    }
+
+    private void setupDeleteButton(Button btn)
+    {
+        btn.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+
+                deleteFile(selectedFolderPair);
+                finish();
+            }
+        });
+    }
+
+    private void deleteFile(FileSync fileSync)
+    {
+        dbInstance.deleteFileSync(fileSync);
     }
 }

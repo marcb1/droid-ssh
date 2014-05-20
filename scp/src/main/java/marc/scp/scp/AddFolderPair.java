@@ -55,8 +55,24 @@ public class AddFolderPair  extends Activity
         populateSpinner(spinner);
 
         file = (FileSync)getIntent().getParcelableExtra(Constants.FILE_PARCEABLE);
+        populateFields(file);
+
         setContentView(contentView);
         selectedItemSpinner = -1;
+    }
+
+    private void populateFields(FileSync file)
+    {
+        if(file != null)
+        {
+            EditText edit;
+            edit = (EditText) contentView.findViewById(R.id.folderPairName);
+            edit.setText(file.getName());
+            edit = (EditText) contentView.findViewById(R.id.localFolderField);
+            edit.setText(file.getLocalFolder());
+            edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
+            edit.setText(file.getRemoteFolder());
+        }
     }
 
     private void populateSpinner(Spinner spinner)
@@ -94,6 +110,46 @@ public class AddFolderPair  extends Activity
         });
     }
 
+    private FileSync errorCheckInput()
+    {
+        EditText edit;
+        FileSync ret = null;
+        Activity activity = this;
+
+        edit = (EditText) contentView.findViewById(R.id.folderPairName);
+        String name = edit.getText().toString();
+        if(Dialogs.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
+        {
+            return ret;
+        }
+
+        edit = (EditText) contentView.findViewById(R.id.localFolderField);
+        String localFolder = edit.getText().toString();
+        if(Dialogs.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
+        {
+            return ret;
+        }
+        File test = new File(localFolder);
+        if(!test.exists())
+        {
+            Dialogs.makeToast(activity, "Local folder does not exit");
+            return ret;
+        }
+        edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
+        String remoteFolder = edit.getText().toString();
+        if(Dialogs.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
+        {
+            return ret;
+        }
+
+        if(selectedItemSpinner == -1)
+        {
+            Dialogs.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
+            return ret;
+        }
+        ret = new FileSync(name, selectedItemSpinner, localFolder, remoteFolder);
+        return ret;
+    }
     private void setupAddandEditButton(Button btn)
     {
         final Activity activity = this;
@@ -101,43 +157,19 @@ public class AddFolderPair  extends Activity
         {
             public void onClick(View v)
             {
-                EditText edit;
-
-                edit = (EditText) contentView.findViewById(R.id.folderPairName);
-                String name = edit.getText().toString();
-                if(Dialogs.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
+                FileSync file = errorCheckInput();
+                if(file != null)
                 {
-                    return;
+                    addFile(file);
                 }
-
-                edit = (EditText) contentView.findViewById(R.id.localFolderField);
-                String localFolder = edit.getText().toString();
-                if(Dialogs.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
-                {
-                    return;
-                }
-                File test = new File(localFolder);
-                if(!test.exists())
-                {
-                    Dialogs.makeToast(activity, "Local folder does not exit");
-                    return;
-                }
-                edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
-                String remoteFolder = edit.getText().toString();
-                if(Dialogs.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
-                {
-                    return;
-                }
-
-                if(selectedItemSpinner == -1)
-                {
-                    Dialogs.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
-                    return;
-                }
-                FileSync file = new FileSync(name, selectedItemSpinner, localFolder, remoteFolder);
-                dbInstance.addFileSync(file);
                 finish();
             }
         });
     }
+
+    private void addFile(FileSync fileSync)
+    {
+        dbInstance.addFileSync(file);
+    }
+
 }

@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import java.util.HashMap;
 
 import marc.scp.sshutils.SshConnection;
+import marc.scp.sshutils.TerminalSession;
 import marc.scp.sshutils.TerminalView;
 
 /**
@@ -96,5 +97,12 @@ public class SharedPreferencesManager
         terminal.setTermType(getTerminalEmulation());
         int textSize = Integer.parseInt(fontSize());
         terminal.setTextSize(textSize);
+        terminal.setAltSendsEsc(false);
+        terminal.setMouseTracking(true);
+    }
+
+    public void setPreferenceSession(TerminalSession terminalSession)
+    {
+        terminalSession.setDefaultUTF8Mode(true);
     }
 }
