@@ -44,8 +44,8 @@ public class Preference implements Parcelable
         hostName = host;
         username = user;
         portNumber = port;
-        rsaKey = null;
-        password = null;
+        rsaKey = "";
+        password = "";
     }
 
     //setters
@@ -80,6 +80,11 @@ public class Preference implements Parcelable
            ret = true;
        }
         return ret;
+    }
+
+    public boolean isPasswordSet()
+    {
+        return (password.length() >= 1);
     }
 
     public void setConnectionName(String name)

@@ -11,6 +11,7 @@ import com.jcraft.jsch.UIKeyboardInteractive;
 import marc.scp.syncDialogs.BlockingOnUIRunnable;
 import marc.scp.syncDialogs.MyAlertBox;
 import marc.scp.syncDialogs.MyAlertDialog;
+import marc.scp.syncDialogs.MyInputBox;
 
 
 public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
@@ -26,6 +27,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
 
     //TODO make this private
     public boolean alertBooleanResult;
+    private final String log = "SessionUserInfo";
 
     private SshConnection conn;
 
@@ -36,6 +38,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
         mPort = port;
         parent = ac;
         conn = null;
+        mPassword = null;
     }
 
     public String getRsa()
@@ -44,7 +47,8 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     }
     public boolean usingRSA()
     {
-        return (mPassword == null);
+        boolean ret = ((mPassword == null) && (mRsa != null));
+        return ret;
     }
     public void setPassword(String pass)
     {
@@ -67,10 +71,11 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
         conn = c;
     }
 
+    @Override
     public String[] promptKeyboardInteractive(String destination, String name, String instruction,
                                               String[] prompt, boolean[] echo)
     {
-        Log.d("sessionuserinfo", "prompt keyboard");
+        Log.d(log, "prompt keyboard");
         return null;
     }
 
@@ -129,6 +134,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     }
 
     //abstract methods
+    @Override
     public String getPassphrase()
     {
         //log here that we returned the password
@@ -145,7 +151,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     @Override
     public void showMessage(String message)
     {
-        showMessage("Info", message);
+        Log.d(log, "showMessage:" + message);
     }
     public boolean promptYesNo(final String message)
     {
@@ -158,13 +164,20 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
         return alertBooleanResult;
     }
 
-    public boolean promptPassword(java.lang.String arg0)
+    @Override
+    //return true, password is retreived through getPassword()
+    public boolean promptPassword(String message)
     {
-        // TODO
-        return true;
+        MyInputBox alert = new MyInputBox(parent, "Enter password", message, this);
+        BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
+        actionRunnable.startOnUiAndWait();
+        return alertBooleanResult;
     }
-    public boolean promptPassphrase(java.lang.String arg0)
+
+    @Override
+    public boolean promptPassphrase(String message)
     {
+        Log.d(log, "promptPassphrase" + message);
         // TODO
         return true;
     }

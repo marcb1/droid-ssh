@@ -94,7 +94,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
             {
                 user.setRSA(p.getRsaKey());
             }
-            else
+            else if(p.isPasswordSet())
             {
                 user.setPassword(p.getPassword());
             }

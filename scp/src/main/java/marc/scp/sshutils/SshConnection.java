@@ -57,12 +57,12 @@ public class SshConnection
         catch(JSchException e)
         {
             userInfo.handleException(e);
-            Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
+            Log.e(log, "Exception caught while creating jsch session", e);
             session = null;
         }
         catch(Exception e)
         {
-            Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
+            Log.e(log, "Exception caught while creating jsch session", e);
             session = null;
         }
     }

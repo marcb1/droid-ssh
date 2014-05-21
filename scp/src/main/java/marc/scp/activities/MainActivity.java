@@ -36,7 +36,6 @@ public class MainActivity extends Activity
     private Dialogs DialogsInstance;
 
     private Database dbInstance;
-    private SharedPreferencesManager prefInstance;
 
     @Override
     //this is called when the activity is created
@@ -48,7 +47,7 @@ public class MainActivity extends Activity
 
         Database.init(this);
         dbInstance = Database.getInstance();
-        prefInstance = SharedPreferencesManager.getInstance(this);
+        SharedPreferencesManager.getInstance(this);
 
         Button quickConnect = (Button) contentView.findViewById(R.id.quickConnect);
         setupQuickConnectBtn(quickConnect);
@@ -125,7 +124,7 @@ public class MainActivity extends Activity
 
     private void setupFolderPairsList(ListView lv)
     {
-        final List<FileSync> fileList = Database.getInstance().getAllFileSync();
+        final List<FileSync> fileList = dbInstance.getAllFileSync();
         SimpleAdapter adapter = ListViews.createAdapterFromFilePairs(this, fileList);
         if((adapter != null))
         {
@@ -150,12 +149,12 @@ public class MainActivity extends Activity
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Preference p = preferencesList.get(position);
-                ConnectToPreference(p);
+                connectToPreference(p);
             }
         });
     }
 
-    private void ConnectToPreference(Preference p)
+    private void connectToPreference(Preference p)
     {
         Intent intent = new Intent(this, TerminalActivity.class);
         intent.putExtra(Constants.PREFERENCE_PARCEABLE, (Parcelable) p);
@@ -195,8 +194,15 @@ public class MainActivity extends Activity
         {
             public void onClick(View v)
             {
-                ArrayList<FileSync> fileList = new ArrayList<FileSync>(Database.getInstance().getAllFileSync());
-                syncFiles(fileList);
+                ArrayList<FileSync> fileList = new ArrayList<FileSync>(dbInstance.getAllFileSync());
+                if(fileList.size() >= 1)
+                {
+                    syncFiles(fileList);
+                }
+                else
+                {
+                    DialogsInstance.makeToast(activity, "Please create a folder pair to sync!");
+                }
             }
         });
     }
@@ -211,10 +217,13 @@ public class MainActivity extends Activity
                 final Dialog dialog = new Dialog(activity);
                 dialog.setContentView(R.layout.quick_connect);
                 Button dialogButton = (Button) dialog.findViewById(R.id.quickConnect);
-                // if button is clicked, close the custom dialog
-                dialogButton.setOnClickListener(new View.OnClickListener() {
+                dialog.setTitle("Quick Connect");
+                dialogButton.setOnClickListener(new View.OnClickListener()
+                {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View v)
+                    {
+                        connectToServer(dialog);
                         dialog.dismiss();
                     }
                 });
@@ -223,29 +232,18 @@ public class MainActivity extends Activity
         });
     }
 
-    // TODO needs to be worked on
     // Called when the user clicks the quick connnect button
-    public void connectToServer(View view)
+    public void connectToServer(Dialog dialog)
     {
-        //MainActivity inherits from context (this)
-        Intent intent = new Intent(this, TerminalActivity.class);
-
         //grab the strings out of the correct field
-        EditText editText = (EditText) findViewById(R.id.usernameField);
+        EditText editText = (EditText) dialog.findViewById(R.id.usernameField);
         String username = editText.getText().toString();
 
-        editText = (EditText) findViewById(R.id.passwordField);
-        String password = editText.getText().toString();
-
-        editText = (EditText) findViewById(R.id.hostNameField);
+        editText = (EditText) dialog.findViewById(R.id.hostNameField);
         String hostname = editText.getText().toString();
 
-        editText = (EditText) findViewById(R.id.portField);
-        String port = editText.getText().toString();
-
-
         // create a new parceable preference object
-
-        startActivity(intent);
+        Preference pref = new Preference(hostname, hostname, username, 22);
+        connectToPreference(pref);
     }
 }
