@@ -50,12 +50,12 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     private SyncThread syncThread;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.file_sync, null);
         setContentView(contentView);
         Dialogs = Dialogs.getInstance(this);
-        syncThread = new SyncThread();
 
         dbInstance = Database.getInstance();
 
@@ -116,7 +116,11 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public void onBackPressed()
     {
-        if((!conn.isConnected()) && ((syncThread == null) || (syncThread.getState() == Thread.State.TERMINATED)) )
+        if((!conn.isConnected()) && (syncThread == null))
+        {
+            super.onBackPressed();
+        }
+        else if((!conn.isConnected()) && (syncThread.getState() == Thread.State.TERMINATED))
         {
             super.onBackPressed();
         }
@@ -129,10 +133,20 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if ((item.getItemId() == android.R.id.home) && ((syncThread != null) || (syncThread.getState() != Thread.State.TERMINATED)) )
+        if(item.getItemId() == android.R.id.home)
         {
+            if((!conn.isConnected()) && (syncThread == null))
+            {
+                super.onOptionsItemSelected(item);
+            }
+            else if((!conn.isConnected()) && (syncThread.getState() == Thread.State.TERMINATED))
+            {
+                super.onOptionsItemSelected(item);
+            }
+            else
+            {
                 exitDialog();
-                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
