@@ -55,6 +55,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.file_sync, null);
         setContentView(contentView);
         Dialogs = Dialogs.getInstance(this);
+        syncThread = new SyncThread();
 
         dbInstance = Database.getInstance();
 
@@ -165,7 +166,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         }
         else
         {
-            setTitle("Error...");
+            setTitle("Error connecting...");
         }
     }
 
@@ -173,13 +174,14 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public void transferResult(boolean result)
     {
+        System.out.println(result);
         if(result)
         {
             setTitle("Done uploading.");
         }
         else
         {
-            setTitle("Error...");
+            setTitle("Error transferring files...");
         }
         conn.disconnect();
         TextView t = (TextView) contentView.findViewById(R.id.fileUploadStatus);

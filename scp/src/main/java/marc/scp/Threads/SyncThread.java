@@ -21,6 +21,11 @@ public class SyncThread extends Thread
 
     private final static String log = "SyncThread";
 
+    public SyncThread()
+    {
+
+    }
+
     public SyncThread(SyncActivity parent, ArrayList<FileSync>  files)
     {
         activity = parent;

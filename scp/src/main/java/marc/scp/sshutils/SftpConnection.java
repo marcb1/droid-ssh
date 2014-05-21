@@ -74,6 +74,7 @@ public class SftpConnection extends SshConnection
         try
         {
             sftp.setInputStream(null);
+            ret = true;
             for (final File file : files)
             {
                 try
@@ -87,7 +88,6 @@ public class SftpConnection extends SshConnection
                         {
                             sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.APPEND);
                         }
-                        ret = true;
                     }
                 }
                 catch (SftpException e)
@@ -102,6 +102,7 @@ public class SftpConnection extends SshConnection
         {
             ret = false;
         }
+        System.out.println("returned" + ret);
         return ret;
     }
 
