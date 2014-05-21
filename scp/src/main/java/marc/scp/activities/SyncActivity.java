@@ -149,7 +149,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
                 exitDialog();
             }
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     //IConnectionNotifier
