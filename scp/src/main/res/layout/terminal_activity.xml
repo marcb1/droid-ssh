@@ -13,7 +13,7 @@
 
         <view
             android:id="@+id/emulatorView"
-            class="marc.scp.sshutils.TerminalView"
+            class="marc.scp.terminal.TerminalView"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:focusable="true"

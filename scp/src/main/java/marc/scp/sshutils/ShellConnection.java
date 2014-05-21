@@ -89,6 +89,7 @@ public class ShellConnection extends SshConnection
     {
         if(channelShell != null)
         {
+            Log.d(log, "setPtySize");
             channelShell.setPtySize(col, row, px, py);
         }
     }
@@ -97,6 +98,7 @@ public class ShellConnection extends SshConnection
     {
         if(channelShell != null)
         {
+            Log.d(log, "setPtyType: " + type);
             channelShell.setPtyType(type);
         }
     }

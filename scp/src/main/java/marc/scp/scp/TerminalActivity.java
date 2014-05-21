@@ -1,5 +1,4 @@
 package marc.scp.scp;
-import jackpal.androidterm.emulatorview.EmulatorView;
 import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.asyncNetworkTasks.IConnectionNotifier;
@@ -8,13 +7,14 @@ import marc.scp.databaseutils.Preference;
 import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.sshutils.*;
 import marc.scp.asyncDialogs.Dialogs;
+import marc.scp.terminal.TerminalSession;
+import marc.scp.terminal.TerminalView;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.Service;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -26,9 +26,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 
 
 public class TerminalActivity extends Activity implements IConnectionNotifier

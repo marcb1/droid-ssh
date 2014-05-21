@@ -1,12 +1,12 @@
-package marc.scp.sshutils;
+package marc.scp.terminal;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 
-import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
+import marc.scp.sshutils.ShellConnection;
 
 /**
  * Created by Marc on 5/17/2014.

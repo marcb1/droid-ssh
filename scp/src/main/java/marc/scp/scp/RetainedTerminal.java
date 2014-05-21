@@ -3,8 +3,8 @@ package marc.scp.scp;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import marc.scp.sshutils.TerminalSession;
-import marc.scp.sshutils.TerminalView;
+import marc.scp.terminal.TerminalSession;
+import marc.scp.terminal.TerminalView;
 
 /**
  * Created by Marc on 5/19/2014.

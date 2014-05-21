@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.util.HashMap;
-
 import marc.scp.sshutils.SshConnection;
-import marc.scp.sshutils.TerminalSession;
-import marc.scp.sshutils.TerminalView;
+import marc.scp.terminal.TerminalSession;
+import marc.scp.terminal.TerminalView;
 
 /**
  * Created by Marc on 5/16/14.

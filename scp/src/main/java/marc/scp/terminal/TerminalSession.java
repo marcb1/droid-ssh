@@ -1,4 +1,4 @@
-package marc.scp.sshutils;
+package marc.scp.terminal;
 
 import android.util.Log;
 
@@ -6,6 +6,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 import jackpal.androidterm.emulatorview.TermSession;
+import marc.scp.sshutils.ShellConnection;
 
 /**
  * Created by Marc on 5/18/2014.
