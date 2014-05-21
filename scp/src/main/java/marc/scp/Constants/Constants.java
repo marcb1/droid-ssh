@@ -1,4 +1,4 @@
-package marc.scp.Constants;
+package marc.scp.constants;
 
 /**
  * Created by Marc on 5/19/2014.

@@ -28,13 +28,16 @@ public class SharedPreferencesManager
     static private final String TERMINALEMULATION = "terminal_emulation";
     static public final String DELETETABLES = "delete_tables";
 
-
-    public static SharedPreferencesManager getInstance(Context context)
+    public static void init(Context context)
     {
         if(instance == null)
         {
             instance = new SharedPreferencesManager(context);
         }
+    }
+
+    public static SharedPreferencesManager getInstance()
+    {
         return instance;
     }
 

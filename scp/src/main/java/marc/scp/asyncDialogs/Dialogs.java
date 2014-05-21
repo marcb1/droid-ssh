@@ -26,13 +26,12 @@ public class Dialogs
         AlertDialogNo = activity.getString(R.string.no);
     }
 
-    public static Dialogs getInstance(Activity activity)
+    public static void init(Activity activity)
     {
         if(instance == null)
         {
             instance =  new Dialogs(activity);
         }
-        return instance;
     }
 
     public static Dialogs getInstance()

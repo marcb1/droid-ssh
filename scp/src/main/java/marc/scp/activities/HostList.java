@@ -20,7 +20,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
-import marc.scp.Constants.Constants;
+import marc.scp.constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.*;
@@ -40,7 +40,7 @@ public class HostList extends Activity
         super.onCreate(savedInstanceState);
         ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.host_list, null);
         listView = (ListView) contentView.findViewById(R.id.list_view);
-        Dialogs = Dialogs.getInstance(this);
+        Dialogs = Dialogs.getInstance();
 
         Button btnAdd = (Button) contentView.findViewById(R.id.button_add);
         setupAddButton(btnAdd);

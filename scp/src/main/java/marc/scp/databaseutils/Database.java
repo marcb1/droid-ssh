@@ -7,10 +7,6 @@ import android.content.Context;
 
 import com.j256.ormlite.table.TableUtils;
 
-/*
-    This file has been checked
- */
-
 public class Database
 {
     private DatabaseHelper helper;

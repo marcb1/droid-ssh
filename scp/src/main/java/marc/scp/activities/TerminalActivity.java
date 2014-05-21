@@ -1,5 +1,6 @@
 package marc.scp.activities;
-import marc.scp.Constants.Constants;
+
+import marc.scp.constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.asyncNetworkTasks.IConnectionNotifier;
 import marc.scp.asyncNetworkTasks.SshConnectTask;
@@ -29,11 +30,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-
 public class TerminalActivity extends Activity implements IConnectionNotifier
 {
     private SshConnection conn;
-    private int textSize;
     private boolean keyboardShown;
 
     private SharedPreferencesManager prefInstance;
@@ -52,9 +51,9 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         super.onCreate(savedInstanceState);
         setContentView(R.layout.terminal_activity);
 
-        prefInstance = SharedPreferencesManager.getInstance(this);
+        prefInstance = SharedPreferencesManager.getInstance();
         keyboardShown = true;
-        Dialogs = Dialogs.getInstance(this);
+        Dialogs = Dialogs.getInstance();
 
         FragmentManager fm = getFragmentManager();
         String ter = "terminal";
@@ -142,6 +141,8 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
         setupKeyboardButton(keyboardButton);
     }
 
+    //IconnectionNotifier
+    @Override
     public void connectionResult(boolean result)
     {
         if(result == false)

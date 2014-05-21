@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import marc.scp.scp.R;
-import marc.scp.Constants.Constants;
+import marc.scp.constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
@@ -41,13 +41,15 @@ public class MainActivity extends Activity
     //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
-        DialogsInstance = DialogsInstance.getInstance(this);
+        Dialogs.init(this);
+        DialogsInstance = DialogsInstance.getInstance();
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
 
         Database.init(this);
+        SharedPreferencesManager.init(this);
         dbInstance = Database.getInstance();
-        SharedPreferencesManager.getInstance(this);
+        SharedPreferencesManager.getInstance();
 
         Button quickConnect = (Button) contentView.findViewById(R.id.quickConnect);
         setupQuickConnectBtn(quickConnect);

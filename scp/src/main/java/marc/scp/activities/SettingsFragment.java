@@ -14,11 +14,14 @@ import marc.scp.scp.R;
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener
 {
     private Dialogs Dialogs;
+    private Database dbInstance;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         Dialogs = Dialogs.getInstance();
+        dbInstance = Database.getInstance();
         // Load the preferences from an XML resource
         addPreferencesFromResource(marc.scp.scp.R.xml.preferences);
         Preference p_delete = (Preference) this.findPreference(SharedPreferencesManager.DELETETABLES);
@@ -37,7 +40,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                         @Override
                         public void PositiveMethod(final DialogInterface dialog, final int id)
                         {
-                            Database.getInstance().clearAllTables();
+                            dbInstance.clearAllTables();
                         }
                     });
         }

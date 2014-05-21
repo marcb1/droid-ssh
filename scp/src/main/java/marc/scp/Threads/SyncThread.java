@@ -1,9 +1,4 @@
-package marc.scp.Threads;
-
-import android.app.Activity;
-import android.util.Log;
-
-import com.j256.ormlite.android.AndroidLog;
+package marc.scp.threads;
 
 import java.util.ArrayList;
 

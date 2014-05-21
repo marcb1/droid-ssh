@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import marc.scp.Constants.Constants;
+import marc.scp.constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
@@ -27,16 +27,17 @@ import marc.scp.scp.R;
  */
 public class AddFolderPair  extends Activity
 {
-    private ViewGroup contentView;
+    //singleton instances
     private Database dbInstance;
-    private Dialogs Dialogs;
+    private Dialogs dialogInstance;
+
+    private ViewGroup contentView;
     private int selectedItemSpinner;
+    private FileSync file;
 
     //hash of preferences and their id, used for adding folder pairs, so we don't have to query the database again
     //to find the preference object, the folder pair is linked to
     private HashMap<String, Integer> hash;
-
-    private FileSync file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,7 +45,7 @@ public class AddFolderPair  extends Activity
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_folder_pair, null);
         dbInstance = Database.getInstance();
-        Dialogs = Dialogs.getInstance(this);
+        dialogInstance = dialogInstance.getInstance();
 
         hash = new HashMap<String, Integer>();
 
@@ -61,6 +62,7 @@ public class AddFolderPair  extends Activity
         selectedItemSpinner = -1;
     }
 
+    //helpers
     private void populateFields(FileSync file)
     {
         if(file != null)
@@ -80,7 +82,7 @@ public class AddFolderPair  extends Activity
         final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
         if(preferencesList == null)
         {
-            Dialogs.getAlertDialog(this, "Error", "Please create a connection first", true);
+            dialogInstance.getAlertDialog(this, "Error", "Please create a connection first", true);
             finish();
             return;
         }
@@ -118,38 +120,40 @@ public class AddFolderPair  extends Activity
 
         edit = (EditText) contentView.findViewById(R.id.folderPairName);
         String name = edit.getText().toString();
-        if(Dialogs.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
+        if(dialogInstance.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
         {
             return ret;
         }
 
         edit = (EditText) contentView.findViewById(R.id.localFolderField);
         String localFolder = edit.getText().toString();
-        if(Dialogs.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
+        if(dialogInstance.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
         {
             return ret;
         }
         File test = new File(localFolder);
         if(!test.exists())
         {
-            Dialogs.makeToast(activity, "Local folder does not exit");
+            dialogInstance.makeToast(activity, "Local folder does not exit");
             return ret;
         }
         edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
         String remoteFolder = edit.getText().toString();
-        if(Dialogs.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
+        if(dialogInstance.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
         {
             return ret;
         }
 
         if(selectedItemSpinner == -1)
         {
-            Dialogs.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
+            dialogInstance.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
             return ret;
         }
         ret = new FileSync(name, selectedItemSpinner, localFolder, remoteFolder);
         return ret;
     }
+
+    //setup buttons
     private void setupAddandEditButton(Button btn)
     {
         final Activity activity = this;
@@ -158,7 +162,7 @@ public class AddFolderPair  extends Activity
             public void onClick(View v)
             {
                 FileSync fileInput = errorCheckInput();
-                if(file != null)
+                if((file != null) && (fileInput != null))
                 {
                     fileInput.setId(file.getId());
                     updateFile(fileInput);
@@ -174,6 +178,7 @@ public class AddFolderPair  extends Activity
         });
     }
 
+    //database access
     private void addFile(FileSync fileSync)
     {
         dbInstance.addFileSync(fileSync);

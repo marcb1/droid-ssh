@@ -24,6 +24,7 @@ public class RetainedTerminal extends Fragment {
         setRetainInstance(true);
     }
 
+    //setters
     public void setTerminalSession(TerminalSession session)
     {
         terminalSession = session;
@@ -34,10 +35,10 @@ public class RetainedTerminal extends Fragment {
         terminalview = view;
     }
 
+    //getters
     public TerminalSession getTerminalSession() {
         return terminalSession;
     }
-
 
     public TerminalView getTerminalView() {
         return terminalview;

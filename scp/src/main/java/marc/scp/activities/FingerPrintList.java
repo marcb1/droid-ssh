@@ -25,12 +25,13 @@ import marc.scp.scp.R;
 public class FingerPrintList extends Activity
 {
     private ListView listView;
-    private Dialogs DialogsInstance;
+    private Dialogs dialogsInstance;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        DialogsInstance = DialogsInstance.getInstance(this);
+        dialogsInstance = dialogsInstance.getInstance();
         ViewGroup contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.fingerprint_list, null);
         listView = (ListView) contentView.findViewById(R.id.list_view);
 
@@ -61,7 +62,7 @@ public class FingerPrintList extends Activity
         {
             public void onClick(View v)
             {
-                DialogsInstance.getConfirmDialog(activity, "Are you sure you would like to all saved Fingerprints?", true,
+                dialogsInstance.getConfirmDialog(activity, "Are you sure you would like to all saved Fingerprints?", true,
                         new YesNoDialog() {
                             @Override
                             public void PositiveMethod(DialogInterface dialog, int id) {
@@ -76,7 +77,8 @@ public class FingerPrintList extends Activity
         });
     }
 
-    public void deleteAll()
+    //database access
+    private void deleteAll()
     {
         Database.getInstance().deleteAllHostKeys();
     }

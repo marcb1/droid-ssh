@@ -26,8 +26,8 @@ import marc.scp.scp.R;
 
 public class SyncList extends Activity
 {
-    ListView listView;
-    FileSync selectedSync;
+    private ListView listView;
+    private FileSync selectedSync;
     public final static String SELECTED_ID = "com.whomarc.scp.ID";
 
     protected void onCreate(Bundle savedInstanceState)
@@ -74,7 +74,6 @@ public class SyncList extends Activity
             }
         });
     }
-
 
     private void setupAddButton(Button btnAdd)
     {

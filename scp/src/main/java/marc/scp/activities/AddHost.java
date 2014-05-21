@@ -15,7 +15,7 @@ import android.widget.Switch;
 
 import java.io.File;
 
-import marc.scp.Constants.Constants;
+import marc.scp.constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.Preference;
@@ -36,41 +36,46 @@ public class AddHost extends Activity
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_host, null);
 
         pref = (Preference)getIntent().getParcelableExtra(Constants.PREFERENCE_PARCEABLE);
-        Dialogs = Dialogs.getInstance(this);
+        Dialogs = Dialogs.getInstance();
 
-        //if not null
         if (pref != null)
         {
-            EditText edit;
-
-            edit = (EditText) contentView.findViewById(R.id.hostNameField);
-            edit.setText(pref.getHostName());
-            edit = (EditText) contentView.findViewById(R.id.usernameField);
-            edit.setText(pref.getUsername());
-            edit = (EditText) contentView.findViewById(R.id.connectionNameField);
-            edit.setText(pref.getName());
-
-            edit = (EditText) contentView.findViewById(R.id.passwordField);
-
-            if(pref.getUseKey())
-            {
-                Switch rsaToggle = (Switch) contentView.findViewById(R.id.RSAToggle);
-                rsaToggle.toggle();
-                edit.setInputType(InputType.TYPE_CLASS_TEXT);
-                edit.setText(pref.getRsaKey());
-                usingRSAKey = true;
-            }
-            else
-            {
-                edit.setText(pref.getPassword());
-            }
-            edit = (EditText) contentView.findViewById(R.id.portField);
-            edit.setText(String.valueOf(pref.getPort()));
+            fillForm();
         }
+
         Button btn = (Button) contentView.findViewById(R.id.button_save);
         setupAddandEditButton(btn);
 
         setContentView(contentView);
+    }
+
+    private void fillForm()
+    {
+        EditText edit;
+
+        edit = (EditText) contentView.findViewById(R.id.hostNameField);
+        edit.setText(pref.getHostName());
+        edit = (EditText) contentView.findViewById(R.id.usernameField);
+        edit.setText(pref.getUsername());
+        edit = (EditText) contentView.findViewById(R.id.connectionNameField);
+        edit.setText(pref.getName());
+
+        edit = (EditText) contentView.findViewById(R.id.passwordField);
+
+        if(pref.getUseKey())
+        {
+            Switch rsaToggle = (Switch) contentView.findViewById(R.id.RSAToggle);
+            rsaToggle.toggle();
+            edit.setInputType(InputType.TYPE_CLASS_TEXT);
+            edit.setText(pref.getRsaKey());
+            usingRSAKey = true;
+        }
+        else
+        {
+            edit.setText(pref.getPassword());
+        }
+        edit = (EditText) contentView.findViewById(R.id.portField);
+        edit.setText(String.valueOf(pref.getPort()));
     }
 
     public void onToggleRSA(View view)

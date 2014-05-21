@@ -15,9 +15,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import marc.scp.Threads.SyncThread;
+import marc.scp.threads.SyncThread;
 import marc.scp.scp.R;
-import marc.scp.Constants.Constants;
+import marc.scp.constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.asyncNetworkTasks.IConnectionNotifier;
@@ -55,7 +55,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.file_sync, null);
         setContentView(contentView);
-        Dialogs = Dialogs.getInstance(this);
+        Dialogs = Dialogs.getInstance();
 
         dbInstance = Database.getInstance();
 
@@ -89,6 +89,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         syncThread.start();
     }
 
+    //public so SyncThread can call into here
     public void sync(FileSync file)
     {
         this.file = file;
@@ -107,7 +108,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         conn = new SftpConnection(user);
 
         progress = (ProgressBar) contentView.findViewById(R.id.progressBar);
-        SharedPreferencesManager.getInstance(this).setPreferencesonShellConnection(conn);
+        SharedPreferencesManager.getInstance().setPreferencesonShellConnection(conn);
 
         SshConnectTask task = new SshConnectTask(this);
         task.execute(conn);
