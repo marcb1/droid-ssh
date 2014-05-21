@@ -1,6 +1,7 @@
 package marc.scp.sshutils;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.UserInfo;
@@ -9,7 +10,6 @@ import com.jcraft.jsch.UIKeyboardInteractive;
 
 import marc.scp.syncDialogs.BlockingOnUIRunnable;
 import marc.scp.syncDialogs.MyAlertBox;
-import marc.scp.scp.TerminalActivity;
 import marc.scp.syncDialogs.MyAlertDialog;
 
 
@@ -70,7 +70,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     public String[] promptKeyboardInteractive(String destination, String name, String instruction,
                                               String[] prompt, boolean[] echo)
     {
-        System.out.println("I GOT CALLED!");
+        Log.d("sessionuserinfo", "prompt keyboard");
         return null;
     }
 
@@ -110,7 +110,6 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
                 MyAlertDialog alert = new MyAlertDialog(parent, error, this);
                 BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
                 actionRunnable.startOnUiAndWait();
-                System.out.println("A");
                 if(alertBooleanResult)
                 {
                     conn.connect();

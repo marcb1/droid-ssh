@@ -30,7 +30,6 @@ public class ListViews
                 datum.put("host", pr.getName());
             List<HostKeys> keyList = Database.getInstance().getHostKey(pr.getHostName());
 
-            System.out.println(keyList.size());
             if(keyList.size() == 0)
             {
                 datum.put("fingerprint", "no fingerprint found");

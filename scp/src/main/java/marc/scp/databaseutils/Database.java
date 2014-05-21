@@ -214,7 +214,6 @@ public class Database
             {
                 if(file.getPreferencesId() == prefId)
                 {
-                    System.out.println(file.getId());
                     helper.getSyncDao().delete(file);
                 }
             }

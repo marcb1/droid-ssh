@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -16,6 +16,7 @@ import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.HostKeys;
 import marc.scp.viewPopulator.ListViews;
+import marc.scp.scp.R;
 
 /**
  * Created by Marc on 5/14/14.

@@ -1,13 +1,9 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 
-import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
-import marc.scp.preferences.SharedPreferencesManager;
 
 /**
  * Created by Marc on 5/15/14.

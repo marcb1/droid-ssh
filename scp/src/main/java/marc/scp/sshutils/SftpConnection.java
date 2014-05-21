@@ -92,8 +92,7 @@ public class SftpConnection extends SshConnection
                 }
                 catch (SftpException e)
                 {
-                    // e.printStackTrace();
-                    System.out.println("Exception: " + e.getMessage());
+                    Log.e(log, "sendFiles", e);
                     ret = false;
                     break;
                 }
@@ -121,8 +120,7 @@ public class SftpConnection extends SshConnection
         }
         catch (SftpException e)
         {
-            // e.printStackTrace();
-            System.out.println("Exception: " + e.getMessage());
+            Log.e(log, "changeRemoteDirectory", e);
             ret = false;
         }
         return ret;

@@ -1,5 +1,7 @@
 package marc.scp.sshutils;
 
+import android.util.Log;
+
 import com.jcraft.jsch.HostKey;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.UserInfo;
@@ -18,7 +20,8 @@ import java.util.Iterator;
 public class FingerPrintRepository implements HostKeyRepository
 {
     private JSch parameter;
-    Database dbInstance;
+    private Database dbInstance;
+    static private final String log = "FingerPrintRepository";
 
     FingerPrintRepository(JSch jsch)
     {
@@ -34,18 +37,14 @@ public class FingerPrintRepository implements HostKeyRepository
             List<HostKeys> keyList = dbInstance.getHostKey(host);
             if(keyList.size() > 0)
             {
-                System.out.println(keyList.size());
                 Iterator localIterator = keyList.iterator();
                 while (localIterator.hasNext())
                 {
                     HostKeys localHost = (HostKeys)localIterator.next();
                     HostKey JcHost = new HostKey(host, key);
                     boolean res = JcHost.getKey().equals(localHost.getKey());
-                    System.out.println(localHost.getKey());
-                    System.out.println(JcHost.getKey());
                     if(res == true)
                     {
-                        System.out.println(res);
                         return 0;
                     }
                     else
@@ -74,13 +73,15 @@ public class FingerPrintRepository implements HostKeyRepository
     public void remove(String host, String type, byte[] key) {
     }
 
-    public String getKnownHostsRepositoryID() {
-        System.out.println("C");
+    public String getKnownHostsRepositoryID()
+    {
+        Log.d(log, "getKnownHostsRepositoryID");
         return null;
     }
 
-    public HostKey[] getHostKey() {
-        System.out.println("B");
+    public HostKey[] getHostKey()
+    {
+        Log.d(log, "getHostKey");
         return null;
     }
 

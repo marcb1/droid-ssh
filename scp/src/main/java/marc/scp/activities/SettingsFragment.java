@@ -1,11 +1,6 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -14,6 +9,7 @@ import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
 import marc.scp.preferences.SharedPreferencesManager;
 import marc.scp.asyncDialogs.Dialogs;
+import marc.scp.scp.R;
 
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener
 {

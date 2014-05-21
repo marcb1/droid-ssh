@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 import android.app.Fragment;
 import android.os.Bundle;

@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="marc.scp.scp.MainActivity"
+            android:name="marc.scp.activities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,9 +25,9 @@
         </activity>
 
         <activity
-            android:name="marc.scp.scp.TerminalActivity"
+            android:name="marc.scp.activities.TerminalActivity"
             android:label="@string/title_terminal_activity"
-            android:parentActivityName="marc.scp.scp.MainActivity"
+            android:parentActivityName="marc.scp.activities.MainActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -35,9 +35,9 @@
         </activity>
 
         <activity
-            android:name="marc.scp.scp.SyncActivity"
+            android:name="marc.scp.activities.SyncActivity"
             android:label="@string/title_terminal_activity"
-            android:parentActivityName="marc.scp.scp.MainActivity"
+            android:parentActivityName="marc.scp.activities.MainActivity"
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -45,54 +45,54 @@
         </activity>
 
         <activity
-            android:name="marc.scp.scp.HostList"
+            android:name="marc.scp.activities.HostList"
             android:label="@string/host_list_message"
-            android:parentActivityName="marc.scp.scp.MainActivity">
+            android:parentActivityName="marc.scp.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
         </activity>
 
         <activity
-            android:name="marc.scp.scp.SettingsActivity"
+            android:name="marc.scp.activities.SettingsActivity"
             android:label="@string/settings"
-            android:parentActivityName="marc.scp.scp.MainActivity">
+            android:parentActivityName="marc.scp.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
         </activity>
 
         <activity
-            android:name="marc.scp.scp.FingerPrintList"
+            android:name="marc.scp.activities.FingerPrintList"
             android:label="@string/finger_print_title"
-            android:parentActivityName="marc.scp.scp.MainActivity">
+            android:parentActivityName="marc.scp.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
         </activity>
 
         <activity
-            android:name="marc.scp.scp.FolderPairsList"
+            android:name="marc.scp.activities.FolderPairsList"
             android:label="@string/folder_pairs_title"
-            android:parentActivityName="marc.scp.scp.MainActivity">
+            android:parentActivityName="marc.scp.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
         </activity>
 
         <activity
-            android:name="marc.scp.scp.AddHost"
+            android:name="marc.scp.activities.AddHost"
             android:label="@string/add_host_message"
-            android:parentActivityName="marc.scp.scp.HostList">
+            android:parentActivityName="marc.scp.activities.HostList">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />
         </activity>
 
         <activity
-            android:name="marc.scp.scp.AddFolderPair"
+            android:name="marc.scp.activities.AddFolderPair"
             android:label="@string/add_folder"
-            android:parentActivityName="marc.scp.scp.HostList">
+            android:parentActivityName="marc.scp.activities.HostList">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="marc.scp.scp.MainActivity" />

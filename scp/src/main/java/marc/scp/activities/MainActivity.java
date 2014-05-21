@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -16,8 +16,10 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import marc.scp.scp.R;
 import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.Database;
@@ -50,6 +52,9 @@ public class MainActivity extends Activity
 
         Button quickConnect = (Button) contentView.findViewById(R.id.quickConnect);
         setupQuickConnectBtn(quickConnect);
+
+        Button syncAll = (Button) contentView.findViewById(R.id.SyncAll);
+        setupSyncAll(syncAll);
 
         setContentView(contentView);
     }
@@ -164,6 +169,13 @@ public class MainActivity extends Activity
         startActivity(intent);
     }
 
+    private void syncFiles(ArrayList<FileSync> fileList)
+    {
+        Intent intent = new Intent(this, SyncActivity.class);
+        intent.putParcelableArrayListExtra(Constants.FILE_PARCEABLE, fileList);
+        startActivity(intent);
+    }
+
     private void ExitDialog()
     {
                 DialogsInstance.getConfirmDialog(this, "Are you sure you want to exit?", true,
@@ -174,6 +186,19 @@ public class MainActivity extends Activity
                             }
                         }
                 );
+    }
+
+    private void setupSyncAll(Button syncAll)
+    {
+        final Activity activity = this;
+        syncAll.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                ArrayList<FileSync> fileList = new ArrayList<FileSync>(Database.getInstance().getAllFileSync());
+                syncFiles(fileList);
+            }
+        });
     }
 
     private void setupQuickConnectBtn(Button quickConnect)

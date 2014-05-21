@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.asyncNetworkTasks.IConnectionNotifier;
@@ -9,6 +9,7 @@ import marc.scp.sshutils.*;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.terminal.TerminalSession;
 import marc.scp.terminal.TerminalView;
+import marc.scp.scp.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.app.FragmentManager;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +43,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
 
     private RetainedTerminal retainedTerminal;
     private Dialogs Dialogs;
+    final static String log = "TerminalActivity";
 
 
     @Override
@@ -251,7 +254,6 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
     @Override
     public void onBackPressed()
     {
-        System.out.println("onBackPressed");
         if(!conn.isConnected())
         {
             try
@@ -265,7 +267,7 @@ public class TerminalActivity extends Activity implements IConnectionNotifier
             }
             catch(Exception e)
             {
-
+                Log.d(log, "exception while disconnecting");
             }
         }
         else

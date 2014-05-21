@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -12,8 +12,11 @@ import android.widget.TextView;
 import com.jcraft.jsch.SftpProgressMonitor;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import marc.scp.Threads.SyncThread;
+import marc.scp.scp.R;
 import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
@@ -44,9 +47,10 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     private ProgressBar progress;
     private Dialogs Dialogs;
 
+    private SyncThread syncThread;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.file_sync, null);
         setContentView(contentView);
@@ -55,7 +59,38 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         dbInstance = Database.getInstance();
 
         Intent intent = getIntent();
-        file = (FileSync)intent.getParcelableExtra(Constants.FILE_PARCEABLE);
+        FileSync file = null;
+        try
+        {
+            file = (FileSync) intent.getParcelableExtra(Constants.FILE_PARCEABLE);
+        }
+        catch(ClassCastException e)
+        {
+            file = null;
+        }
+        if (file != null)
+        {
+            sync(file);
+        }
+        else
+        {
+            final ArrayList<FileSync> filesList = this.getIntent().getParcelableArrayListExtra(Constants.FILE_PARCEABLE);
+            if (filesList != null)
+            {
+                syncAll(filesList);
+            }
+        }
+    }
+
+    private void syncAll(final ArrayList<FileSync> filesList)
+    {
+        syncThread = new SyncThread(this, filesList);
+        syncThread.start();
+    }
+
+    public void sync(FileSync file)
+    {
+        this.file = file;
         Preference p = dbInstance.getPreferenceID(file.getPreferencesId());
 
         SessionUserInfo user = new SessionUserInfo(p.getHostName(), p.getUsername(), p.getPort(), this);
@@ -77,11 +112,10 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         task.execute(conn);
     }
 
-
     @Override
     public void onBackPressed()
     {
-        if(!conn.isConnected())
+        if((!conn.isConnected()) && ((syncThread == null) || (syncThread.getState() == Thread.State.TERMINATED)) )
         {
             super.onBackPressed();
         }
@@ -94,7 +128,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if ((item.getItemId() == android.R.id.home) && (conn.isConnected()))
+        if ((item.getItemId() == android.R.id.home) && ((syncThread != null) || (syncThread.getState() != Thread.State.TERMINATED)) )
         {
                 exitDialog();
                 return true;
@@ -127,7 +161,7 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
             }
             SftpUploadTask task = new SftpUploadTask(this, conn, this);
             task.execute(files);
-            setTitle("Uploading...");
+            setTitle("Uploading: " + file.getName());
         }
         else
         {
@@ -150,6 +184,10 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
         conn.disconnect();
         TextView t = (TextView) contentView.findViewById(R.id.fileUploadStatus);
         t.setText("");
+        synchronized (this)
+        {
+            this.notify();
+        }
     }
 
     //SFTP Progress methods
@@ -190,12 +228,26 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     private void exitDialog()
     {
         final Activity activity = this;
+        final SyncThread thread = syncThread;
         Dialogs.getConfirmDialog(this, "Are you sure you would like to disconnect?", true,
                 new YesNoDialog()
                 {
                     @Override
                     public void PositiveMethod(final DialogInterface dialog, final int id)
                     {
+                        try
+                        {
+                            synchronized (activity)
+                            {
+                                thread.setStop();
+                                activity.notify();
+                            }
+                            thread.join();
+                        }
+                        catch(Exception e)
+                        {
+
+                        }
                         conn.disconnect();
                         finish();
                     }

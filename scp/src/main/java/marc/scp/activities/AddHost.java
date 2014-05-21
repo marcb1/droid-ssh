@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 /**
  * Created by Marc on 5/13/14.
@@ -19,6 +19,7 @@ import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.Preference;
+import marc.scp.scp.R;
 
 public class AddHost extends Activity
 {
@@ -63,8 +64,6 @@ public class AddHost extends Activity
             {
                 edit.setText(pref.getPassword());
             }
-
-            System.out.println(pref.getPassword());
             edit = (EditText) contentView.findViewById(R.id.portField);
             edit.setText(String.valueOf(pref.getPort()));
         }

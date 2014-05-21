@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 /**
  * Created by Marc on 5/10/14.
@@ -7,7 +7,6 @@ package marc.scp.scp;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -26,6 +25,7 @@ import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.asyncDialogs.YesNoDialog;
 import marc.scp.databaseutils.*;
 import marc.scp.viewPopulator.ListViews;
+import marc.scp.scp.R;
 
 public class HostList extends Activity
 {

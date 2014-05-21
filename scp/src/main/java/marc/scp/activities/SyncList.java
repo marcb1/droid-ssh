@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 /**
  * Created by Marc on 5/10/14.
@@ -12,7 +12,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import marc.scp.databaseutils.*;
+import marc.scp.scp.R;
 
 public class SyncList extends Activity
 {

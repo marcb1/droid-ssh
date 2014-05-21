@@ -1,4 +1,4 @@
-package marc.scp.scp;
+package marc.scp.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,21 +8,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import marc.scp.Constants.Constants;
 import marc.scp.asyncDialogs.Dialogs;
 import marc.scp.databaseutils.Database;
 import marc.scp.databaseutils.FileSync;
-import marc.scp.databaseutils.HostKeys;
 import marc.scp.databaseutils.Preference;
+import marc.scp.scp.R;
 
 /**
  * Created by Marc on 5/15/14.

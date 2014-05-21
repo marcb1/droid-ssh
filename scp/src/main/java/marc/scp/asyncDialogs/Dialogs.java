@@ -5,8 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.Toast;
-
 import marc.scp.scp.R;
+
 
 /**
  * Created by Marc on 5/16/14.
