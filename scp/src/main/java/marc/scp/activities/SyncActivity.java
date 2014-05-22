@@ -117,39 +117,38 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public void onBackPressed()
     {
-        if((!conn.isConnected()) && (syncThread == null))
+        if(!handleBack())
         {
             super.onBackPressed();
-        }
-        else if((!conn.isConnected()) && (syncThread.getState() == Thread.State.TERMINATED))
-        {
-            super.onBackPressed();
-        }
-        else
-        {
-          exitDialog();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if(item.getItemId() == android.R.id.home)
+        if((item.getItemId() == android.R.id.home) && (handleBack()))
         {
-            if((!conn.isConnected()) && (syncThread == null))
-            {
-                super.onOptionsItemSelected(item);
-            }
-            else if((!conn.isConnected()) && (syncThread.getState() == Thread.State.TERMINATED))
-            {
-                super.onOptionsItemSelected(item);
-            }
-            else
-            {
-                exitDialog();
-            }
+            //if the dialog is shown do not call super let the user decide if they want to kill the connection and the active sync thread
+            return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean handleBack()
+    {
+        boolean ret = false;
+        if((!conn.isConnected()) && (syncThread == null))
+        {
+        }
+        else if((!conn.isConnected()) && (syncThread.getState() == Thread.State.TERMINATED))
+        {
+        }
+        else
+        {
+            exitDialog();
+            ret = true;
+        }
+        return ret;
     }
 
     //IConnectionNotifier
