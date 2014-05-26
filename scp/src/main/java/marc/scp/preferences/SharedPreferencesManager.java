@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import jackpal.androidterm.emulatorview.ColorScheme;
+import marc.scp.constants.Constants;
 import marc.scp.sshutils.SshConnection;
 import marc.scp.terminal.TerminalSession;
 import marc.scp.terminal.TerminalView;
@@ -100,6 +102,7 @@ public class SharedPreferencesManager
         terminal.setTextSize(textSize);
         terminal.setAltSendsEsc(false);
         terminal.setMouseTracking(true);
+       // terminal.setColorScheme(new ColorScheme(Constants.COLOR_SCHEMES[2]));
     }
 
     public void setPreferenceSession(TerminalSession terminalSession)

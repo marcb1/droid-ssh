@@ -137,6 +137,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     @Override
     public String getPassphrase()
     {
+        Log.d(log, "getPassphrase");
         //log here that we returned the password
         return mPassword;
     }
@@ -168,6 +169,10 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     //return true, password is retreived through getPassword()
     public boolean promptPassword(String message)
     {
+        if(mPassword != null)
+        {
+            return true;
+        }
         MyInputBox alert = new MyInputBox(parent, "Enter password", message, this);
         BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
         actionRunnable.startOnUiAndWait();

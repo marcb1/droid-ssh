@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 
+import com.jcraft.jsch.ConfigRepository;
+
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
 import marc.scp.sshutils.ShellConnection;
@@ -16,6 +18,7 @@ public class TerminalView extends EmulatorView
 {
     private ShellConnection conn;
     private int textSize;
+    private String type;
 
     public TerminalView(Context paramContext, TermSession paramTermSession, DisplayMetrics paramDisplayMetrics)
     {
@@ -87,6 +90,7 @@ public class TerminalView extends EmulatorView
     public void setTermType(String type)
     {
         super.setTermType(type);
+        this.type = type;
         conn.setPty(true);
     }
 
@@ -94,6 +98,7 @@ public class TerminalView extends EmulatorView
     {
         if(conn != null)
         {
+            conn.setPtyType(type);
             conn.setPtySize(getVisibleColumns(), getVisibleRows(), getWidth(), getHeight());
         }
     }
