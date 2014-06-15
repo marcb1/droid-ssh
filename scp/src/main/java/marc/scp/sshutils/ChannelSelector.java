@@ -1,5 +1,7 @@
 package marc.scp.sshutils;
 
+import android.util.Log;
+
 import com.jcraft.jsch.ChannelSftp;
 
 import java.io.File;
@@ -11,6 +13,8 @@ public class ChannelSelector implements ChannelSftp.LsEntrySelector
 {
     public boolean result;
     private File file;
+
+    private final static String log = "ChannelSelector";
 
     public ChannelSelector(File f)
     {

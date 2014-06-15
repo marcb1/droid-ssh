@@ -102,7 +102,6 @@ public class SftpConnection extends SshConnection
         {
             ret = false;
         }
-        System.out.println("returned" + ret);
         return ret;
     }
 

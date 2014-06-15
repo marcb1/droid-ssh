@@ -188,7 +188,6 @@ public class SyncActivity  extends Activity implements IUploadNotifier, SftpProg
     @Override
     public void transferResult(boolean result)
     {
-        System.out.println(result);
         if(result)
         {
             setTitle("Done uploading.");
