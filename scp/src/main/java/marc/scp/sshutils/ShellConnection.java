@@ -99,6 +99,7 @@ public class ShellConnection extends SshConnection
         if(channelShell != null)
         {
             Log.d(log, "setPtyType: " + type);
+            channelShell.setEnv("TERM", type);
             channelShell.setPtyType(type);
         }
     }

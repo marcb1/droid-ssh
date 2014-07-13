@@ -84,9 +84,10 @@ public class SftpConnection extends SshConnection
                         ChannelSelector select = new ChannelSelector(file);
 
                         sftp.ls(remotePath, select);
+                        //if !result, a file with the same name and size is not in the remote directory so overriwte
                         if(!select.result)
                         {
-                            sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.APPEND);
+                            sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.OVERWRITE);
                         }
                     }
                 }

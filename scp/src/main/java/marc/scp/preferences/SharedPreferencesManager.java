@@ -76,7 +76,7 @@ public class SharedPreferencesManager
 
     public String getTerminalEmulation()
     {
-        String terminal = sharedPref.getString(TERMINALEMULATION, "vt100");
+        String terminal = sharedPref.getString(TERMINALEMULATION, "xterm-256color");
         return terminal;
     }
 
