@@ -1,0 +1,4 @@
+Droid SSH
+Android app that supports the SSH protocol.
+Creates SSH sessions via RSA/password authentication.
+Supports SSH terminal sessions and file transfer.
