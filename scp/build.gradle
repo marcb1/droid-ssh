@@ -2,8 +2,8 @@ apply plugin: 'android'
 
 android
 {
-    compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    compileSdkVersion 22
+    buildToolsVersion '19.1.0'
 
     defaultConfig
     {
@@ -14,18 +14,24 @@ android
     {
         release
         {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             debuggable false
-            jniDebugBuild false
-            zipAlign true
+            jniDebuggable false
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
         }
+        debug
+        {
+            applicationIdSuffix ".debug"
+        }
+
     }
 }
 
 dependencies
 {
-    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:appcompat-v7:22.2.1'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/jsch-0.1.51.jar')
     compile files('libs/ormlite-android-4.48.jar')
