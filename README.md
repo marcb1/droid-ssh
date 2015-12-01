@@ -6,3 +6,6 @@ Creates SSH sessions via RSA/password authentication.
 Supports SSH terminal sessions and file transfer.
 
 
+Play Store: https://play.google.com/store/apps/details?id=marc.scp.scp
+
+
