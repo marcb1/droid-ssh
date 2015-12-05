@@ -29,35 +29,34 @@ import marc.scp.viewPopulator.ListViews;
 import marc.scp.databaseutils.Preference;
 import marc.scp.asyncDialogs.Dialogs;
 
-//this is the main activity that's first started when the app is launched
+// this is the main activity; it is first started when the app is launched
 public class MainActivity extends Activity
 {
-    private ViewGroup contentView;
-    private Dialogs DialogsInstance;
+    private ViewGroup   _contentView;
+    private Dialogs     _dialogsInstance;
+    private Database    _dbInstance;
 
-    private Database dbInstance;
-
+    // this is called when the activity is created
     @Override
-    //this is called when the activity is created
     protected void onCreate(Bundle savedInstanceState)
     {
         Dialogs.init(this);
-        DialogsInstance = DialogsInstance.getInstance();
+        _dialogsInstance = _dialogsInstance.getInstance();
         super.onCreate(savedInstanceState);
-        contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
+        _contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.main_activity, null);
 
         Database.init(this);
         SharedPreferencesManager.init(this);
-        dbInstance = Database.getInstance();
+        _dbInstance = Database.getInstance();
         SharedPreferencesManager.getInstance();
 
-        Button quickConnect = (Button) contentView.findViewById(R.id.quickConnect);
+        Button quickConnect = (Button) _contentView.findViewById(R.id.quickConnect);
         setupQuickConnectBtn(quickConnect);
 
-        Button syncAll = (Button) contentView.findViewById(R.id.SyncAll);
+        Button syncAll = (Button) _contentView.findViewById(R.id.SyncAll);
         setupSyncAll(syncAll);
 
-        setContentView(contentView);
+        setContentView(_contentView);
     }
 
     @Override
@@ -65,10 +64,10 @@ public class MainActivity extends Activity
     {
         super.onStart();
 
-        ListView listView = (ListView) contentView.findViewById(R.id.connections_list);
+        ListView listView = (ListView) _contentView.findViewById(R.id.connections_list);
         setupConnectionsList(listView);
 
-        listView = (ListView) contentView.findViewById(R.id.folder_pair_list);
+        listView = (ListView) _contentView.findViewById(R.id.folder_pair_list);
         setupFolderPairsList(listView);
     }
 
@@ -126,7 +125,7 @@ public class MainActivity extends Activity
 
     private void setupFolderPairsList(ListView lv)
     {
-        final List<FileSync> fileList = dbInstance.getAllFileSync();
+        final List<FileSync> fileList = _dbInstance.getAllFileSync();
         SimpleAdapter adapter = ListViews.createAdapterFromFilePairs(this, fileList);
         if((adapter != null))
         {
@@ -144,7 +143,7 @@ public class MainActivity extends Activity
 
     private void setupConnectionsList(ListView lv)
     {
-        final List<Preference> preferencesList = dbInstance.getAllPreferences();
+        final List<Preference> preferencesList = _dbInstance.getAllPreferences();
         lv.setAdapter(ListViews.createAdapterFromPrefs(this, preferencesList));
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -179,7 +178,7 @@ public class MainActivity extends Activity
 
     private void ExitDialog()
     {
-                DialogsInstance.getConfirmDialog(this, "Are you sure you want to exit?", true,
+                _dialogsInstance.getConfirmDialog(this, "Are you sure you want to exit?", true,
                         new YesNoDialog() {
                             @Override
                             public void PositiveMethod(final DialogInterface dialog, final int id) {
@@ -196,14 +195,14 @@ public class MainActivity extends Activity
         {
             public void onClick(View v)
             {
-                ArrayList<FileSync> fileList = new ArrayList<FileSync>(dbInstance.getAllFileSync());
+                ArrayList<FileSync> fileList = new ArrayList<FileSync>(_dbInstance.getAllFileSync());
                 if(fileList.size() >= 1)
                 {
                     syncFiles(fileList);
                 }
                 else
                 {
-                    DialogsInstance.makeToast(activity, "Please create a folder pair to sync!");
+                    _dialogsInstance.makeToast(activity, "Please create a folder pair to sync!");
                 }
             }
         });

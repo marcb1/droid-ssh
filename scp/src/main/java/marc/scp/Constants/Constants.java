@@ -1,14 +1,11 @@
 package marc.scp.constants;
 
-/**
- * Created by Marc on 5/19/2014.
- */
 public class Constants
 {
     public final static String PREFERENCE_PARCEABLE = "com.whomarc.scp.PREFERENCE";
     public final static String FILE_PARCEABLE = "com.whomarc.scp.FILE";
 
-    //terminal constants
+    // terminal constants
     public final static String RIGHT = "\033[C";
     public final static String LEFT = "\033[D";
     public final static String UP = "\033[A";
