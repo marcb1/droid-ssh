@@ -19,7 +19,6 @@ android
             debuggable false
             jniDebuggable false
             zipAlignEnabled true
-            signingConfig signingConfigs.release
         }
         debug
         {

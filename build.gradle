@@ -1,5 +1,7 @@
-buildscript {
-    repositories {
+buildscript
+{
+    repositories
+    {
         mavenCentral()
     }
     dependencies
@@ -8,8 +10,10 @@ buildscript {
             }
 }
 
-allprojects {
-    repositories {
+allprojects
+{
+    repositories
+    {
         mavenCentral()
     }
 }
