@@ -5,9 +5,9 @@ buildscript
         mavenCentral()
     }
     dependencies
-            {
-                classpath 'com.android.tools.build:gradle:1.5.0'
-            }
+    {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
 }
 
 allprojects
