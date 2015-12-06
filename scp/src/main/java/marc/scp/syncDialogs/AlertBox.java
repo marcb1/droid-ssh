@@ -4,44 +4,43 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-import marc.scp.sshutils.SessionUserInfo;
 
-/**
- * Created by Marc on 5/14/14.
- */
-public class MyAlertBox  implements BlockingOnUIRunnableListener
+public class AlertBox implements BlockingOnUIRunnableListener
 {
-    Activity activityParent;
-    SessionUserInfo handler;
-    String message;
-    String title;
+    private Activity            _activityParent;
+    private String              _message;
+    private String              _title;
+    public DialogResponse       _userResponse;
 
-    public MyAlertBox(Activity parent, String boxTitle, String msg, SessionUserInfo handle)
+    public AlertBox(Activity parent, String boxTitle, String msg)
     {
-        message = msg;
-        handler = handle;
-        activityParent = parent;
-        title = boxTitle;
+        _message = msg;
+        _activityParent = parent;
+        _title = boxTitle;
+        _userResponse = new DialogResponse();
+    }
+
+    public DialogResponse getUserResponse()
+    {
+        return _userResponse;
     }
 
     public void onRunOnUIThread(final Runnable runnable)
     {
         //Unfortunately, this could throw an exception if this thread tries to create an alert while the activity is not running
-        new AlertDialog.Builder(activityParent)
-                .setMessage(message)
-                .setTitle(title)
+        new AlertDialog.Builder(_activityParent)
+                .setMessage(_message)
+                .setTitle(_title)
                 .setCancelable(true)
                 .setNeutralButton(android.R.string.ok,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton)
                             {
                                 dialog.dismiss();
-                                activityParent.finish();
+                                _activityParent.finish();
                             }
                         })
                 .show();
-
-
 
         synchronized ( runnable )
         {

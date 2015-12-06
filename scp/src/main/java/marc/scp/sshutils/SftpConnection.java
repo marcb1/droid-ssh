@@ -40,15 +40,15 @@ public class SftpConnection extends SshConnection
         try
         {
             Session session = super.getSession();
-            if((session != null) && (state == CONNECTION_STATE.DISCONNECTED))
+            if((session != null) && (_state == CONNECTION_STATE.DISCONNECTED))
             {
                 Channel channel = super.getChannel();
                 Log.d(log, "SFTP Connecting...");
-                state = CONNECTION_STATE.CONNECTING;
+                _state = CONNECTION_STATE.CONNECTING;
                 session.connect(5000);
 
                 channel = session.openChannel("sftp");
-                state = CONNECTION_STATE.CONNECTED;
+                _state = CONNECTION_STATE.CONNECTED;
 
                 channel.connect(5000);
                 sftp = (ChannelSftp)channel;
@@ -62,7 +62,7 @@ public class SftpConnection extends SshConnection
             Log.d(log, "Exception caught while initiating SFTP connection: " + e.getMessage(), e);
             getUserInfo().handleException(e);
             ret = false;
-            state = CONNECTION_STATE.DISCONNECTED;
+            _state = CONNECTION_STATE.DISCONNECTED;
             sftp = null;
         }
         return ret;
@@ -109,7 +109,7 @@ public class SftpConnection extends SshConnection
     public boolean changeRemoteDirectory(String path)
     {
         boolean ret = false;
-        if((state == state.DISCONNECTED) || (sftp == null))
+        if((_state == _state.DISCONNECTED) || (sftp == null))
         {
             return ret;
         }
@@ -130,7 +130,7 @@ public class SftpConnection extends SshConnection
     public boolean sendFile(File file)
     {
         boolean ret = false;
-        if((state == state.DISCONNECTED) || (sftp == null))
+        if((_state == _state.DISCONNECTED) || (sftp == null))
         {
             return ret;
         }

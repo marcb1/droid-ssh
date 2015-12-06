@@ -9,9 +9,9 @@ import com.jcraft.jsch.UserInfo;
 import com.jcraft.jsch.UIKeyboardInteractive;
 
 import marc.scp.syncDialogs.BlockingOnUIRunnable;
-import marc.scp.syncDialogs.MyAlertBox;
-import marc.scp.syncDialogs.MyAlertDialog;
-import marc.scp.syncDialogs.MyInputBox;
+import marc.scp.syncDialogs.AlertBox;
+import marc.scp.syncDialogs.AlertDialog;
+import marc.scp.syncDialogs.AlertInput;
 
 
 public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
@@ -25,8 +25,6 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
 
     private Activity parent;
 
-    //TODO make this private
-    public boolean alertBooleanResult;
     private final String log = "SessionUserInfo";
 
     private SshConnection conn;
@@ -79,6 +77,14 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
         return null;
     }
 
+    public String promptInput(String title, String promptMessage)
+    {
+        AlertInput alert = new AlertInput(parent, title, promptMessage);
+        BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
+        actionRunnable.startOnUiAndWait();
+        return alert._userResponse.responseString;
+    }
+
     public void handleException(JSchException paramJSchException)
     {
         String error = new String(paramJSchException.getMessage());
@@ -112,10 +118,10 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
             error = new String("Unable to establish connection with the host, retry?");
             if(conn != null)
             {
-                MyAlertDialog alert = new MyAlertDialog(parent, error, this);
+                AlertDialog alert = new AlertDialog(parent, error, this);
                 BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
                 actionRunnable.startOnUiAndWait();
-                if(alertBooleanResult)
+                if( alert.getDialogResponse().responseBoolean )
                 {
                     conn.connect();
                 }
@@ -144,7 +150,7 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
 
     public void showMessage(String title, String message)
     {
-        MyAlertBox alert = new MyAlertBox(parent, title, message, this);
+        AlertBox alert = new AlertBox(parent, title, message);
         BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
         actionRunnable.startOnUiAndWait();
     }
@@ -153,16 +159,16 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
     public void showMessage(String message)
     {
         Log.d(log, "showMessage:" + message);
+        showMessage("", message);
     }
+
     public boolean promptYesNo(final String message)
     {
-        alertBooleanResult = false;
-
-        MyAlertDialog alert = new MyAlertDialog(parent, message, this);
+        AlertDialog alert = new AlertDialog(parent, message, this);
         BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
         actionRunnable.startOnUiAndWait();
 
-        return alertBooleanResult;
+        return alert.getDialogResponse().responseBoolean;
     }
 
     @Override
@@ -173,10 +179,14 @@ public class SessionUserInfo implements UserInfo, UIKeyboardInteractive
         {
             return true;
         }
-        MyInputBox alert = new MyInputBox(parent, "Enter password", message, this);
+        AlertInput alert = new AlertInput(parent, "Enter password", message);
         BlockingOnUIRunnable actionRunnable = new BlockingOnUIRunnable(parent, alert);
         actionRunnable.startOnUiAndWait();
-        return alertBooleanResult;
+        if (alert._userResponse.responseBoolean)
+        {
+            mPassword = alert._userResponse.responseString;
+        }
+        return alert._userResponse.responseBoolean;
     }
 
     @Override

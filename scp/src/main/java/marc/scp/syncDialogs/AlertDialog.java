@@ -5,30 +5,33 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import marc.scp.sshutils.SessionUserInfo;
 
-public class MyAlertDialog implements BlockingOnUIRunnableListener
+public class AlertDialog implements BlockingOnUIRunnableListener
 {
-    Activity activityParent;
-    SessionUserInfo handler;
-    String message;
-    public MyAlertDialog instance;
+    Activity            _activityParent;
+    String              _message;
+    DialogResponse      _userResponse;
 
-    public MyAlertDialog(Activity parent, String msg, SessionUserInfo handle)
+    public AlertDialog(Activity parent, String msg, SessionUserInfo handle)
     {
-        message = msg;
-        handler = handle;
-        activityParent = parent;
-        this.instance = this;
+        _message = msg;
+        _activityParent = parent;
+        _userResponse = new DialogResponse();
+    }
+
+    public DialogResponse getDialogResponse()
+    {
+        return _userResponse;
     }
 
     public void onRunOnUIThread(final Runnable runnable)
     {
-        android.app.AlertDialog alert =  new android.app.AlertDialog.Builder(activityParent).setMessage(message)
+        android.app.AlertDialog alert =  new android.app.AlertDialog.Builder(_activityParent).setMessage(_message)
                 .setNegativeButton("No", new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int which)
                     {
                         dialog.dismiss();
-                        handler.alertBooleanResult = false;
+                        _userResponse.responseBoolean = false;
                         synchronized ( runnable )
                         {
                             runnable.notifyAll();
@@ -40,7 +43,7 @@ public class MyAlertDialog implements BlockingOnUIRunnableListener
                     public void onClick(DialogInterface dialog, int which)
                     {
                         dialog.dismiss();
-                        handler.alertBooleanResult = true;
+                        _userResponse.responseBoolean = true;
                         synchronized ( runnable )
                         {
                             runnable.notifyAll();

@@ -2,28 +2,19 @@ package marc.scp.sshutils;
 
 import com.jcraft.jsch.*;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.File;
-import java.util.List;
-import java.util.Vector;
-
-import jackpal.androidterm.emulatorview.TermSession;
-
 import android.util.Log;
 
 public class SshConnection
 {
-    //jsch objects
-    private Channel channel;
-    private JSch jsch;
-    private Session session;
+    // jsch objects
+    private Channel             _channel;
+    private JSch                _jsch;
+    private Session             _session;
 
-    private SessionUserInfo userInfo;
+    private SessionUserInfo     _userInfo;
 
-    private final String log = "SshConnection";
+    private final String        _log = "SshConnection";
+    protected CONNECTION_STATE  _state;
 
     protected enum CONNECTION_STATE
     {
@@ -31,107 +22,133 @@ public class SshConnection
         CONNECTING,
         DISCONNECTED;
     }
-    protected CONNECTION_STATE state;
 
+    // SessionUserInfo not connected to UI at this point
     public SshConnection(SessionUserInfo user)
     {
-        jsch = new JSch();
-        channel = null;
-        userInfo = user;
+        _jsch = new JSch();
+        _channel = null;
+        _userInfo = user;
+        _state = CONNECTION_STATE.DISCONNECTED;
 
-        state = CONNECTION_STATE.DISCONNECTED;
         try
         {
-            session = jsch.getSession(userInfo.getUser(), userInfo.getHost(), userInfo.getPort());
-            session.setHostKeyRepository(new FingerPrintRepository(jsch));
-            session.setServerAliveInterval(10000);
-
-            if(user.usingRSA())
-            {
-                //load(alias, private, public, passphrase)
-                KeyPair keyPair = KeyPair.load(jsch, user.getRsa(), null);
-                jsch.addIdentity(user.getHost(), keyPair.forSSHAgent(), null, null);
-            }
-            session.setUserInfo(user);
+            _session = _jsch.getSession(_userInfo.getUser(), _userInfo.getHost(), _userInfo.getPort());
+            _session.setHostKeyRepository(new FingerPrintRepository(_jsch));
+            _session.setServerAliveInterval(10000);
         }
         catch(JSchException e)
         {
-            userInfo.handleException(e);
-            Log.e(log, "Exception caught while creating jsch session", e);
-            session = null;
+            Log.e(_log, "Exception caught while creating jsch _session", e);
+            _session = null;
         }
         catch(Exception e)
         {
-            Log.e(log, "Exception caught while creating jsch session", e);
-            session = null;
+            Log.e(_log, "Exception caught while creating jsch _session", e);
+            _session = null;
         }
+    }
+
+    private boolean setupSession()
+    {
+        boolean ret = false;
+        if(_session == null)
+        {
+            return ret;
+        }
+        else if(_userInfo.usingRSA())
+        {
+            try
+            {
+                // load(alias, private, public, passphrase)
+                KeyPair keyPair = KeyPair.load(_jsch, _userInfo.getRsa(), null);
+                if (!keyPair.isEncrypted())
+                {
+                    _jsch.addIdentity(_userInfo.getHost(), keyPair.forSSHAgent(), null, null);
+                }
+                else
+                {
+                    String passphrase = _userInfo.promptInput("RSA Encrypted", "Please enter key passphrase");
+                    keyPair.decrypt(passphrase);
+                }
+                ret = true;
+            }
+            catch(JSchException e)
+            {
+                _userInfo.handleException(e);
+                Log.e(_log, "Exception caught while creating jsch session", e);
+            }
+        }
+        _session.setUserInfo(_userInfo);
+        return ret;
     }
 
     public boolean connect()
     {
+        setupSession();
         return true;
     }
 
     public void disconnect()
     {
-        if(state != CONNECTION_STATE.DISCONNECTED)
+        if(_state != CONNECTION_STATE.DISCONNECTED)
         {
-            if(channel != null)
+            if(_channel != null)
             {
-                channel.disconnect();
+                _channel.disconnect();
             }
-            session.disconnect();
-            state = CONNECTION_STATE.DISCONNECTED;
+            _session.disconnect();
+            _state = CONNECTION_STATE.DISCONNECTED;
         }
     }
 
     //setters
     public void enableCompression(String level)
     {
-        session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
-        session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
-        session.setConfig("compression_level", level);
-        Log.d(log, "Compression enabled, level: " + level);
+        _session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
+        _session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
+        _session.setConfig("compression_level", level);
+        Log.d(_log, "Compression enabled, level: " + level);
     }
 
     public void disableHostChecking()
     {
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
-        Log.d(log, "Host checking disabled");
-        session.setConfig(config);
+        Log.d(_log, "Host checking disabled");
+        _session.setConfig(config);
     }
 
     //getters
     public boolean isConnected()
     {
-        return state != CONNECTION_STATE.DISCONNECTED;
+        return _state != CONNECTION_STATE.DISCONNECTED;
     }
 
     public String getName()
     {
-        return userInfo.getHost();
+        return _userInfo.getHost();
     }
 
     public Channel getChannel()
     {
-        return channel;
+        return _channel;
     }
 
     //protected getters
     protected SessionUserInfo getUserInfo()
     {
-        return userInfo;
+        return _userInfo;
     }
 
     protected Session getSession()
     {
-        return session;
+        return _session;
     }
 
     protected JSch getJsch()
     {
-        return jsch;
+        return _jsch;
     }
 }
 

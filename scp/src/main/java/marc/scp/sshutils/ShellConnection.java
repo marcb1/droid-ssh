@@ -5,7 +5,6 @@ import android.util.Log;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelShell;
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -45,14 +44,15 @@ public class ShellConnection extends SshConnection
     public boolean connect()
     {
         boolean ret = false;
+        super.connect();
         try
         {
             Session session = super.getSession();
-            if((session != null) && (state == CONNECTION_STATE.DISCONNECTED))
+            if((session != null) && (_state == CONNECTION_STATE.DISCONNECTED))
             {
                 Log.d(log, "SSH shell Connecting...");
                 Channel channel = super.getChannel();
-                state = CONNECTION_STATE.CONNECTING;
+                _state = CONNECTION_STATE.CONNECTING;
                 session.connect(5000);
 
                 channel = session.openChannel("shell");
@@ -62,7 +62,7 @@ public class ShellConnection extends SshConnection
                 channel.setOutputStream(localOut, true);
 
                 channel.connect(5000);
-                state = CONNECTION_STATE.CONNECTED;
+                _state = CONNECTION_STATE.CONNECTED;
 
                 Log.d(log, "SSH shell Connected");
                 ret = true;
@@ -72,7 +72,7 @@ public class ShellConnection extends SshConnection
         {
             Log.e(log, "Exception caught while initiating shell connection", e);
             ret = false;
-            state = CONNECTION_STATE.DISCONNECTED;
+            _state = CONNECTION_STATE.DISCONNECTED;
             getUserInfo().handleException(e);
         }
         return ret;
@@ -116,7 +116,7 @@ public class ShellConnection extends SshConnection
     public String executeCommand(String command)
     {
         String ret = null;
-        if(state != CONNECTION_STATE.CONNECTED)
+        if(_state != CONNECTION_STATE.CONNECTED)
         {
             return ret;
         }

@@ -32,7 +32,6 @@ public class TerminalSession extends TermSession
         {
            // Log.d(log, "Exception caught while creating jsch session" + e.getMessage());
         }
-
     }
 
     public ShellConnection getConnection()
