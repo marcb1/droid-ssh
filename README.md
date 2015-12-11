@@ -1,5 +1,7 @@
 ##Droid SSH
 
+[![Build Status](https://travis-ci.org/marcb1/droid-ssh.svg)](https://travis-ci.org/marcb1/droid-ssh)
+
 Android app that supports the SSH protocol.
 Creates SSH sessions via RSA/password authentication.
 Supports SSH terminal sessions and file transfer.
