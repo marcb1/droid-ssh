@@ -15,53 +15,54 @@ import java.io.PipedOutputStream;
 
 
 /**
- * Created by Marc on 5/18/2014.
  * Inherits from SshConnection, instantiate this to create an shell connection through a terminal view
  */
-
 public class ShellConnection extends SshConnection
 {
-    private PipedInputStream localIn;
-    private PipedOutputStream localOut;
+    private PipedInputStream        _localIn;
+    private PipedOutputStream       _localOut;
 
-    private ChannelShell channelShell;
+    private ChannelShell            _channelShell;
 
-    private final String log = "ShellConnection";
+    private final String log = "DROID_SSH.ShellConnection";
 
     public ShellConnection(SessionUserInfo user)
     {
         super(user);
 
-        localIn = new PipedInputStream();
-        localOut = new PipedOutputStream();
+        _localIn = new PipedInputStream();
+        _localOut = new PipedOutputStream();
 
-        channelShell = null;
+        _channelShell = null;
 
-        //give user object, alerts user if they want to reconnect
+        // give user object, alerts user if they want to reconnect
         getUserInfo().setConnectionHandler(this);
     }
 
     public boolean connect()
     {
-        boolean ret = false;
-        super.connect();
+        boolean ret = super.connect();
+        if (ret == false)
+        {
+            Log.d(log, "failed to connect...");
+            return ret;
+        }
         try
         {
             Session session = super.getSession();
             if((session != null) && (_state == CONNECTION_STATE.DISCONNECTED))
             {
                 Log.d(log, "SSH shell Connecting...");
-                Channel channel = super.getChannel();
                 _state = CONNECTION_STATE.CONNECTING;
                 session.connect(5000);
 
-                channel = session.openChannel("shell");
-                channelShell = (ChannelShell)channel;
+                _channel = session.openChannel("shell");
 
-                channel.setInputStream(localIn, true);
-                channel.setOutputStream(localOut, true);
+                _channel.setInputStream(_localIn, true);
+                _channel.setOutputStream(_localOut, true);
 
-                channel.connect(5000);
+                _channel.connect(5000);
+                _channelShell = (ChannelShell)_channel;
                 _state = CONNECTION_STATE.CONNECTED;
 
                 Log.d(log, "SSH shell Connected");
@@ -87,28 +88,28 @@ public class ShellConnection extends SshConnection
 
     public void setPtySize(int col, int row, int px, int py)
     {
-        if(channelShell != null)
+        if(_channelShell != null)
         {
             Log.d(log, "setPtySize");
-            channelShell.setPtySize(col, row, px, py);
+            _channelShell.setPtySize(col, row, px, py);
         }
     }
 
     public void setPtyType(String type)
     {
-        if(channelShell != null)
+        if(_channelShell != null)
         {
             Log.d(log, "setPtyType: " + type);
-            channelShell.setEnv("TERM", type);
-            channelShell.setPtyType(type);
+            _channelShell.setEnv("TERM", type);
+            _channelShell.setPtyType(type);
         }
     }
 
     public void setPty(boolean bool)
     {
-        if(channelShell != null)
+        if(_channelShell != null)
         {
-            channelShell.setPty(bool);
+            _channelShell.setPty(bool);
         }
     }
 
@@ -157,11 +158,11 @@ public class ShellConnection extends SshConnection
 
     public PipedInputStream getInputStream()
     {
-        return localIn;
+        return _localIn;
     }
 
     public PipedOutputStream getOutputStream()
     {
-        return localOut;
+        return _localOut;
     }
 }

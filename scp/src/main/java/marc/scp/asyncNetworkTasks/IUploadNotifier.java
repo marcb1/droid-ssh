@@ -2,7 +2,7 @@ package marc.scp.asyncNetworkTasks;
 
 /**
  * Created by Marc on 5/17/2014.
- * interface that UploadTask that uses to notify of upload result
+ * interface that UploadTask that uses to notify of upload _result
  */
 
 public interface IUploadNotifier

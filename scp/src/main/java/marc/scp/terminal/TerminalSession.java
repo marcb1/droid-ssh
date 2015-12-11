@@ -1,7 +1,5 @@
 package marc.scp.terminal;
 
-import android.util.Log;
-
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
@@ -13,11 +11,11 @@ import marc.scp.sshutils.ShellConnection;
  */
 public class TerminalSession extends TermSession
 {
-    private ShellConnection conn;
+    private ShellConnection _conn;
 
     public TerminalSession(ShellConnection connection)
     {
-        conn = connection;
+        _conn = connection;
         PipedInputStream i = null;
         PipedOutputStream ou = null;
         try
@@ -36,7 +34,7 @@ public class TerminalSession extends TermSession
 
     public ShellConnection getConnection()
     {
-        return conn;
+        return _conn;
     }
 
     @Override //called when data is processed from the input stream

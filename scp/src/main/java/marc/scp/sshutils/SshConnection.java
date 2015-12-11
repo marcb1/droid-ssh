@@ -1,19 +1,20 @@
 package marc.scp.sshutils;
 
 import com.jcraft.jsch.*;
+import marc.scp.constants.Constants;
 
 import android.util.Log;
 
 public class SshConnection
 {
     // jsch objects
-    private Channel             _channel;
     private JSch                _jsch;
-    private Session             _session;
+    protected Channel           _channel;
+    protected Session           _session;
 
     private SessionUserInfo     _userInfo;
 
-    private final String        _log = "SshConnection";
+    private final String        _LOG = Constants.LOG_PREFIX + "SshConnection";
     protected CONNECTION_STATE  _state;
 
     protected enum CONNECTION_STATE
@@ -27,6 +28,8 @@ public class SshConnection
     public SshConnection(SessionUserInfo user)
     {
         _jsch = new JSch();
+        _jsch.setLogger(new SshLogger());
+        // _channel created by child class, can be terminal or file transfer channel
         _channel = null;
         _userInfo = user;
         _state = CONNECTION_STATE.DISCONNECTED;
@@ -39,24 +42,26 @@ public class SshConnection
         }
         catch(JSchException e)
         {
-            Log.e(_log, "Exception caught while creating jsch _session", e);
+            Log.e(_LOG, "Exception caught while creating jsch _session", e);
             _session = null;
         }
         catch(Exception e)
         {
-            Log.e(_log, "Exception caught while creating jsch _session", e);
+            Log.e(_LOG, "Exception caught while creating jsch _session", e);
             _session = null;
         }
     }
 
     private boolean setupSession()
     {
-        boolean ret = false;
         if(_session == null)
         {
-            return ret;
+            Log.e(_LOG, "session is null!");
+            return false;
         }
-        else if(_userInfo.usingRSA())
+
+        boolean ret = true;
+        if(_userInfo.usingRSA())
         {
             try
             {
@@ -68,15 +73,15 @@ public class SshConnection
                 }
                 else
                 {
-                    String passphrase = _userInfo.promptInput("RSA Encrypted", "Please enter key passphrase");
+                    String passphrase = _userInfo.promptInput("RSA Encrypted", "Please enter passphrase for key");
                     keyPair.decrypt(passphrase);
                 }
-                ret = true;
             }
             catch(JSchException e)
             {
                 _userInfo.handleException(e);
-                Log.e(_log, "Exception caught while creating jsch session", e);
+                Log.e(_LOG, "Exception caught while creating jsch session", e);
+                ret = false;
             }
         }
         _session.setUserInfo(_userInfo);
@@ -85,8 +90,7 @@ public class SshConnection
 
     public boolean connect()
     {
-        setupSession();
-        return true;
+        return setupSession();
     }
 
     public void disconnect()
@@ -97,7 +101,10 @@ public class SshConnection
             {
                 _channel.disconnect();
             }
-            _session.disconnect();
+            if(_session != null)
+            {
+                _session.disconnect();
+            }
             _state = CONNECTION_STATE.DISCONNECTED;
         }
     }
@@ -108,14 +115,14 @@ public class SshConnection
         _session.setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
         _session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
         _session.setConfig("compression_level", level);
-        Log.d(_log, "Compression enabled, level: " + level);
+        Log.d(_LOG, "Compression enabled; level: " + level);
     }
 
     public void disableHostChecking()
     {
         java.util.Properties config = new java.util.Properties();
         config.put("StrictHostKeyChecking", "no");
-        Log.d(_log, "Host checking disabled");
+        Log.d(_LOG, "Host checking disabled");
         _session.setConfig(config);
     }
 
@@ -151,4 +158,3 @@ public class SshConnection
         return _jsch;
     }
 }
-

@@ -18,8 +18,8 @@ import java.util.List;
 public class SftpConnection extends SshConnection
 {
 
-    private ChannelSftp sftp;
-    private String remotePath;
+    private ChannelSftp     _sftpChannel;
+    private String          _remotePath;
 
     private final String log = "SftpConnection";
 
@@ -27,8 +27,8 @@ public class SftpConnection extends SshConnection
     {
         super(user);
 
-        sftp = null;
-        remotePath = null;
+        _sftpChannel = null;
+        _remotePath = null;
 
         getUserInfo().setConnectionHandler(this);
     }
@@ -36,7 +36,9 @@ public class SftpConnection extends SshConnection
     @Override
     public boolean connect()
     {
-        boolean ret = false;
+        boolean ret = super.connect();
+        if(!ret)
+            return false;
         try
         {
             Session session = super.getSession();
@@ -47,11 +49,11 @@ public class SftpConnection extends SshConnection
                 _state = CONNECTION_STATE.CONNECTING;
                 session.connect(5000);
 
-                channel = session.openChannel("sftp");
+                channel = session.openChannel("_sftpChannel");
                 _state = CONNECTION_STATE.CONNECTED;
 
                 channel.connect(5000);
-                sftp = (ChannelSftp)channel;
+                _sftpChannel = (ChannelSftp)channel;
 
                 Log.d(log, "SFTP Connected");
                 ret = true;
@@ -63,7 +65,7 @@ public class SftpConnection extends SshConnection
             getUserInfo().handleException(e);
             ret = false;
             _state = CONNECTION_STATE.DISCONNECTED;
-            sftp = null;
+            _sftpChannel = null;
         }
         return ret;
     }
@@ -73,21 +75,21 @@ public class SftpConnection extends SshConnection
         boolean ret = false;
         try
         {
-            sftp.setInputStream(null);
+            _sftpChannel.setInputStream(null);
             ret = true;
             for (final File file : files)
             {
                 try
                 {
-                    if(remotePath != null)
+                    if(_remotePath != null)
                     {
                         ChannelSelector select = new ChannelSelector(file);
 
-                        sftp.ls(remotePath, select);
-                        //if !result, a file with the same name and size is not in the remote directory so overriwte
-                        if(!select.result)
+                        _sftpChannel.ls(_remotePath, select);
+                        //if !_result, a file with the same name and size is not in the remote directory so overriwte
+                        if(!select._result)
                         {
-                            sftp.put(file.getPath(), file.getName(), monitor, ChannelSftp.OVERWRITE);
+                            _sftpChannel.put(file.getPath(), file.getName(), monitor, ChannelSftp.OVERWRITE);
                         }
                     }
                 }
@@ -109,14 +111,14 @@ public class SftpConnection extends SshConnection
     public boolean changeRemoteDirectory(String path)
     {
         boolean ret = false;
-        if((_state == _state.DISCONNECTED) || (sftp == null))
+        if((_state == _state.DISCONNECTED) || (_sftpChannel == null))
         {
             return ret;
         }
         try
         {
-            sftp.cd(path);
-            remotePath = path;
+            _sftpChannel.cd(path);
+            _remotePath = path;
             ret = true;
         }
         catch (SftpException e)
@@ -130,14 +132,14 @@ public class SftpConnection extends SshConnection
     public boolean sendFile(File file)
     {
         boolean ret = false;
-        if((_state == _state.DISCONNECTED) || (sftp == null))
+        if((_state == _state.DISCONNECTED) || (_sftpChannel == null))
         {
             return ret;
         }
         try
         {
-            sftp.setInputStream(null);
-            sftp.put(file.getPath(), file.getName(), ChannelSftp.APPEND);
+            _sftpChannel.setInputStream(null);
+            _sftpChannel.put(file.getPath(), file.getName(), ChannelSftp.APPEND);
             ret = true;
         }
         catch(Exception e)

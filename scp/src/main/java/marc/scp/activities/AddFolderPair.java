@@ -28,38 +28,38 @@ import marc.scp.scp.R;
 public class AddFolderPair  extends Activity
 {
     //singleton instances
-    private Database dbInstance;
-    private Dialogs dialogInstance;
+    private Database                    _dbInstance;
+    private Dialogs                     _dialogInstance;
 
-    private ViewGroup contentView;
-    private int selectedItemSpinner;
-    private FileSync file;
+    private ViewGroup                   _contentView;
+    private int                         _selectedItemSpinner;
+    private FileSync                    _file;
 
-    //hash of preferences and their id, used for adding folder pairs, so we don't have to query the database again
-    //to find the preference object, the folder pair is linked to
-    private HashMap<String, Integer> hash;
+    // hash of preferences and their id, used for adding folder pairs, so we don't have to query the database again
+    // to find the preference object, the folder pair is linked to
+    private HashMap<String, Integer>    _hash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_folder_pair, null);
-        dbInstance = Database.getInstance();
-        dialogInstance = dialogInstance.getInstance();
+        _contentView = (ViewGroup) getLayoutInflater().inflate(R.layout.add_folder_pair, null);
+        _dbInstance = Database.getInstance();
+        _dialogInstance = _dialogInstance.getInstance();
 
-        hash = new HashMap<String, Integer>();
+        _hash = new HashMap<String, Integer>();
 
-        Button btn = (Button) contentView.findViewById(R.id.button_save);
+        Button btn = (Button) _contentView.findViewById(R.id.button_save);
         setupAddandEditButton(btn);
 
-        Spinner spinner = (Spinner) contentView.findViewById(R.id.connection_list);
+        Spinner spinner = (Spinner) _contentView.findViewById(R.id.connection_list);
         populateSpinner(spinner);
 
-        file = (FileSync)getIntent().getParcelableExtra(Constants.FILE_PARCEABLE);
-        populateFields(file);
+        _file = (FileSync)getIntent().getParcelableExtra(Constants.FILE_PARCEABLE);
+        populateFields(_file);
 
-        setContentView(contentView);
-        selectedItemSpinner = -1;
+        setContentView(_contentView);
+        _selectedItemSpinner = -1;
     }
 
     //helpers
@@ -68,11 +68,11 @@ public class AddFolderPair  extends Activity
         if(file != null)
         {
             EditText edit;
-            edit = (EditText) contentView.findViewById(R.id.folderPairName);
+            edit = (EditText) _contentView.findViewById(R.id.folderPairName);
             edit.setText(file.getName());
-            edit = (EditText) contentView.findViewById(R.id.localFolderField);
+            edit = (EditText) _contentView.findViewById(R.id.localFolderField);
             edit.setText(file.getLocalFolder());
-            edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
+            edit = (EditText) _contentView.findViewById(R.id.remoteFolderField);
             edit.setText(file.getRemoteFolder());
         }
     }
@@ -82,7 +82,7 @@ public class AddFolderPair  extends Activity
         final List<Preference> preferencesList = Database.getInstance().getAllPreferences();
         if(preferencesList == null)
         {
-            dialogInstance.getAlertDialog(this, "Error", "Please create a connection first", true);
+            _dialogInstance.getAlertDialog(this, "Error", "Please create a connection first", true);
             finish();
             return;
         }
@@ -93,7 +93,7 @@ public class AddFolderPair  extends Activity
             if(pr != null)
             {
                 prefList.add(pr.getName());
-                hash.put(pr.getName(), pr.getId());
+                _hash.put(pr.getName(), pr.getId());
             }
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, prefList);
@@ -102,12 +102,12 @@ public class AddFolderPair  extends Activity
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String host = (String)parent.getItemAtPosition(pos);
-                selectedItemSpinner = hash.get(host);
+                _selectedItemSpinner = _hash.get(host);
             }
             public void onNothingSelected(AdapterView<?> parent)
             {
                 String host = (String)parent.getItemAtPosition(0);
-                selectedItemSpinner = hash.get(host);
+                _selectedItemSpinner = _hash.get(host);
             }
         });
     }
@@ -118,38 +118,38 @@ public class AddFolderPair  extends Activity
         FileSync ret = null;
         Activity activity = this;
 
-        edit = (EditText) contentView.findViewById(R.id.folderPairName);
+        edit = (EditText) _contentView.findViewById(R.id.folderPairName);
         String name = edit.getText().toString();
-        if(dialogInstance.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
+        if(_dialogInstance.toastIfEmpty(name, activity, "You did not enter a folder pair name."))
         {
             return ret;
         }
 
-        edit = (EditText) contentView.findViewById(R.id.localFolderField);
+        edit = (EditText) _contentView.findViewById(R.id.localFolderField);
         String localFolder = edit.getText().toString();
-        if(dialogInstance.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
+        if(_dialogInstance.toastIfEmpty(localFolder, activity, "You did not enter a local folder."))
         {
             return ret;
         }
         File test = new File(localFolder);
         if(!test.exists())
         {
-            dialogInstance.makeToast(activity, "Local folder does not exit");
+            _dialogInstance.makeToast(activity, "Local folder does not exit");
             return ret;
         }
-        edit = (EditText) contentView.findViewById(R.id.remoteFolderField);
+        edit = (EditText) _contentView.findViewById(R.id.remoteFolderField);
         String remoteFolder = edit.getText().toString();
-        if(dialogInstance.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
+        if(_dialogInstance.toastIfEmpty(remoteFolder, activity, "You did not enter a remote folder."))
         {
             return ret;
         }
 
-        if(selectedItemSpinner == -1)
+        if(_selectedItemSpinner == -1)
         {
-            dialogInstance.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
+            _dialogInstance.makeToast(activity, "You did not select a connection to sync associate this folder sync with.");
             return ret;
         }
-        ret = new FileSync(name, selectedItemSpinner, localFolder, remoteFolder);
+        ret = new FileSync(name, _selectedItemSpinner, localFolder, remoteFolder);
         return ret;
     }
 
@@ -162,9 +162,9 @@ public class AddFolderPair  extends Activity
             public void onClick(View v)
             {
                 FileSync fileInput = errorCheckInput();
-                if((file != null) && (fileInput != null))
+                if((_file != null) && (fileInput != null))
                 {
-                    fileInput.setId(file.getId());
+                    fileInput.setId(_file.getId());
                     updateFile(fileInput);
                     finish();
                 }
@@ -181,12 +181,12 @@ public class AddFolderPair  extends Activity
     //database access
     private void addFile(FileSync fileSync)
     {
-        dbInstance.addFileSync(fileSync);
+        _dbInstance.addFileSync(fileSync);
     }
 
     private void updateFile(FileSync fileSync)
     {
-        dbInstance.updateFile(fileSync);
+        _dbInstance.updateFile(fileSync);
     }
 
 }

@@ -14,9 +14,7 @@ import marc.scp.databaseutils.FileSync;
 import marc.scp.databaseutils.HostKeys;
 import marc.scp.databaseutils.Preference;
 
-/**
- * Created by Marc on 5/16/14.
- */
+
 public class ListViews
 {
     public static SimpleAdapter createAdapterFromPrefs(Activity activity, List<Preference> preferencesList)

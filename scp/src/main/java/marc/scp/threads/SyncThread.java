@@ -2,6 +2,7 @@ package marc.scp.threads;
 
 import java.util.ArrayList;
 
+import marc.scp.constants.Constants;
 import marc.scp.activities.SyncActivity;
 import marc.scp.databaseutils.FileSync;
 
@@ -10,22 +11,17 @@ import marc.scp.databaseutils.FileSync;
  */
 public class SyncThread extends Thread
 {
-    private SyncActivity activity;
-    private boolean stop;
-    private ArrayList<FileSync> filesList;
+    private SyncActivity        _activity;
+    private boolean             _stop;
+    private ArrayList<FileSync> _filesList;
 
-    private final static String log = "SyncThread";
-
-    public SyncThread()
-    {
-
-    }
+    private final static String LOG = Constants.LOG_PREFIX + "SyncThread";
 
     public SyncThread(SyncActivity parent, ArrayList<FileSync>  files)
     {
-        activity = parent;
-        stop = false;
-        filesList = files;
+        _activity = parent;
+        _stop = false;
+        _filesList = files;
     }
 
     @Override
@@ -33,29 +29,29 @@ public class SyncThread extends Thread
     {
         try
         {
-            for(FileSync file: filesList)
+            for(FileSync file: _filesList)
             {
-                synchronized (activity)
+                synchronized (_activity)
                 {
-                    if(stop)
+                    if(_stop)
                     {
                         return;
                     }
-                    //this is an async call which will spawn another thread to connect
-                    activity.sync(file);
-                    activity.wait();
+                    // this is an async call which will spawn another thread to connect
+                    _activity.sync(file);
+                    _activity.wait();
                 }
             }
         }
         catch (InterruptedException e)
         {
-            android.util.Log.e(log, "run", e);
+            android.util.Log.e(LOG, "caught exception while running sync thread", e);
         }
     }
 
-    public void setStop()
+    public void setStop ()
     {
-        stop = true;
+        _stop = true;
     }
 
 }

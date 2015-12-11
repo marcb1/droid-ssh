@@ -6,28 +6,18 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/hostNameField"
+        android:id="@+id/connectField"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:hint="@string/host_message"
+        android:hint="@string/quick_connect_box"
         android:inputType="text"
         />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/usernameField"
-        android:hint="@string/username_message"
-        android:inputType="text|textNoSuggestions" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_connect"
         android:id="@+id/quickConnect"
-        android:onClick="connectToServer"
         android:layout_alignParentLeft="true" />
 
 </LinearLayout>

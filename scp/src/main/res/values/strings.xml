@@ -10,6 +10,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
+
     <!-- Activity Titles -->
     <string name="app_name">Droid SSH</string>
     <string name="title_terminal_activity">Connecting...</string>
@@ -107,6 +108,7 @@
     <!-- Quick Connect Menu//NOT DONE -->
     <string name="username_message">username</string>
     <string name="password_message">password</string>
+    <string name="quick_connect_box">user@hostname:port</string>
 
     <string name="port_message">port</string>
     <string name="rsa_message">rsa key</string>

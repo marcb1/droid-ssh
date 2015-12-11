@@ -2,6 +2,8 @@ package marc.scp.constants;
 
 public class Constants
 {
+    public final static String LOG_PREFIX = "DROID_SSH.";
+
     public final static String PREFERENCE_PARCEABLE = "com.whomarc.scp.PREFERENCE";
     public final static String FILE_PARCEABLE = "com.whomarc.scp.FILE";
 
